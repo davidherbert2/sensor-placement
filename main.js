@@ -50,7 +50,7 @@ window.onload = (event) => {
 		let source = layers["sensor"].getSource().getSource();
 		Object.assign(sensorArgs, conf.NEWCASTLE_CENTRE);
 		sensorInfo = sensorInfo + "?" + Object.keys(sensorArgs).map(key => key + "=" + sensorArgs[key]).join("&");
-		fetch("http://localhost:8000/cgi-bin/uo_wrapper.py?url=" + encodeURIComponent(sensorInfo))
+		fetch("http://ec2-52-207-74-207.compute-1.amazonaws.com:8080/sensor_placement/cgi-bin/uo_wrapper.py?url=" + encodeURIComponent(sensorInfo))
 			.then(r => r.json())
 			.then(jsonResponse => {
 				source.clear();

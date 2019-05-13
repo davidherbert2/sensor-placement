@@ -143,7 +143,7 @@ export const LSOA_LAYER = () => {
 	return(new TileLayer({
 		extent: Object.values(NEWCASTLE_CENTRE_3857),
 		source: new TileWMS({
-			url: "http://ec2-52-207-74-207.compute-1.amazonaws.com:8080/geoserver/uo/wms",
+			url: "http://ec2-52-207-74-207.compute-1.amazonaws.com:8080/geoserver/data_dot_gov/wms",
 			params: {
 				"LAYERS": "data_dot_gov:lsoa", 
 				"TILED": true

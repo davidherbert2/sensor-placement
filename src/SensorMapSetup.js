@@ -50,10 +50,10 @@ export const SENSOR_ATTR_ORDERING = ["Name", "Latitude", "Longitude", "Elevation
  * Bounding box of interest for sensor map, and centroid thereof
  */
 export const NEWCASTLE_CENTRE = {
-	"bbox_p1_x": -1.6655,
-	"bbox_p1_y": 54.9611,
-	"bbox_p2_x": -1.5672,
-	"bbox_p2_y": 54.9904
+	"bbox_p1_x": -1.7353,
+	"bbox_p1_y": 54.9484,
+	"bbox_p2_x": -1.4298,
+	"bbox_p2_y": 55.0563
 };
 
 const NEWCASTLE_CENTRE_3857 = fromLonLat([NEWCASTLE_CENTRE["bbox_p1_x"], NEWCASTLE_CENTRE["bbox_p1_y"]]).concat(

@@ -64,7 +64,7 @@ const NEWCASTLE_CENTRE_3857 = fromLonLat([NEWCASTLE_CENTRE["bbox_p1_x"], NEWCAST
  */
 export const NEWCASTLE_CENTROID = [
 	-1.6253,
-	64.9736
+	54.9736
 ];
 
 /**

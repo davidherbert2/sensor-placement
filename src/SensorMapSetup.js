@@ -59,11 +59,14 @@ export const NEWCASTLE_CENTRE = {
 const NEWCASTLE_CENTRE_3857 = fromLonLat([NEWCASTLE_CENTRE["bbox_p1_x"], NEWCASTLE_CENTRE["bbox_p1_y"]]).concat(
 	fromLonLat([NEWCASTLE_CENTRE["bbox_p2_x"], NEWCASTLE_CENTRE["bbox_p2_y"]]));
 
+/**
+ * Lon/lat of USB
+ */
 export const NEWCASTLE_CENTROID = [
-	0.5*(NEWCASTLE_CENTRE["bbox_p1_x"] + NEWCASTLE_CENTRE["bbox_p2_x"]),
-	0.5*(NEWCASTLE_CENTRE["bbox_p1_y"] + NEWCASTLE_CENTRE["bbox_p2_y"])
+	-1.6253,
+	64.9736
 ];
-			
+
 /**
  * Symbology for display of sensors on map 
  */

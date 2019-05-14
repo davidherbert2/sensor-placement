@@ -194,7 +194,7 @@ export const LSOA_LAYER = () => {
 //			serverType: "geoserver"
 //		})
 //	}));
-}//;
+//};
 
 /**
  * OL map

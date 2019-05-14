@@ -144,8 +144,7 @@ export const SENSOR_LAYER = () => {
  */
 const LSOA_STYLE = new Style({
     fill: new Fill({
-        color: "#0000ff",
-		opacity: 0.2
+        color: rgba(0, 0, 255, 0.2)
     }),
     stroke: new Stroke({
 		color: "#0000ff",

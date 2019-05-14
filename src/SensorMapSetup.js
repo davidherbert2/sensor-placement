@@ -6,11 +6,13 @@ import Map from "ol/Map";
 import View from "ol/View";
 import Feature from "ol/Feature";
 import {fromLonLat} from "ol/proj";
+import {bbox as bboxStrategy} from "ol/loadingstrategy.js";
 import Style from "ol/style/Style";
 import CircleStyle from "ol/style/Circle";
 import Fill from "ol/style/Fill";
 import Stroke from "ol/style/Stroke";
 import Text from "ol/style/Text";
+import GeoJSON from "ol/format/GeoJSON"; 
 import VectorLayer from "ol/layer/Vector";
 import TileLayer from "ol/layer/Tile";
 import OSM from "ol/source/OSM";
@@ -138,24 +140,62 @@ export const SENSOR_LAYER = () => {
 };
 
 /**
+ * LSOA style 
+ */
+const LSOA_STYLE = new Style({
+    fill: new Fill({
+        color: "#0000ff",
+		opacity: 0.2
+    }),
+    stroke: new Stroke({
+		color: "#0000ff",
+        width: 1
+    }),
+    text: new Text()
+});
+
+/**
  * Office of National Statistics LSOA dataset
  * http://geoportal.statistics.gov.uk/datasets/da831f80764346889837c72508f046fa_1/data
  * Downloaded as Shapefile and exported via local Geoserver
  */
 export const LSOA_LAYER = () => {
-	return(new TileLayer({
-		extent: Object.values(NEWCASTLE_CENTRE_3857),
-		source: new TileWMS({
-			url: "http://ec2-52-207-74-207.compute-1.amazonaws.com:8080/geoserver/data_dot_gov/wms",
-			params: {
-				"LAYERS": "data_dot_gov:lsoa", 
-				"TILED": true
+	return(new VectorLayer({
+        source: new VectorSource({
+			format: new GeoJSON(),
+			url: function(extent) {
+				return(`
+					http://ec2-52-207-74-207.compute-1.amazonaws.com:8080/geoserver/data_dot_gov/wfs?service=WFS&
+					version=2.0.0&request=GetFeature&typename=data_dot_gov:lsoa&
+					outputFormat=application/json&srsname=EPSG:3857&bbox=
+					` 
+					+ extent.join(",") + ",EPSG:3857");
 			},
-			serverType: "geoserver"
-		})
-	}));
+			strategy: bboxStrategy
+		}),
+        style: LSOA_STYLE
+    }));
 };
-			
+
+/**
+ * Office of National Statistics LSOA dataset
+ * http://geoportal.statistics.gov.uk/datasets/da831f80764346889837c72508f046fa_1/data
+ * Downloaded as Shapefile and exported via local Geoserver
+ */
+//export const LSOA_LAYER = () => {
+//	return(new TileLayer({
+//		extent: Object.values(NEWCASTLE_CENTRE_3857),
+//		source: new TileWMS({
+//			url: "http://ec2-52-207-74-207.compute-1.amazonaws.com:8080/geoserver/data_dot_gov/wms",
+//			params: {
+//				"LAYERS": "data_dot_gov:lsoa", 
+//				"TILED": true
+//			},
+//			serverType: "geoserver"
+//		})
+//	}));
+}//;
+
 /**
  * OL map
  */

@@ -184,20 +184,20 @@ export const LSOA_LAYER = () => {
 export const LSOA_HIGHLIGHT_STYLE = (feature) => {
     return(new Style({
         stroke: new Stroke({
-            color: "#ff0000",
+            color: "rgba(192, 159, 128, 1)",
             width: 1
         }),
         fill: new Fill({
-            color: "rgba(192, 159, 128, 0.2)"
+            color: "rgba(192, 159, 128, 0.4)"
         }),
 		text: new Text({
 			font: "12px sans-serif",
 			text: feature.get("lsoa11nm"),
 			stroke: new Stroke({
-				color: "rgba(192, 159, 128, 1)"
+				color: "rgba(118, 50, 63, 1)"
 			}),
 			fill: new Fill({
-				color: "rgba(192, 159, 128, 1)"
+				color: "rgba(118, 50, 63, 1)"
 			})
 		})
     }));

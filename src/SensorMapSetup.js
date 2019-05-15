@@ -151,7 +151,9 @@ const LSOA_STYLE = (feature) => {
 			color: "#0000ff",
 			width: 1
 		}),
-		text: new Text(feature.get("lsoa11nm"))
+		text: new Text({
+			text: feature.get("lsoa11nm")
+		})
 	}));
 };
 

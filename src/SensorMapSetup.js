@@ -175,10 +175,7 @@ export const LSOA_LAYER = () => {
 			},
 			strategy: bboxStrategy
 		}),
-        style: LSOA_STYLE();
-			style.getText().setText();
-            return(style); 
-		}
+        style: LSOA_STYLE
     }));
 };
 

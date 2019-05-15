@@ -41,16 +41,15 @@ window.onload = (event) => {
           return;
         }
         let pixel = map.getEventPixel(evt.originalEvent);
-		let feature = map.getFeaturesAtPixel(pixel, layerCandidate => {
+		let features = map.getFeaturesAtPixel(pixel, layerCandidate => {
 			return(layerCandidate == layers["lsoa"]);
 		});
-		if (feature !== highlight) {
+		let feature = features.length == 0 ? null : features[0];
+		if (feature && feature !== highlight) {
 			if (highlight) {
 				featureOverlays["lsoa"].getSource().removeFeature(highlight);
 			}
-			if (feature) {
-				featureOverlays["lsoa"].getSource().addFeature(feature);
-			}
+			featureOverlays["lsoa"].getSource().addFeature(feature);
 			highlight = feature;
 		}
 	});

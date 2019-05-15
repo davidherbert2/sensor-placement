@@ -193,7 +193,7 @@ export const LSOA_HIGHLIGHT_STYLE = (feature) => {
 		text: new Text({
 			font: "12px sans-serif",
 			text: feature.get("lsoa11nm"),
-			placement: "line",
+			//placement: "line",
 			overflow: true,
 			stroke: new Stroke({
 				color: "rgba(118, 50, 63, 1)"

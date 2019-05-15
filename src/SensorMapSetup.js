@@ -145,22 +145,12 @@ export const SENSOR_LAYER = () => {
 const LSOA_STYLE = (feature) => {
 	return(new Style({
 		fill: new Fill({
-			color: "rgba(0, 0, 255, 0.2)"
+			color: "rgba(215, 206, 199, 0.2)"
 		}),
 		stroke: new Stroke({
-			color: "#0000ff",
+			color: "rgba(215, 206, 199, 0.2)",
 			width: 1
-		}),
-		text: new Text({
-			font: "bold 12px sans-serif",
-			text: feature.get("lsoa11nm"),
-			stroke: new Stroke({
-				color: "#0000ff"
-			}),
-			fill: new Fill({
-				color: "#0000ff"
-			})
-		})
+		})		
 	}));
 };
 
@@ -191,15 +181,25 @@ export const LSOA_LAYER = () => {
 /**
  * Overlay layer for the above to facilitate mousemove handler
  */
-export const LSOA_HIGHLIGHT_STYLE = () => {
+export const LSOA_HIGHLIGHT_STYLE = (feature) => {
     return(new Style({
         stroke: new Stroke({
             color: "#ff0000",
             width: 1
         }),
         fill: new Fill({
-            color: "rgba(255,0,0,0.1)"
-        })
+            color: "rgba(192, 159, 128, 0.2)"
+        }),
+		text: new Text({
+			font: "12px sans-serif",
+			text: feature.get("lsoa11nm"),
+			stroke: new Stroke({
+				color: "rgba(192, 159, 128, 1)"
+			}),
+			fill: new Fill({
+				color: "rgba(192, 159, 128, 1)"
+			})
+		})
     }));
 };
  

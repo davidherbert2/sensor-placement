@@ -1,4 +1,5 @@
 import Feature from "ol/Feature";
+import LayerGroup from "ol/layer/Group";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import {fromLonLat} from "ol/proj";
@@ -17,7 +18,7 @@ window.onload = (event) => {
 	/** 
 	 * Layer group and switcher 
 	 */
-	let layers [
+	let layers = [
 		new ol.layer.Group({
 			"title": "Base maps",
 			"fold": "open",

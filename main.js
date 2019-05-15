@@ -48,12 +48,7 @@ window.onload = (event) => {
 			]
 		})
 	];
-
-	let layers = {
-		"base": ,		
-		"lsoa": conf.LSOA_LAYER(),
-		"sensor": conf.SENSOR_LAYER()
-	};
+	
 	let map = conf.MAP(Object.values(layers));
 	let popup = new FeatureClusterPopover("body", conf.SENSOR_ATTR_ORDERING, conf.SENSOR_ATTR_NAMES, "Sensor Name");
 	

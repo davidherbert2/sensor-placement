@@ -49,7 +49,7 @@ window.onload = (event) => {
 				featureOverlays.getSource().removeFeature(highlight);
 			}
 			if (feature) {
-				featureOverlay.getSource().addFeature(feature);
+				featureOverlays.getSource().addFeature(feature);
 			}
 			highlight = feature;
 		}

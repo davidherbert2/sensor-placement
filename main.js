@@ -19,14 +19,14 @@ window.onload = (event) => {
 	 * Layer group and switcher 
 	 */
 	let layers = [
-		new ol.layer.Group({
+		new Group({
 			"title": "Base maps",
 			"fold": "open",
 			"layers": [
 				conf.OSM_LAYER()
 			]
 		}),
-		new ol.layer.Group({
+		new Group({
 			"title": "Office of National Statistics",
 			"fold": "open",
 			"layers": [
@@ -40,7 +40,7 @@ window.onload = (event) => {
 		//		conf.LSOA_LAYER()
 		//	]
 		//}),
-		new ol.layer.Group({
+		new Group({
 			"title": "Urban Observatory",
 			"fold": "open",
 			"layers": [

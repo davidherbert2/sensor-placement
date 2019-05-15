@@ -46,10 +46,10 @@ window.onload = (event) => {
 		});
 		if (feature !== highlight) {
 			if (highlight) {
-				featureOverlays.getSource().removeFeature(highlight);
+				featureOverlays["lsoa"].getSource().removeFeature(highlight);
 			}
 			if (feature) {
-				featureOverlays.getSource().addFeature(feature);
+				featureOverlays["lsoa"].getSource().addFeature(feature);
 			}
 			highlight = feature;
 		}

@@ -6,7 +6,7 @@ import Map from "ol/Map";
 import View from "ol/View";
 import Feature from "ol/Feature";
 import {fromLonLat} from "ol/proj";
-import {bbox as bboxStrategy} from "ol/loadingstrategy.js";
+import {bbox as bboxStrategy} from "ol/loadingstrategy";
 import Style from "ol/style/Style";
 import CircleStyle from "ol/style/Circle";
 import Fill from "ol/style/Fill";
@@ -142,16 +142,18 @@ export const SENSOR_LAYER = () => {
 /**
  * LSOA style 
  */
-const LSOA_STYLE = new Style({
-    fill: new Fill({
-        color: "rgba(0, 0, 255, 0.2)"
-    }),
-    stroke: new Stroke({
-		color: "#0000ff",
-        width: 1
-    }),
-    text: new Text()
-});
+const LSOA_STYLE = (feature) => {
+	return(new Style({
+		fill: new Fill({
+			color: "rgba(0, 0, 255, 0.2)"
+		}),
+		stroke: new Stroke({
+			color: "#0000ff",
+			width: 1
+		}),
+		text: new Text(feature.get("lsoa11nm"))
+	}));
+};
 
 /**
  * Office of National Statistics LSOA dataset
@@ -160,6 +162,7 @@ const LSOA_STYLE = new Style({
  */
 export const LSOA_LAYER = () => {
 	return(new VectorLayer({
+		extent: NEWCASTLE_CENTRE_3857,
         source: new VectorSource({
 			format: new GeoJSON(),
 			url: function(extent) {
@@ -172,29 +175,28 @@ export const LSOA_LAYER = () => {
 			},
 			strategy: bboxStrategy
 		}),
-        style: LSOA_STYLE
+        style: LSOA_STYLE();
+			style.getText().setText();
+            return(style); 
+		}
     }));
 };
 
 /**
- * Office of National Statistics LSOA dataset
- * http://geoportal.statistics.gov.uk/datasets/da831f80764346889837c72508f046fa_1/data
- * Downloaded as Shapefile and exported via local Geoserver
+ * Overlay layer for the above to facilitate mousemove handler
  */
-//export const LSOA_LAYER = () => {
-//	return(new TileLayer({
-//		extent: Object.values(NEWCASTLE_CENTRE_3857),
-//		source: new TileWMS({
-//			url: "http://ec2-52-207-74-207.compute-1.amazonaws.com:8080/geoserver/data_dot_gov/wms",
-//			params: {
-//				"LAYERS": "data_dot_gov:lsoa", 
-//				"TILED": true
-//			},
-//			serverType: "geoserver"
-//		})
-//	}));
-//};
-
+export const LSOA_HIGHLIGHT_STYLE = () => {
+    return(new Style({
+        stroke: new Stroke({
+            color: "#ff0000",
+            width: 1
+        }),
+        fill: new Fill({
+            color: "rgba(255,0,0,0.1)"
+        })
+    }));
+};
+ 
 /**
  * OL map
  */

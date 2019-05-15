@@ -16,11 +16,40 @@ window.onload = (event) => {
 	let map = conf.MAP(Object.values(layers));
 	let popup = new FeatureClusterPopover("body", conf.SENSOR_ATTR_ORDERING, conf.SENSOR_ATTR_NAMES, "Sensor Name");
 	
+	let highlight = null;
+	let featureOverlays = {
+		"lsoa": new VectorLayer({
+			source: new VectorSource(),
+			map: map,
+			style: LSOA_HIGHLIGHT_STYLE()
+		})
+	};
+	
 	map.addOverlay(popup.overlay);
 	map.on("singleclick", evt => {
-		let hits = map.getFeaturesAtPixel(evt.pixel);
+		let hits = map.getFeaturesAtPixel(evt.pixel, layerCandidate => {
+			return(layerCandidate == layers["sensor"]);
+		});
 		if (hits != null) {
 			popup.show(evt.coordinate, hits[0]);	
+		}
+	});
+	map.on("pointermove", evt => {
+		if (evt.dragging) {
+          return;
+        }
+        let pixel = map.getEventPixel(evt.originalEvent);
+		let feature = map.getFeaturesAtPixel(pixel, layerCandidate => {
+			return(layerCandidate == layers["lsoa"]);
+		});
+		if (feature !== highlight) {
+			if (highlight) {
+				featureOverlays.getSource().removeFeature(highlight);
+			}
+			if (feature) {
+				featureOverlay.getSource().addFeature(feature);
+			}
+			highlight = feature;
 		}
 	});
 	

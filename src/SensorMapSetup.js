@@ -191,7 +191,7 @@ export const LSOA_HIGHLIGHT_STYLE = (feature) => {
             color: "rgba(192, 159, 128, 0.4)"
         }),
 		text: new Text({
-			font: "12px sans-serif",
+			font: "12px consolas",
 			text: feature.get("lsoa11nm"),
 			//placement: "line",
 			overflow: true,

@@ -158,7 +158,7 @@ const LSOA_STYLE = (feature) => {
 				color: "#0000ff"
 			}),
 			fill: new Fill({
-				color: "rgba(255, 255, 255, 0.3)"
+				color: "#0000ff"
 			})
 		})
 	}));

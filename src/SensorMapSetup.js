@@ -121,6 +121,9 @@ const SENSOR_STYLE_FUNCTION = (feature) => {
  */
 export const OSM_LAYER = () => {
 	return(new TileLayer({
+		title: "OpenStreetMap",
+		type: "base",
+		visible: true,
 		source: new OSM()
 	}));
 };
@@ -130,6 +133,9 @@ export const OSM_LAYER = () => {
  */	
 export const SENSOR_LAYER = () => {
 	return(new VectorLayer({
+		title: "Sensor locations",
+		type: "overlay",
+		visible: true,
 		source: new Cluster({
 			distance: 20, 					
 			source: new VectorSource({wrapX: false}),
@@ -161,6 +167,8 @@ const LSOA_STYLE = (feature) => {
  */
 export const LSOA_LAYER = () => {
 	return(new VectorLayer({
+		title: "LSOAs",
+		type: "overlay",
 		extent: NEWCASTLE_CENTRE_3857,
         source: new VectorSource({
 			format: new GeoJSON(),

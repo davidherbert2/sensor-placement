@@ -8,19 +8,57 @@ import DropDownListFromUrl from "./src/DropDownListFromUrl.js";
 import FeatureClusterPopover from "./src/FeatureClusterPopover.js";
 import * as conf from "./src/SensorMapSetup.js";
 
-window.onload = (event) => {	
+window.onload = (event) => {
+	
+	let getLayerByTitle = (title) => {
+		return(map.getLayers().getArray().find(lyr => lyr.get("title") === title));
+	};
+
+	/** 
+	 * Layer group and switcher 
+	 */
+	let layers [
+		new ol.layer.Group({
+			"title": "Base maps",
+			"fold": "open",
+			"layers": [
+				conf.OSM_LAYER()
+			]
+		}),
+		new ol.layer.Group({
+			"title": "Office of National Statistics",
+			"fold": "open",
+			"layers": [
+				conf.LSOA_LAYER()
+			]
+		}),
+		//new ol.layer.Group({
+		//	"title": "Newcastle City Council",
+		//	"fold": "open",
+		//	"layers": [
+		//		conf.LSOA_LAYER()
+		//	]
+		//}),
+		new ol.layer.Group({
+			"title": "Urban Observatory",
+			"fold": "open",
+			"layers": [
+				conf.SENSOR_LAYER()
+			]
+		})
+	];
 
 	let layers = {
-		"base": conf.OSM_LAYER(),
-		"sensor": conf.SENSOR_LAYER(),
-		"lsoa": conf.LSOA_LAYER()
+		"base": ,		
+		"lsoa": conf.LSOA_LAYER(),
+		"sensor": conf.SENSOR_LAYER()
 	};
 	let map = conf.MAP(Object.values(layers));
 	let popup = new FeatureClusterPopover("body", conf.SENSOR_ATTR_ORDERING, conf.SENSOR_ATTR_NAMES, "Sensor Name");
 	
 	let highlight = null;
 	let featureOverlays = {
-		"lsoa": new VectorLayer({
+		"LSOAs": new VectorLayer({
 			source: new VectorSource(),
 			map: map,
 			style: conf.LSOA_HIGHLIGHT_STYLE
@@ -30,9 +68,9 @@ window.onload = (event) => {
 	map.addOverlay(popup.overlay);
 	map.on("singleclick", evt => {
 		let hits = map.getFeaturesAtPixel(evt.pixel, layerCandidate => {
-			return(layerCandidate == layers["sensor"]);
+			return(layerCandidate == getLayerByTitle("Sensor locations"));
 		});
-		if (hits != null) {
+		if (hits && hits.length > 0) {
 			popup.show(evt.coordinate, hits[0]);	
 		}
 	});
@@ -42,14 +80,14 @@ window.onload = (event) => {
         }
         let pixel = map.getEventPixel(evt.originalEvent);
 		let features = map.getFeaturesAtPixel(pixel, layerCandidate => {
-			return(layerCandidate == layers["lsoa"]);
+			return(layerCandidate == getLayerByTitle("LSOAs"));
 		});
 		let feature = features.length == 0 ? null : features[0];
 		if (feature && feature !== highlight) {
 			if (highlight) {
-				featureOverlays["lsoa"].getSource().removeFeature(highlight);
+				featureOverlays["LSOAs"].getSource().removeFeature(highlight);
 			}
-			featureOverlays["lsoa"].getSource().addFeature(feature);
+			featureOverlays["LSOAs"].getSource().addFeature(feature);
 			highlight = feature;
 		}
 	});
@@ -78,7 +116,7 @@ window.onload = (event) => {
 			"sensor_type": ddVariables.value
 		};
 		/* Two levels of source - first one is a cluster */
-		let source = layers["sensor"].getSource().getSource();
+		let source = getLayerByTitle("Sensor locations").getSource().getSource();
 		Object.assign(sensorArgs, conf.NEWCASTLE_CENTRE);
 		sensorInfo = sensorInfo + "?" + Object.keys(sensorArgs).map(key => key + "=" + sensorArgs[key]).join("&");
 		fetch("http://ec2-52-207-74-207.compute-1.amazonaws.com:8080/sensor_placement/cgi-bin/uo_wrapper.py?url=" + encodeURIComponent(sensorInfo))

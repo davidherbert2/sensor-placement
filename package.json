@@ -11,7 +11,8 @@
   "author": "David Herbert",
   "license": "ISC",
   "dependencies": {
-    "ol": "^5.3.2"
+    "ol": "^5.3.2",
+    "ol-layerswitcher": "^3.2.0"
   },
   "devDependencies": {
     "parcel-bundler": "^1.12.3"

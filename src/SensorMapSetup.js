@@ -152,7 +152,14 @@ const LSOA_STYLE = (feature) => {
 			width: 1
 		}),
 		text: new Text({
-			text: feature.get("lsoa11nm")
+			font: "bold 12px sans-serif",
+			text: feature.get("lsoa11nm"),
+			stroke: new Stroke({
+				color: "#0000ff"
+			}),
+			fill: new Fill({
+				color: "rgba(255, 255, 255, 0.3)"
+			})
 		})
 	}));
 };

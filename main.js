@@ -23,7 +23,7 @@ window.onload = (event) => {
 		"lsoa": new VectorLayer({
 			source: new VectorSource(),
 			map: map,
-			style: conf.LSOA_HIGHLIGHT_STYLE()
+			style: conf.LSOA_HIGHLIGHT_STYLE
 		})
 	};
 	

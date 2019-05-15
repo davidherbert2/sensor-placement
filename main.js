@@ -12,6 +12,7 @@ import * as conf from "./src/SensorMapSetup.js";
 window.onload = (event) => {
 	
 	let getLayerByTitle = (title) => {
+		console.log(map.getLayers().getArray());
 		return(map.getLayers().getArray().find(lyr => lyr.get("title") === title));
 	};
 

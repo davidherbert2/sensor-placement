@@ -1,4 +1,5 @@
 import Feature from "ol/Feature";
+import VectorLayer from "ol/layer/Vector";
 import {fromLonLat} from "ol/proj";
 import Point from "ol/geom/Point";
 

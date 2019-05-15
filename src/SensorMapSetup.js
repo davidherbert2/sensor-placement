@@ -145,10 +145,10 @@ export const SENSOR_LAYER = () => {
 const LSOA_STYLE = (feature) => {
 	return(new Style({
 		fill: new Fill({
-			color: "rgba(215, 206, 199, 0.2)"
+			color: "rgba(215, 206, 199, 0.3)"
 		}),
 		stroke: new Stroke({
-			color: "rgba(215, 206, 199, 0.2)",
+			color: "rgba(215, 206, 199, 1)",
 			width: 1
 		})		
 	}));
@@ -193,6 +193,8 @@ export const LSOA_HIGHLIGHT_STYLE = (feature) => {
 		text: new Text({
 			font: "12px sans-serif",
 			text: feature.get("lsoa11nm"),
+			placement: "line",
+			overflow: true,
 			stroke: new Stroke({
 				color: "rgba(118, 50, 63, 1)"
 			}),

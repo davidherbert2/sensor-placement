@@ -11,27 +11,25 @@ import * as conf from "./src/SensorMapSetup.js";
 
 window.onload = (event) => {
 	
-	let getLayerByTitle = (title) => {
-		console.log(map.getLayers().getArray());
-		return(map.getLayers().getArray().find(lyr => lyr.get("title") === title));
-	};
-
-	/** 
+	/**
 	 * Layer group and switcher 
 	 */
+	let osmLayer = conf.OSM_LAYER();
+	let lsoaLayer = conf.LSOA_LAYER();
+	let sensorLayer = conf.SENSOR_LAYER();
 	let layers = [
 		new LayerGroup({
 			"title": "Base maps",
 			"fold": "open",
 			"layers": [
-				conf.OSM_LAYER()
+				osmLayer
 			]
 		}),
 		new LayerGroup({
 			"title": "Office of National Statistics",
 			"fold": "open",
 			"layers": [
-				conf.LSOA_LAYER()
+				lsoaLayer
 			]
 		}),
 		//new ol.layer.Group({
@@ -45,7 +43,7 @@ window.onload = (event) => {
 			"title": "Urban Observatory",
 			"fold": "open",
 			"layers": [
-				conf.SENSOR_LAYER()
+				sensorLayer
 			]
 		})
 	];
@@ -65,7 +63,7 @@ window.onload = (event) => {
 	map.addOverlay(popup.overlay);
 	map.on("singleclick", evt => {
 		let hits = map.getFeaturesAtPixel(evt.pixel, layerCandidate => {
-			return(layerCandidate == getLayerByTitle("Sensor locations"));
+			return(layerCandidate == sensorLayer);
 		});
 		if (hits && hits.length > 0) {
 			popup.show(evt.coordinate, hits[0]);	
@@ -77,7 +75,7 @@ window.onload = (event) => {
         }
         let pixel = map.getEventPixel(evt.originalEvent);
 		let features = map.getFeaturesAtPixel(pixel, layerCandidate => {
-			return(layerCandidate == getLayerByTitle("LSOAs"));
+			return(layerCandidate == lsoaLayer);
 		});
 		let feature = features.length == 0 ? null : features[0];
 		if (feature && feature !== highlight) {
@@ -113,7 +111,7 @@ window.onload = (event) => {
 			"sensor_type": ddVariables.value
 		};
 		/* Two levels of source - first one is a cluster */
-		let source = getLayerByTitle("Sensor locations").getSource().getSource();
+		let source = sensorLayer.getSource().getSource();
 		Object.assign(sensorArgs, conf.NEWCASTLE_CENTRE);
 		sensorInfo = sensorInfo + "?" + Object.keys(sensorArgs).map(key => key + "=" + sensorArgs[key]).join("&");
 		fetch("http://ec2-52-207-74-207.compute-1.amazonaws.com:8080/sensor_placement/cgi-bin/uo_wrapper.py?url=" + encodeURIComponent(sensorInfo))

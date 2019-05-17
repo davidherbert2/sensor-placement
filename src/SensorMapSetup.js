@@ -151,10 +151,10 @@ export const SENSOR_LAYER = () => {
 const LSOA_STYLE = (feature) => {
 	return(new Style({
 		fill: new Fill({
-			color: "rgba(215, 206, 199, 0.3)"
+			color: "rgba(215, 206, 199, 0.0)"
 		}),
 		stroke: new Stroke({
-			color: "rgba(215, 206, 199, 1)",
+			color: "rgba(118, 50, 63, 1)",
 			width: 1
 		})		
 	}));

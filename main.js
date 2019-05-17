@@ -62,8 +62,10 @@ window.onload = (event) => {
 	
 	map.addOverlay(popup.overlay);
 	map.on("singleclick", evt => {
-		let hits = map.getFeaturesAtPixel(evt.pixel, layerCandidate => {
-			return(layerCandidate == sensorLayer);
+		let hits = map.getFeaturesAtPixel(evt.pixel, {
+			layerFilter: layerCandidate => {
+				return(layerCandidate == sensorLayer);
+			}
 		});
 		if (hits && hits.length > 0) {
 			popup.show(evt.coordinate, hits[0]);	
@@ -74,10 +76,12 @@ window.onload = (event) => {
           return;
         }
         let pixel = map.getEventPixel(evt.originalEvent);
-		let features = map.getFeaturesAtPixel(pixel, layerCandidate => {
-			return(layerCandidate == lsoaLayer);
+		let features = map.getFeaturesAtPixel(pixel, {
+			layerFilter: layerCandidate => {
+				return(layerCandidate == lsoaLayer);
+			}
 		});
-		let feature = features.length == 0 ? null : features[0];
+		let feature = (features && features.length == 0) ? null : features[0];
 		if (feature && feature !== highlight) {
 			if (highlight) {
 				featureOverlays["LSOAs"].getSource().removeFeature(highlight);

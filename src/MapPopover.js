@@ -34,11 +34,11 @@ export default class MapPopover {
 		let contentDiv = document.createElement("div");
 		this._popupDiv.appendChild(contentDiv);
 		
-		let element = appendTo;
-		if (typeof element == "string") {
-			element = document.querySelector(element);
+		let elt = appendTo;
+		if (typeof elt == "string") {
+			elt = document.querySelector(elt);
 		} 		
-		element.appendChild(this._popupDiv);
+		elt.appendChild(this._popupDiv);
 		
 		this._overlay = new Overlay({
 			element: this._popupDiv,

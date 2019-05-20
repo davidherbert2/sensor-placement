@@ -33,7 +33,7 @@ export default class InteractiveVectorLayer extends VectorLayer {
 		
 		this._hoverOverlay = null;
 		this._highlight = null;
-		this._hoverInteract = hoverOpts.keys.length > 0;
+		this._hoverInteract = Object.keys(hoverOpts).length > 0;
 		if (this._hoverInteract) {
 			/**
 			 * Possible options:
@@ -46,7 +46,7 @@ export default class InteractiveVectorLayer extends VectorLayer {
 		}
 		
 		this._popup = null;
-		this._clickInteract = clickOpts.keys.length > 0;
+		this._clickInteract = Object.keys(clickOpts).length > 0;
 		if (this._clickInteract) {
 			/**
 			 * Possible options:

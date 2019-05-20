@@ -22,7 +22,7 @@ export default class InteractiveVectorLayer extends VectorLayer {
 		super(layerOpts);
 		this._featureSource = new VectorSource(sourceOpts);
 		let source = this._featureSource;
-		if (cluster) {
+		if (layerOpts.cluster) {
 			source = new Cluster({
 				distance: 20, 					
 				source: this._featureSource,
@@ -49,6 +49,7 @@ export default class InteractiveVectorLayer extends VectorLayer {
 		this._clickInteract = clickOpts.keys.length > 0;
 		if (this._clickInteract) {
 			/**
+			 * Possible options:
 			 * Possible options:
 			 * - ordering - array of human-friendly attribute names defining the attribute order in a pop-up
 			 * - translation - object mapping human-friendly attribute names (keys) with the actual ones (values)

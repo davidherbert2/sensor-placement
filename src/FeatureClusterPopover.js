@@ -10,7 +10,7 @@ export default class FeatureClusterPopover extends MapPopover {
 
 	/**
 	 * Create a generalised map popover overlay
-	 * @param [Object|string=body] - element to append the overlay to
+	 * @param {Object} [appendTo=body] - element to append the overlay to
 	 * @param {Array|string} [ordering=[]] - human-friendly attribute names in output order, or 'alpha' to sort attribute keys alphabetically
 	 * @param {Object} [translation={}] - mapping of human-friendly output names (keys) to actual attribute names (values)
 	 * @param {string} [nameAttr=Name] - name of the identifying attribute for cluster members, usually a name

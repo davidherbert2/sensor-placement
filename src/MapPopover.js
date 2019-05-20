@@ -11,7 +11,7 @@ export default class MapPopover {
 
 	/**
 	 * Create a generalised map popover overlay
-	 * @param {Object|string=body} - element to append the overlay to
+	 * @param {Object} [appendTo=body] - element to append the overlay to
 	 */
 	constructor(appendTo = "body") {
 		

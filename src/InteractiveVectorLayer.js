@@ -19,6 +19,7 @@ export default class InteractiveVectorLayer extends VectorLayer {
 	 * @param {Object} [clickOpts={}] - options for map clicks
 	 */
 	constructor(layerOpts = {type: "overlay", cluster: false, visible: false}, sourceOpts = {wrapX: false}, hoverOpts = {}, clickOpts = {}) {
+		super(layerOpts);
 		this._featureSource = new VectorSource(sourceOpts);
 		let source = this._featureSource;
 		if (cluster) {
@@ -28,7 +29,7 @@ export default class InteractiveVectorLayer extends VectorLayer {
 				wrapX: false
 			});
 		}
-		super(Object.assign({source}, layerOpts));
+		this.setSource(source);
 		
 		this._hoverOverlay = null;
 		this._highlight = null;

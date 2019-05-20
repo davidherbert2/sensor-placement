@@ -28,7 +28,7 @@ export default class InteractiveVectorLayer extends VectorLayer {
 				wrapX: false
 			});
 		}
-		super(Object.assign({source}, layerOpts);
+		super(Object.assign({source}, layerOpts));
 		
 		this._hoverOverlay = null;
 		this._highlight = null;

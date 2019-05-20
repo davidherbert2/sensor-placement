@@ -21,6 +21,8 @@ import Cluster from "ol/source/Cluster";
 import VectorSource from "ol/source/Vector";
 import MousePosition from "ol/control/MousePosition";
 import Zoom from "ol/control/Zoom";
+
+import InteractiveVectorLayer from "./InteractiveVectorLayer.js";
  
 /**
  * Urban Observatory API endpoint

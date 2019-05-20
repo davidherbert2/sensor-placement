@@ -3,7 +3,6 @@ import {fromLonLat} from "ol/proj";
 import Point from "ol/geom/Point";
 
 import DropDownListFromUrl from "./src/DropDownListFromUrl.js";		
-import FeatureClusterPopover from "./src/FeatureClusterPopover.js";
 import * as conf from "./src/SensorMapSetup.js";
 
 window.onload = (event) => {

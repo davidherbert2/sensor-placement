@@ -56,7 +56,7 @@ export const NEWCASTLE_CENTROID = [-1.6253, 54.9736];
  * Individual layer definitions
  * OpenStreetMap layer
  */
-export const OSM = new TileLayer({
+export const OPENSTREETMAP = new TileLayer({
 	title: "OpenStreetMap",
 	type: "base",
 	visible: true,
@@ -156,7 +156,7 @@ export const LAYERS = [
 		new LayerGroup({
 			"title": "Base maps",
 			"fold": "open",
-			"layers": [OSM]
+			"layers": [OPENSTREETMAP]
 		}),
 		new LayerGroup({
 			"title": "Office of National Statistics",

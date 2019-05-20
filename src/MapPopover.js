@@ -35,8 +35,8 @@ export default class MapPopover {
 		this._popupDiv.appendChild(contentDiv);
 		
 		let element = appendTo;
-		if (typeof appendTo == "string") {
-			element = document.querySelector(appendTo);
+		if (typeof element == "string") {
+			element = document.querySelector(element);
 		} 		
 		element.appendChild(this._popupDiv);
 		

@@ -134,21 +134,21 @@ export const SENSORS = new InteractiveVectorLayer(
 				}));
 			}
 			return(style);
-		},
-		{}, {},
-		{
-			ordering: ["Name", "Latitude", "Longitude", "Elevation", "Height", "Broker", "Third party"],
-			translation: {
-				"Broker": "Broker Name", 
-				"Elevation": "Ground Height Above Sea Level",
-				"Latitude": "Sensor Centroid Latitude", 
-				"Longitude": "Sensor Centroid Longitude", 
-				"Height": "Sensor Height Above Ground",
-				"Name": "Sensor Name",
-				"Third party": "Third Party"
-			},
-			nameattr: "Name"			
 		}
+	},
+	{}, {},
+	{
+		ordering: ["Name", "Latitude", "Longitude", "Elevation", "Height", "Broker", "Third party"],
+		translation: {
+			"Broker": "Broker Name", 
+			"Elevation": "Ground Height Above Sea Level",
+			"Latitude": "Sensor Centroid Latitude", 
+			"Longitude": "Sensor Centroid Longitude", 
+			"Height": "Sensor Height Above Ground",
+			"Name": "Sensor Name",
+			"Third party": "Third Party"
+		},
+		nameattr: "Name"			
 	}
 );
 

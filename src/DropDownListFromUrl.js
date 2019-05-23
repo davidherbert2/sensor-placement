@@ -32,13 +32,12 @@ export default class DropDownListFromUrl extends DropDownList {
 	 * @param {string} [prompt=Please select] - default prompt inviting selection
 	 */
 	populate(parms, arrname, defval = "", sortby = "Name", sortdir = "ascending", prompt = "Please select") {
-		const PROXY = "http://ec2-52-207-74-207.compute-1.amazonaws.com:8080/sensor_placement/cgi-bin/uo_wrapper.py";
 		let fetchUrl = this._url;
 		if (typeof parms == "object") {
 			let queryString = Object.keys(parms).map(key => key + "=" + parms[key]).join("&");
 			fetchUrl = fetchUrl + "?" + queryString;
 		}
-		fetch(PROXY + "?url=" + encodeURIComponent(fetchUrl))
+		fetch(fetchUrl)
 			.then(r => r.json())
 			.then(data => {
 				let dataArr = data[arrname];

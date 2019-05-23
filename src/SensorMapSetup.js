@@ -21,14 +21,15 @@ import VectorSource from "ol/source/Vector";
 import InteractiveVectorLayer from "./InteractiveVectorLayer.js";
 
 /**
- * Address of Amazon AWS instance
+ * Address of Amazon AWS instance and proxy to circumvent CORS for the UO API
  */
 export const AWS_INSTANCE = "http://ec2-18-209-223-88.compute-1.amazonaws.com:8080";
+export const PROXY = `${AWS_INSTANCE}/sensor_placement/cgi-bin/uo_wrapper.py`;
  
 /**
  * Urban Observatory API endpoint
  */
-export const UO_API = "http://uoweb3.ncl.ac.uk/api/v1.1";
+export const UO_API = `${PROXY}?url=http://uoweb3.ncl.ac.uk/api/v1.1`;
 export const UO_THEMES = `${UO_API}/themes/json/`;
 export const UO_SENSOR_TYPES = `${UO_API}/sensors/types/json/`;
 export const UO_SENSOR_DATA = `${UO_API}/sensors/json/`;

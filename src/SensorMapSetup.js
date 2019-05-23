@@ -128,7 +128,7 @@ export const SENSORS = () => {
 			style: (feature) => {
 				let	clusterFeats = feature.get("features");
 				let size = clusterFeats ? clusterFeats.length : 1;
-				style = new Style({
+				let style = new Style({
 					image: new CircleStyle({
 						radius: 5,
 						fill: new Fill({color: "white"}),

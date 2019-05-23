@@ -16,5 +16,13 @@
   },
   "devDependencies": {
     "parcel-bundler": "^1.12.3"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/davidherbert2/sensor-placement.git"
+  },
+  "bugs": {
+    "url": "https://github.com/davidherbert2/sensor-placement/issues"
+  },
+  "homepage": "https://github.com/davidherbert2/sensor-placement#readme"
 }

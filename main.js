@@ -82,7 +82,7 @@ window.onload = (event) => {
 		let source = sensorLayer.getSource().getSource();
 		Object.assign(sensorArgs, conf.NEWCASTLE_CENTRE);
 		sensorInfo = sensorInfo + "?" + Object.keys(sensorArgs).map(key => key + "=" + sensorArgs[key]).join("&");
-		fetch(`${PROXY}?url=` + encodeURIComponent(sensorInfo))
+		fetch(`${conf.PROXY}?url=` + encodeURIComponent(sensorInfo))
 			.then(r => r.json())
 			.then(jsonResponse => {
 				source.clear();

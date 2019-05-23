@@ -6,6 +6,7 @@ import {fromLonLat} from "ol/proj";
 import Point from "ol/geom/Point";
 import MousePosition from "ol/control/MousePosition";
 import Zoom from "ol/control/Zoom";
+import LayerSwitcher from "ol-layerswitcher/src/ol-layerswitcher";
 
 import DropDownListFromUrl from "./src/DropDownListFromUrl.js";		
 import * as conf from "./src/SensorMapSetup.js";
@@ -52,7 +53,8 @@ window.onload = (event) => {
 					return(`<strong>${coord[0].toFixed(4)},${coord[1].toFixed(4)}</strong>`);
 				}
 			}),
-			new Zoom()
+			new Zoom(),
+			new LayerSwitcher();
 		]
 	});
 	

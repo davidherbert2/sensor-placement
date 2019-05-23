@@ -65,7 +65,9 @@ export default class MapPopover {
 	}
 	
 	hide() {
-		this._overlay.setPosition(undefined);
+		if (this._overlay) {
+			this._overlay.setPosition(undefined);
+		}
 	}
 
 }

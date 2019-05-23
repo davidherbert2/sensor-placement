@@ -60,8 +60,8 @@ export const OPENSTREETMAP = () => {
 		type: "base",
 		visible: true,
 		source: new OSM()
-	})
-});
+	}));
+};
 
 /**
  * LSOA layer
@@ -106,8 +106,8 @@ export const LSOA = () => {
 					})
 				}));
 			}
-		})
-});
+		}));
+};
 
 /**
  * Sensor layer
@@ -151,5 +151,5 @@ export const SENSORS = () => {
 				"Third party": "Third Party"
 			},
 			nameattr: "Name"			
-		})
-});
+		}));
+};

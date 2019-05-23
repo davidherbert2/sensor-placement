@@ -54,7 +54,7 @@ window.onload = (event) => {
 				}
 			}),
 			new Zoom(),
-			new LayerSwitcher();
+			new LayerSwitcher()
 		]
 	});
 	

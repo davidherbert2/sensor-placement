@@ -79,7 +79,6 @@ export default class FeatureClusterPopover extends MapPopover {
 					for (let i = 0; i < feats.length; i++) {
 						rows.push(`<tr><td>${i+1}</td><td>${feats[i].get(this._name)}</td></tr>`);
 					}
-					console.log(rows);
 					content = `Zoom in to view ${feats.length} sensors<table class="table is-striped is-hoverable is-fullwidth">${rows.join("")}</table>`;
 				}
 			}										

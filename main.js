@@ -68,11 +68,11 @@ window.onload = (event) => {
 		ddVariables.populate({
 			theme: newTheme
 		}, "Variables");
-		popup.hide();
+		sensorLayer.popup.hide();
 	});
 	
 	ddVariables.dd.addEventListener("change", evt => {
-		popup.hide();
+		sensorLayer.popup.hide();
 		let sensorInfo = conf.UO_SENSOR_DATA;
 		let sensorArgs = {
 			"theme": ddThemes.value,

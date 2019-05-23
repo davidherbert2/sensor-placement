@@ -59,6 +59,10 @@ export default class InteractiveVectorLayer extends VectorLayer {
 		}
 	}
 	
+	get popup() {
+		return(this._popup);
+	}
+	
 	/**
 	 * Assign this layer's interactions to the given map
 	 * @param {Map} map - OpenLayers map

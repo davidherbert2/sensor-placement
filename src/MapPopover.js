@@ -40,10 +40,11 @@ export default class MapPopover {
 		console.log("2");
 		console.log(elt);
 		if (typeof elt == "string") {
+			console.log("Element is string");
 			elt = document.querySelector(elt);
-		} 		
-		console.log("3");
-		console.log(elt);
+			console.log("3");
+			console.log(elt);
+		} 				
 		elt.appendChild(this._popupDiv);
 		
 		this._overlay = new Overlay({

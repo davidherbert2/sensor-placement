@@ -55,6 +55,11 @@ window.onload = (event) => {
 			new Zoom()
 		]
 	});
+	
+	/**
+	 * Assign click/hover handlers for layers 
+	 */
+	sensorLayer.assignHandlers(map);
 
 	let form = document.querySelector("form");	
 	let ddThemes = new DropDownListFromUrl(form, conf.UO_THEMES, "theme-list", ["theme-list"], "Select a theme", true);

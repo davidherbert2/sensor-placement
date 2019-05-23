@@ -41,8 +41,9 @@ export default class MapPopover {
 		console.log(elt);
 		if (typeof elt == "string") {
 			console.log("Element is string");
-			elt = document.querySelector(elt);
+			let elt2 = document.querySelector(elt);
 			console.log("3");
+			console.log(elt2);
 			console.log(elt);
 		} 				
 		elt.appendChild(this._popupDiv);

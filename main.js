@@ -1,13 +1,60 @@
+import Map from "ol/Map";
+import View from "ol/View";
+import LayerGroup from "ol/layer/Group";
 import Feature from "ol/Feature";
 import {fromLonLat} from "ol/proj";
 import Point from "ol/geom/Point";
+import MousePosition from "ol/control/MousePosition";
+import Zoom from "ol/control/Zoom";
 
 import DropDownListFromUrl from "./src/DropDownListFromUrl.js";		
 import * as conf from "./src/SensorMapSetup.js";
 
 window.onload = (event) => {
 	
-	let map = conf.MAP;
+	/**
+	 * Layer creation 
+	 */
+	let osmLayer    = conf.OPENSTREETMAP();
+	let sensorLayer = conf.SENSORS();
+	let lsoaLayer   = conf.LSOA();
+	
+	/**
+	 * Create the map and layer tree
+	 */
+	let map = new Map({
+		target: "map",
+		layers: [
+			new LayerGroup({
+				"title": "Base maps",
+				"fold": "open",
+				"layers": [osmLayer]
+			}),
+			new LayerGroup({
+				"title": "Office of National Statistics",
+				"fold": "open",
+				"layers": [lsoaLayer]
+			}),			
+			new LayerGroup({
+				"title": "Urban Observatory",
+				"fold": "open",
+				"layers": [sensorLayer]
+			})
+		],
+		view: new View({
+			center: fromLonLat(conf.NEWCASTLE_CENTROID),
+			zoom: 14
+		}),
+		controls: [
+			new MousePosition({
+				projection: "EPSG:4326",
+				coordinateFormat: (coord) => {
+					return(`<strong>${coord[0].toFixed(4)},${coord[1].toFixed(4)}</strong>`);
+				}
+			}),
+			new Zoom()
+		]
+	});
 
 	let form = document.querySelector("form");	
 	let ddThemes = new DropDownListFromUrl(form, conf.UO_THEMES, "theme-list", ["theme-list"], "Select a theme", true);
@@ -32,7 +79,7 @@ window.onload = (event) => {
 			"sensor_type": ddVariables.value
 		};
 		/* Two levels of source - first one is a cluster */
-		let source = conf.SENSORS.getSource().getSource();
+		let source = sensorLayer.getSource().getSource();
 		Object.assign(sensorArgs, conf.NEWCASTLE_CENTRE);
 		sensorInfo = sensorInfo + "?" + Object.keys(sensorArgs).map(key => key + "=" + sensorArgs[key]).join("&");
 		fetch("http://ec2-52-207-74-207.compute-1.amazonaws.com:8080/sensor_placement/cgi-bin/uo_wrapper.py?url=" + encodeURIComponent(sensorInfo))

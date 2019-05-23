@@ -14,9 +14,7 @@ export default class MapPopover {
 	 * @param {Object} [appendTo=body] - element to append the overlay to
 	 */
 	constructor(appendTo = "body") {
-		
-		console.log("1");
-		console.log(appendTo);
+				
 		this._overlay = null;
 		this._popupDiv = document.createElement("div");
 		this._popupDiv.classList.add("ol-popup");
@@ -36,16 +34,7 @@ export default class MapPopover {
 		let contentDiv = document.createElement("div");
 		this._popupDiv.appendChild(contentDiv);
 		
-		let elt = appendTo;
-		console.log("2");
-		console.log(elt);
-		if (typeof elt == "string") {
-			console.log("Element is string");
-			let elt2 = document.querySelector(elt);
-			console.log("3");
-			console.log(elt2);
-			console.log(elt);
-		} 				
+		let elt = (typeof elt == "string") ? document.querySelector(appendTo) : appendTo;				
 		elt.appendChild(this._popupDiv);
 		
 		this._overlay = new Overlay({

@@ -2,8 +2,6 @@
  * @module SensorMapSetup
  */
 
-import Map from "ol/Map";
-import View from "ol/View";
 import Feature from "ol/Feature";
 import {fromLonLat} from "ol/proj";
 import {bbox as bboxStrategy} from "ol/loadingstrategy";
@@ -19,8 +17,6 @@ import OSM from "ol/source/OSM";
 import TileWMS from "ol/source/TileWMS";
 import Cluster from "ol/source/Cluster";
 import VectorSource from "ol/source/Vector";
-import MousePosition from "ol/control/MousePosition";
-import Zoom from "ol/control/Zoom";
 
 import InteractiveVectorLayer from "./InteractiveVectorLayer.js";
  
@@ -58,17 +54,17 @@ export const NEWCASTLE_CENTROID = [-1.6253, 54.9736];
  * Individual layer definitions
  * OpenStreetMap layer
  */
-export const OPENSTREETMAP = new TileLayer({
+export const OPENSTREETMAP = () => return(new TileLayer({
 	title: "OpenStreetMap",
 	type: "base",
 	visible: true,
 	source: new OSM()
-});
+}));
 
 /**
  * LSOA layer
  */
-export const LSOA = new InteractiveVectorLayer(
+export const LSOA = () => return(new InteractiveVectorLayer(
 	{ /* Layer options */
 		title: "LSOAs", 
 		type: "overlay", 
@@ -108,12 +104,12 @@ export const LSOA = new InteractiveVectorLayer(
 			}));
 		}
 	}
-);
+));
 
 /**
  * Sensor layer
  */
-export const SENSORS = new InteractiveVectorLayer(
+export const SENSORS = () => return(new InteractiveVectorLayer(
 	{
 		title: "Sensor locations",
 		type: "overlay",
@@ -152,50 +148,4 @@ export const SENSORS = new InteractiveVectorLayer(
 		},
 		nameattr: "Name"			
 	}
-);
-
-export const LAYERS = [
-		new LayerGroup({
-			"title": "Base maps",
-			"fold": "open",
-			"layers": [OPENSTREETMAP]
-		}),
-		new LayerGroup({
-			"title": "Office of National Statistics",
-			"fold": "open",
-			"layers": [LSOA]
-		}),
-		//new ol.layer.Group({
-		//	"title": "Newcastle City Council",
-		//	"fold": "open",
-		//	"layers": [
-		//		conf.LSOA_LAYER()
-		//	]
-		//}),
-		new LayerGroup({
-			"title": "Urban Observatory",
-			"fold": "open",
-			"layers": [SENSORS]
-		})
-	];
-
-/**
- * OL map
- */
-export const MAP = new Map({
-	target: "map",
-	layers: LAYERS, 
-	view: new View({
-		center: fromLonLat(NEWCASTLE_CENTROID),
-		zoom: 14
-	}),
-	controls: [
-		new MousePosition({
-			projection: "EPSG:4326",
-			coordinateFormat: (coord) => {
-				return(`<strong>${coord[0].toFixed(4)},${coord[1].toFixed(4)}</strong>`);
-			}
-		}),
-		new Zoom()
-	]
-});
+));

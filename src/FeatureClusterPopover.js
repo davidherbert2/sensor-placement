@@ -60,7 +60,7 @@ export default class FeatureClusterPopover extends MapPopover {
 	 * @param {Object} feature - the feature with attributes to output (which may be a cluster)
 	 * @return {string}
 	 */
-	_formatPopupContent(feature, nameAttr = "Name") {
+	_formatPopupContent(feature) {
 		let content = "Nothing clicked";
 		let attrs = {};
 		if (feature) {

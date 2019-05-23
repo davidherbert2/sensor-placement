@@ -156,6 +156,6 @@ export const SENSORS = () => {
 				"Name": "Sensor Name",
 				"Third party": "Third Party"
 			},
-			nameattr: "Name"			
+			nameattr: "Sensor Name"			
 		}));
 };

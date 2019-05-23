@@ -95,7 +95,7 @@ export default class InteractiveVectorLayer extends VectorLayer {
 		
 		if (this._clickInteract) {
 			/* Add popup overlay and add click handler to the chain */
-			map.addOverlay(this._popup.overlay);
+			this._popup.overlay.setMap(map);
 			map.on("singleclick", evt => {
 				let hits = map.getFeaturesAtPixel(evt.pixel, {
 					layerFilter: layerCandidate => {

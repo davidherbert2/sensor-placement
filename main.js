@@ -15,6 +15,7 @@ window.onload = (event) => {
 	/**
 	 * Layer creation 
 	 */
+	console.log(document.querySelector("body"));
 	let osmLayer    = conf.OPENSTREETMAP();
 	let sensorLayer = conf.SENSORS();
 	let lsoaLayer   = conf.LSOA();

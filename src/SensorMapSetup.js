@@ -19,6 +19,11 @@ import Cluster from "ol/source/Cluster";
 import VectorSource from "ol/source/Vector";
 
 import InteractiveVectorLayer from "./InteractiveVectorLayer.js";
+
+/**
+ * Address of Amazon AWS instance
+ */
+export const AWS_INSTANCE = "http://ec2-18-209-223-88.compute-1.amazonaws.com:8080";
  
 /**
  * Urban Observatory API endpoint
@@ -84,7 +89,7 @@ export const LSOA = () => {
 			format: new GeoJSON(),
 			url: (extent) => {
 				return(`
-					http://ec2-52-207-74-207.compute-1.amazonaws.com:8080/geoserver/data_dot_gov/wfs?service=WFS&
+					${AWS_INSTANCE}/geoserver/data_dot_gov/wfs?service=WFS&
 					version=2.0.0&request=GetFeature&typename=data_dot_gov:lsoa&
 					outputFormat=application/json&srsname=EPSG:3857&bbox=
 					` 

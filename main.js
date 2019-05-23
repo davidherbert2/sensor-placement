@@ -17,7 +17,7 @@ window.onload = (event) => {
 	 */
 	let osmLayer    = conf.OPENSTREETMAP();
 	let sensorLayer = conf.SENSORS();
-	let lsoaLayer   = conf.LSOA();
+	//let lsoaLayer   = conf.LSOA();
 	
 	/**
 	 * Create the map and layer tree
@@ -30,11 +30,11 @@ window.onload = (event) => {
 				"fold": "open",
 				"layers": [osmLayer]
 			}),
-			new LayerGroup({
-				"title": "Office of National Statistics",
-				"fold": "open",
-				"layers": [lsoaLayer]
-			}),			
+			//new LayerGroup({
+			//	"title": "Office of National Statistics",
+			//	"fold": "open",
+			//	"layers": [lsoaLayer]
+			//}),			
 			new LayerGroup({
 				"title": "Urban Observatory",
 				"fold": "open",

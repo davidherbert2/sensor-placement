@@ -35,7 +35,7 @@ export default class DropDownListFromUrl extends DropDownList {
 		let fetchUrl = this._url;
 		if (typeof parms == "object") {
 			let queryString = Object.keys(parms).map(key => key + "=" + parms[key]).join("&");
-			fetchUrl = fetchUrl + "?" + queryString;
+			fetchUrl = fetchUrl + queryString ? ("?" + queryString) : "";
 		}
 		fetch(fetchUrl)
 			.then(r => r.json())

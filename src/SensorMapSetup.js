@@ -82,7 +82,7 @@ export const LSOA = () => {
 			style: (feature) => {
 				return(new Style({
 					fill: new Fill({color: "rgba(215, 206, 199, 0.0)"}),
-					stroke: new Stroke({color: "rgba(118, 50, 63, 1)", width: 1})		
+					stroke: new Stroke({color: "rgba(118, 50, 63, 1)", width: 0.2})		
 				}));
 			}
 		},
@@ -101,7 +101,7 @@ export const LSOA = () => {
 		{ /* Hover options */
 			style: (feature) => {
 				return(new Style({
-					stroke: new Stroke({color: "rgba(192, 159, 128, 1)", width: 1}),
+					stroke: new Stroke({color: "rgba(192, 159, 128, 1)", width: 0.2}),
 					fill: new Fill({color: "rgba(192, 159, 128, 0.4)"}),
 					text: new Text({
 						font: "12px consolas",

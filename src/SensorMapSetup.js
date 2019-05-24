@@ -90,7 +90,7 @@ export const LSOA = () => {
 			format: new GeoJSON(),
 			url: (extent) => {
 				return(`
-					${AWS_INSTANCE}/geoserver/data_dot_gov/wfs?service=WFS&
+					${AWS_INSTANCE}/geoserver/ssis/wfs?service=WFS&
 					version=2.0.0&request=GetFeature&typename=ssis:lsoa&
 					outputFormat=application/json&srsname=EPSG:3857&bbox=
 					` 

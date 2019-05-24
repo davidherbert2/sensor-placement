@@ -18,7 +18,7 @@ window.onload = (event) => {
 	 */
 	let osmLayer    = conf.OPENSTREETMAP();
 	let sensorLayer = conf.SENSORS();
-	//let lsoaLayer   = conf.LSOA();
+	let lsoaLayer   = conf.LSOA();
 	
 	/**
 	 * Create the map and layer tree

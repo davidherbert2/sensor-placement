@@ -31,11 +31,11 @@ window.onload = (event) => {
 				"fold": "open",
 				"layers": [osmLayer]
 			}),
-			//new LayerGroup({
-			//	"title": "Office of National Statistics",
-			//	"fold": "open",
-			//	"layers": [lsoaLayer]
-			//}),			
+			new LayerGroup({
+				"title": "Office of National Statistics",
+				"fold": "open",
+				"layers": [lsoaLayer]
+			}),			
 			new LayerGroup({
 				"title": "Urban Observatory",
 				"fold": "open",

@@ -91,7 +91,7 @@ export const LSOA = () => {
 			url: (extent) => {
 				return(`
 					${AWS_INSTANCE}/geoserver/data_dot_gov/wfs?service=WFS&
-					version=2.0.0&request=GetFeature&typename=data_dot_gov:lsoa&
+					version=2.0.0&request=GetFeature&typename=ssis:lsoa&
 					outputFormat=application/json&srsname=EPSG:3857&bbox=
 					` 
 					+ extent.join(",") + ",EPSG:3857");

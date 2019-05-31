@@ -137,7 +137,7 @@ export const LSOA = () => {
 			style: (feature) => {
 				return(new Style({
 					fill: new Fill({color: HEX2RGBA("#315c2b", 0.0)}),
-					stroke: new Stroke({color: HEX2RGBA("#315c2b"), width: 2, lineDash:[2, 2]})		
+					stroke: new Stroke({color: HEX2RGBA("#315c2b"), width: 2, lineDash: [3, 3]})		
 				}));
 			}
 		},

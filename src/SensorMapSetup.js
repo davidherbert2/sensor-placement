@@ -114,8 +114,8 @@ export const LA = () => {
 			extent: NEWCASTLE_CENTRE_3857,
 			style: (feature) => {
 				return(new Style({
-					fill: new Fill({color: HEX2RGBA("#bc4b51", 0.0)}),
-					stroke: new Stroke({color: HEX2RGBA("#bc4b51"), width: 2})		
+					fill: new Fill({color: HEX2RGBA("#274029", 0.0)}),
+					stroke: new Stroke({color: HEX2RGBA("#274029"), width: 2})		
 				}));
 			}
 		},
@@ -136,8 +136,8 @@ export const LSOA = () => {
 			extent: NEWCASTLE_CENTRE_3857,
 			style: (feature) => {
 				return(new Style({
-					fill: new Fill({color: HEX2RGBA("#89608e", 0.0)}),
-					stroke: new Stroke({color: HEX2RGBA("#89608e"), width: 1})		
+					fill: new Fill({color: HEX2RGBA("#315c2b", 0.0)}),
+					stroke: new Stroke({color: HEX2RGBA("#315c2b"), width: 1})		
 				}));
 			}
 		},
@@ -173,8 +173,8 @@ export const OA = () => {
 			extent: NEWCASTLE_CENTRE_3857,
 			style: (feature) => {
 				return(new Style({
-					fill: new Fill({color: HEX2RGBA("#f4a259", 0.0)}),
-					stroke: new Stroke({color: HEX2RGBA("#f4a259"), width: 0.5})		
+					fill: new Fill({color: HEX2RGBA("#60712f", 0.0)}),
+					stroke: new Stroke({color: HEX2RGBA("#60712f"), width: 0.5})		
 				}));
 			}
 		},

@@ -41,7 +41,7 @@ window.onload = (event) => {
 			new LayerGroup({
 				"title": "Office of National Statistics",
 				"fold": "open",
-				"layers": [laLayer, lsoaLayer, oaLayer]
+				"layers": [oaLayer, lsoaLayer, laLayer]
 			})					
 		],
 		view: new View({

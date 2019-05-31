@@ -18,7 +18,9 @@ window.onload = (event) => {
 	 */
 	let osmLayer    = conf.OPENSTREETMAP();
 	let sensorLayer = conf.SENSORS();
+	let laLayer   = conf.LA();
 	let lsoaLayer   = conf.LSOA();
+	let oaLayer   = conf.OA();
 	
 	/**
 	 * Create the map and layer tree
@@ -39,7 +41,7 @@ window.onload = (event) => {
 			new LayerGroup({
 				"title": "Office of National Statistics",
 				"fold": "open",
-				"layers": [lsoaLayer]
+				"layers": [laLayer, lsoaLayer, oaLayer]
 			})					
 		],
 		view: new View({

@@ -2,7 +2,6 @@
  * @module SensorMapSetup
  */
 
-import Feature from "ol/Feature";
 import {fromLonLat} from "ol/proj";
 import {bbox as bboxStrategy} from "ol/loadingstrategy";
 import Style from "ol/style/Style";
@@ -11,20 +10,21 @@ import Fill from "ol/style/Fill";
 import Stroke from "ol/style/Stroke";
 import Text from "ol/style/Text";
 import GeoJSON from "ol/format/GeoJSON"; 
-import VectorLayer from "ol/layer/Vector";
 import TileLayer from "ol/layer/Tile";
 import OSM from "ol/source/OSM";
-import TileWMS from "ol/source/TileWMS";
-import Cluster from "ol/source/Cluster";
-import VectorSource from "ol/source/Vector";
 
 import InteractiveVectorLayer from "./InteractiveVectorLayer.js";
 
 /**
+ * Map projection (Google Spherical Mercator EPSG:3857)
+ */
+const MAP_PROJECTION = "EPSG:3857";
+
+/**
  * Address of Amazon AWS instance and proxy to circumvent CORS for the UO API
  */
-export const AWS_INSTANCE = "http://ec2-18-209-223-88.compute-1.amazonaws.com:8080";
-export const PROXY = `${AWS_INSTANCE}/sensor-placement/cgi-bin/uo_wrapper.py`;
+const AWS_INSTANCE = "http://ec2-18-209-223-88.compute-1.amazonaws.com:8080";
+const PROXY = `${AWS_INSTANCE}/sensor-placement/cgi-bin/uo_wrapper.py`;
  
 /**
  * Urban Observatory API endpoint
@@ -33,6 +33,11 @@ export const UO_API = `${PROXY}?url=http://uoweb3.ncl.ac.uk/api/v1.1`;
 export const UO_THEMES = `${UO_API}/themes/json/`;
 export const UO_SENSOR_TYPES = `${UO_API}/sensors/types/json/`;
 export const UO_SENSOR_DATA = `${UO_API}/sensors/json/`;
+
+/**
+ * Lon/lat of USB
+ */
+export const NEWCASTLE_CENTROID = [-1.6253, 54.9736];
 
 /**
  * Bounding box of interest for sensor map in WGS 84
@@ -52,9 +57,44 @@ const NEWCASTLE_CENTRE_3857 =
 	fromLonLat([NEWCASTLE_CENTRE["bbox_p2_x"], NEWCASTLE_CENTRE["bbox_p2_y"]]));
 
 /**
- * Lon/lat of USB
+ * Return a colour from the palette, with optional opacity 0 (transparent) -> 1 (opaque)
+ * Palettes from https://coolors.co
+ * @param {string} col - hex RGB triplet
+ * @param {float} [opacity=1] - desired opacity
+ * @return {string}
  */
-export const NEWCASTLE_CENTROID = [-1.6253, 54.9736];
+const PALETTE_COLOR = (col, opacity = 1) => {
+	switch(col) {
+		case "#fec5b1": return(`rgba(254, 197, 17, ${opacity})`); break;
+		case "#ec4e20": return(`rgba(236, 78, 32, ${opacity}`)  ; break;
+		case "#84732b": return(`rgba(132, 115, 43, ${opacity}`) ; break;
+		case "#574f2a": return(`rgba(87, 79, 42, ${opacity}`)   ; break;
+		default:        return(`rgba(28,58,19, ${opacity}`)     ; break; 
+	}
+};
+
+/**
+ * Return a GeoJSON source pointing to the given typename
+ * @param {string} feature - the name of the data layer, namespaced if necessary
+ * @return {Object}
+ */
+const GEOJSON_SOURCE = (feature) => {
+	return({ /* Source options */
+		format: new GeoJSON(),
+		url: (extent) => {
+			return(`
+				${AWS_INSTANCE}/geoserver/siss/wfs?service=WFS&
+				version=2.0.0&request=GetFeature&typename=${feature}&
+				outputFormat=application/json&srsname=${MAP_PROJECTION}&bbox=
+				` 
+				+ extent.join(",") + `,${MAP_PROJECTION}`
+			);
+		},
+		strategy: bboxStrategy,
+		overlaps: false,
+		wrapX: false		
+	});
+};
 
 /**
  * Individual layer definitions
@@ -70,6 +110,27 @@ export const OPENSTREETMAP = () => {
 };
 
 /**
+ * LA layer
+ */
+export const LA = () => {
+	return(new InteractiveVectorLayer(
+		{ /* Layer options */
+			title: "Local Authority areas", 
+			type: "overlay", 
+			cluster: false,
+			extent: NEWCASTLE_CENTRE_3857,
+			style: (feature) => {
+				return(new Style({
+					fill: new Fill({color: COLOR_PALETTE("#1c3a13", 0.1)}),
+					stroke: new Stroke({color: COLOR_PALETTE("#1c3a13"), width: 0.5})		
+				}));
+			}
+		},
+		GEOJSON_SOURCE("siss:tyne_and_wear_la")
+	));
+};
+
+/**
  * LSOA layer
  */
 export const LSOA = () => {
@@ -78,41 +139,54 @@ export const LSOA = () => {
 			title: "LSOAs", 
 			type: "overlay", 
 			cluster: false,
+			visible: false,
 			extent: NEWCASTLE_CENTRE_3857,
 			style: (feature) => {
 				return(new Style({
-					fill: new Fill({color: "rgba(215, 206, 199, 0.0)"}),
-					stroke: new Stroke({color: "rgba(118, 50, 63, 1)", width: 0.2})		
+					fill: new Fill({color: COLOR_PALETTE("#574f2a", 0.1)}),
+					stroke: new Stroke({color: COLOR_PALETTE("#574f2a"), width: 0.2})		
 				}));
 			}
 		},
-		{ /* Source options */
-			format: new GeoJSON(),
-			url: (extent) => {
-				return(`
-					${AWS_INSTANCE}/geoserver/siss/wfs?service=WFS&
-					version=2.0.0&request=GetFeature&typename=siss:lsoa&
-					outputFormat=application/json&srsname=EPSG:3857&bbox=
-					` 
-					+ extent.join(",") + ",EPSG:3857");
-			},
-			strategy: bboxStrategy		
-		},
-		{ /* Hover options */
+		GEOJSON_SOURCE("siss:tyne_and_wear_lsoa")
+	));
+	// { /* Hover options */
+	// 	style: (feature) => {
+	// 		return(new Style({
+	// 			stroke: new Stroke({color: "rgba(192, 159, 128, 1)", width: 0.2}),
+	// 			fill: new Fill({color: "rgba(192, 159, 128, 0.4)"}),
+	// 			text: new Text({
+	// 				font: "12px DejaVu Sans",
+	// 				text: feature.get("lsoa11nm"),
+	// 				overflow: true,
+	// 				stroke: new Stroke({color: "rgba(118, 50, 63, 1)"}),
+	// 				fill: new Fill({color: "rgba(118, 50, 63, 1)"})
+	// 			})
+	// 		}));
+	// 	}
+	// }));
+};
+
+/**
+ * OA layer
+ */
+export const OA = () => {
+	return(new InteractiveVectorLayer(
+		{ /* Layer options */
+			title: "OAs", 
+			type: "overlay", 
+			cluster: false,
+			visible: false,
+			extent: NEWCASTLE_CENTRE_3857,
 			style: (feature) => {
 				return(new Style({
-					stroke: new Stroke({color: "rgba(192, 159, 128, 1)", width: 0.2}),
-					fill: new Fill({color: "rgba(192, 159, 128, 0.4)"}),
-					text: new Text({
-						font: "12px DejaVu Sans",
-						text: feature.get("lsoa11nm"),
-						overflow: true,
-						stroke: new Stroke({color: "rgba(118, 50, 63, 1)"}),
-						fill: new Fill({color: "rgba(118, 50, 63, 1)"})
-					})
+					fill: new Fill({color: COLOR_PALETTE("#84732b", 0.1)}),
+					stroke: new Stroke({color: COLOR_PALETTE("#84732b"), width: 0.2})		
 				}));
 			}
-		}));
+		},
+		GEOJSON_SOURCE("siss:tyne_and_wear_oa")
+	));
 };
 
 /**

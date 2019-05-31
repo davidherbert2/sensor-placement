@@ -57,20 +57,13 @@ const NEWCASTLE_CENTRE_3857 =
 	fromLonLat([NEWCASTLE_CENTRE["bbox_p2_x"], NEWCASTLE_CENTRE["bbox_p2_y"]]));
 
 /**
- * Return a colour from the palette, with optional opacity 0 (transparent) -> 1 (opaque)
- * Palettes from https://coolors.co
- * @param {string} col - hex RGB triplet
- * @param {float} [opacity=1] - desired opacity
- * @return {string}
+ * Hex to rgba - https://stackoverflow.com/questions/21646738/convert-hex-to-rgba
+ * @param {string} hex - RGB triplet 
+ * @param {float} [opacity=1.0] - desired opacity 
  */
-const COLOR_PALETTE = (col, opacity = 1) => {
-	switch(col) {
-		case "#fec5b1": return(`rgba(254, 197, 17, ${opacity})`); break;
-		case "#ec4e20": return(`rgba(236, 78, 32, ${opacity}`)  ; break;
-		case "#84732b": return(`rgba(132, 115, 43, ${opacity}`) ; break;
-		case "#574f2a": return(`rgba(87, 79, 42, ${opacity}`)   ; break;
-		default:        return(`rgba(28,58,19, ${opacity}`)     ; break; 
-	}
+const HEX2RGBA = (hex, alpha = 1) => {
+	const [r, g, b] = hex.match(/\w\w/g).map(x => parseInt(x, 16));
+	return `rgba(${r},${g},${b},${alpha})`;
 };
 
 /**
@@ -121,8 +114,8 @@ export const LA = () => {
 			extent: NEWCASTLE_CENTRE_3857,
 			style: (feature) => {
 				return(new Style({
-					fill: new Fill({color: COLOR_PALETTE("#fec5b1", 0.0)}),
-					stroke: new Stroke({color: COLOR_PALETTE("#fec5b1"), width: 2})		
+					fill: new Fill({color: HEX2RGBA("#bc4b51", 0.0)}),
+					stroke: new Stroke({color: HEX2RGBA("#bc4b51"), width: 2})		
 				}));
 			}
 		},
@@ -143,8 +136,8 @@ export const LSOA = () => {
 			extent: NEWCASTLE_CENTRE_3857,
 			style: (feature) => {
 				return(new Style({
-					fill: new Fill({color: COLOR_PALETTE("#ec4e20", 0.0)}),
-					stroke: new Stroke({color: COLOR_PALETTE("#ec4e20"), width: 1})		
+					fill: new Fill({color: HEX2RGBA("#89608e", 0.0)}),
+					stroke: new Stroke({color: HEX2RGBA("#89608e"), width: 1})		
 				}));
 			}
 		},
@@ -180,8 +173,8 @@ export const OA = () => {
 			extent: NEWCASTLE_CENTRE_3857,
 			style: (feature) => {
 				return(new Style({
-					fill: new Fill({color: COLOR_PALETTE("#84732b", 0.0)}),
-					stroke: new Stroke({color: COLOR_PALETTE("#84732b"), width: 0.5})		
+					fill: new Fill({color: HEX2RGBA("#f4a259", 0.0)}),
+					stroke: new Stroke({color: HEX2RGBA("#f4a259"), width: 0.5})		
 				}));
 			}
 		},

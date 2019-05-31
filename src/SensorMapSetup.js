@@ -104,7 +104,7 @@ export const LSOA = () => {
 					stroke: new Stroke({color: "rgba(192, 159, 128, 1)", width: 0.2}),
 					fill: new Fill({color: "rgba(192, 159, 128, 0.4)"}),
 					text: new Text({
-						font: "12px consolas",
+						font: "12px DejaVu Sans",
 						text: feature.get("lsoa11nm"),
 						overflow: true,
 						stroke: new Stroke({color: "rgba(118, 50, 63, 1)"}),

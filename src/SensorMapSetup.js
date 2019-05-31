@@ -63,7 +63,7 @@ const NEWCASTLE_CENTRE_3857 =
  * @param {float} [opacity=1] - desired opacity
  * @return {string}
  */
-const PALETTE_COLOR = (col, opacity = 1) => {
+const COLOR_PALETTE = (col, opacity = 1) => {
 	switch(col) {
 		case "#fec5b1": return(`rgba(254, 197, 17, ${opacity})`); break;
 		case "#ec4e20": return(`rgba(236, 78, 32, ${opacity}`)  ; break;

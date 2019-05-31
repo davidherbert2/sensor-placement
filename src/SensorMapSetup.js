@@ -137,7 +137,7 @@ export const LSOA = () => {
 			style: (feature) => {
 				return(new Style({
 					fill: new Fill({color: HEX2RGBA("#315c2b", 0.0)}),
-					stroke: new Stroke({color: HEX2RGBA("#315c2b"), width: 2, linedash:[4, 4]})		
+					stroke: new Stroke({color: HEX2RGBA("#315c2b"), width: 2, lineDash:[4, 4]})		
 				}));
 			}
 		},
@@ -174,7 +174,7 @@ export const OA = () => {
 			style: (feature) => {
 				return(new Style({
 					fill: new Fill({color: HEX2RGBA("#60712f", 0.0)}),
-					stroke: new Stroke({color: HEX2RGBA("#60712f"), width: 1, linedash: [2, 2]})		
+					stroke: new Stroke({color: HEX2RGBA("#60712f"), width: 1, lineDash: [2, 2]})		
 				}));
 			}
 		},

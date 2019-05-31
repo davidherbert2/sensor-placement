@@ -121,8 +121,8 @@ export const LA = () => {
 			extent: NEWCASTLE_CENTRE_3857,
 			style: (feature) => {
 				return(new Style({
-					fill: new Fill({color: COLOR_PALETTE("#1c3a13", 0.0)}),
-					stroke: new Stroke({color: COLOR_PALETTE("#1c3a13"), width: 2})		
+					fill: new Fill({color: COLOR_PALETTE("#fec5b1", 0.0)}),
+					stroke: new Stroke({color: COLOR_PALETTE("#fec5b1"), width: 2})		
 				}));
 			}
 		},
@@ -143,8 +143,8 @@ export const LSOA = () => {
 			extent: NEWCASTLE_CENTRE_3857,
 			style: (feature) => {
 				return(new Style({
-					fill: new Fill({color: COLOR_PALETTE("#574f2a", 0.0)}),
-					stroke: new Stroke({color: COLOR_PALETTE("#574f2a"), width: 1})		
+					fill: new Fill({color: COLOR_PALETTE("#ec4e20", 0.0)}),
+					stroke: new Stroke({color: COLOR_PALETTE("#ec4e20"), width: 1})		
 				}));
 			}
 		},

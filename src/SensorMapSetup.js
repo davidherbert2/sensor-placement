@@ -178,7 +178,7 @@ export const OA = () => {
 			style: (feature) => {
 				return(new Style({
 					fill: new Fill({color: HEX2RGBA("#60712f", 0.0)}),
-					stroke: new Stroke({color: HEX2RGBA("#60712f"), width: 1, lineDash: [2, 2]})		
+					stroke: new Stroke({color: HEX2RGBA("#60712f", 0,0)})		
 				}));
 			}
 		},

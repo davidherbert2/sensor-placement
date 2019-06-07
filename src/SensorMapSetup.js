@@ -137,27 +137,26 @@ export const LSOA = () => {
 			style: (feature) => {
 				return(new Style({
 					fill: new Fill({color: HEX2RGBA("#315c2b", 0.0)}),
-					stroke: new Stroke({color: HEX2RGBA("#315c2b"), width: 2, lineDash: [3, 3]})		
+					stroke: new Stroke({color: HEX2RGBA("#315c2b", 0.0)})		
 				}));
 			}
 		},
-		GEOJSON_SOURCE("siss:tyne_and_wear_lsoa")
-	));
-	// { /* Hover options */
-	// 	style: (feature) => {
-	// 		return(new Style({
-	// 			stroke: new Stroke({color: "rgba(192, 159, 128, 1)", width: 0.2}),
-	// 			fill: new Fill({color: "rgba(192, 159, 128, 0.4)"}),
-	// 			text: new Text({
-	// 				font: "12px DejaVu Sans",
-	// 				text: feature.get("lsoa11nm"),
-	// 				overflow: true,
-	// 				stroke: new Stroke({color: "rgba(118, 50, 63, 1)"}),
-	// 				fill: new Fill({color: "rgba(118, 50, 63, 1)"})
-	// 			})
-	// 		}));
-	// 	}
-	// }));
+		GEOJSON_SOURCE("siss:tyne_and_wear_lsoa"),
+		{ /* Hover options */
+			style: (feature) => {
+				return(new Style({
+					stroke: new Stroke({color: HEX2RGBA("#315c2b", 0.4)}),
+					fill: new Fill({color: HEX2RGBA("#315c2b", 0.4)}),
+					text: new Text({
+						font: "12px DejaVu Sans",
+						text: feature.get("lsoa11nm"),
+						overflow: true,
+						stroke: new Stroke({color: HEX2RGBA("#315c2b", 1.0)}),
+						fill: new Fill({color: HEX2RGBA("#315c2b", 1.0)})
+					})
+				}));
+			}
+		}));
 };
 
 /**

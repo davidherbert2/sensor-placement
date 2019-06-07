@@ -123,6 +123,7 @@ export const OPENSTREETMAP = () => {
 /**
  * LA layer
  */
+const LA_COL = "#7a4419"
 export const LA = () => {
 	return(new InteractiveVectorLayer(
 		{ /* Layer options */
@@ -132,18 +133,20 @@ export const LA = () => {
 			extent: NEWCASTLE_CENTRE_3857,
 			style: (feature) => {
 				return(new Style({
-					fill: new Fill({color: HEX2RGBA("#274029", 0.0)}),
-					stroke: new Stroke({color: HEX2RGBA("#274029"), width: 2.5})		
+					fill: new Fill({color: HEX2RGBA(LA_COL, 0.0)}),
+					stroke: new Stroke({color: HEX2RGBA(LA_COL), width: 2.5})		
 				}));
 			}
 		},
-		GEOJSON_SOURCE("siss:tyne_and_wear_la")
+		GEOJSON_SOURCE("siss:tyne_and_wear_la"),
+		HOVER_OPTIONS(LA_COL, 0.4)
 	));
 };
 
 /**
  * LSOA layer
  */
+const LSOA_COL = "#63535b"
 export const LSOA = () => {
 	return(new InteractiveVectorLayer(
 		{ /* Layer options */
@@ -154,19 +157,20 @@ export const LSOA = () => {
 			extent: NEWCASTLE_CENTRE_3857,
 			style: (feature) => {
 				return(new Style({
-					fill: new Fill({color: HEX2RGBA("#315c2b", 0.0)}),
-					stroke: new Stroke({color: HEX2RGBA("#315c2b", 0.0)})		
+					fill: new Fill({color: HEX2RGBA(LSOA_COL, 0.0)}),
+					stroke: new Stroke({color: HEX2RGBA(LSOA_COL, 0.0)})		
 				}));
 			}
 		},
 		GEOJSON_SOURCE("siss:tyne_and_wear_lsoa"),
-		HOVER_OPTIONS("#315c2b")
+		HOVER_OPTIONS(LSOA_COL)
 	));
 };
 
 /**
  * OA layer
  */
+const OA_COL = "#400406"
 export const OA = () => {
 	return(new InteractiveVectorLayer(
 		{ /* Layer options */
@@ -177,13 +181,13 @@ export const OA = () => {
 			extent: NEWCASTLE_CENTRE_3857,
 			style: (feature) => {
 				return(new Style({
-					fill: new Fill({color: HEX2RGBA("#60712f", 0.0)}),
-					stroke: new Stroke({color: HEX2RGBA("#60712f", 0,0)})		
+					fill: new Fill({color: HEX2RGBA(OA_COL, 0.0)}),
+					stroke: new Stroke({color: HEX2RGBA(OA_COL, 0,0)})		
 				}));
 			}
 		},
 		GEOJSON_SOURCE("siss:tyne_and_wear_oa"),
-		HOVER_OPTIONS("#60712f", 0.4, "code")
+		HOVER_OPTIONS(OA_COL, 0.4, "code")
 	));
 };
 

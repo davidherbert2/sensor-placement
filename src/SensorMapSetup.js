@@ -134,7 +134,7 @@ export const LA = () => {
 			style: (feature) => {
 				return(new Style({
 					fill: new Fill({color: HEX2RGBA(LA_COL, 0.0)}),
-					stroke: new Stroke({color: HEX2RGBA(LA_COL), width: 2.5})		
+					stroke: new Stroke({color: HEX2RGBA(LA_COL, 0.0)})		
 				}));
 			}
 		},

@@ -64,6 +64,7 @@ window.onload = (event) => {
 	 * Assign click/hover handlers for layers 
 	 */
 	sensorLayer.assignHandlers(map);
+	laLayer.assignHandlers(map);
 	lsoaLayer.assignHandlers(map);
 	oaLayer.assignHandlers(map);
 

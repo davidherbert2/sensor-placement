@@ -40,7 +40,8 @@ export default class InteractiveVectorLayer extends VectorLayer {
 			 * - style - the style to be applied hovering over a feature
 			 */
 			this._hoverOverlay = new VectorLayer({
-				source: new VectorSource(),				
+				source: new VectorSource(),
+				zIndex: this.getZIndex() + 1000,				
 				style: hoverOpts.style
 			});
 		}

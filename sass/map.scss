@@ -1,4 +1,14 @@
 @charset "utf-8";
 @import "../node_modules/bulma/bulma.sass";
 
-$body-size: 0.75em
+$body-size: 0.75em;
+
+@import "ol_popup";
+
+$ol-map-width: 100%;
+$ol-map-height: 750px;
+
+.map {
+    width: $ol-map-width;
+    height: $ol-map-height;
+}

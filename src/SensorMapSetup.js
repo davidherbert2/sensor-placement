@@ -89,7 +89,7 @@ const GEOJSON_SOURCE = (feature) => {
 	});
 };
 
-const HOVER_STYLE = (col, opacity = 0.4, nameAttr = "name") => {
+const HOVER_OPTIONS = (col, opacity = 0.4, nameAttr = "name") => {
 	return({ /* Hover options */
 		style: (feature) => {
 			return(new Style({

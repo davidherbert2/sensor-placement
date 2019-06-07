@@ -60,7 +60,7 @@ window.onload = (event) => {
 		]
 	});
 
-	map.getView().on("change.resolution", (evt) => {
+	map.getView().on("change:resolution", (evt) => {
 		console.log(evt);
 	});
 	

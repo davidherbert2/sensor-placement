@@ -82,7 +82,7 @@ export default class InteractiveVectorLayer extends VectorLayer {
 						return(layerCandidate == this);
 					}
 				});
-				let feature = (features && features.length == 0) ? null : features[0];
+				let feature = (!features || (features && features.length == 0)) ? null : features[0];
 				if (feature && feature !== this._highlight) {
 					if (this._highlight) {
 						this._hoverOverlay.getSource().removeFeature(this._highlight);

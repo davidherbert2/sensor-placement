@@ -69,10 +69,10 @@ export default class InteractiveVectorLayer extends VectorLayer {
 	 */
 	assignHandlers(map) {
 
+		/* Check in range of visibility and clear highlight if out of range */
 		map.getView().on("change:resolution", evt => {
-			console.log(this);
 			let res = map.getView().getResolution();
-			if (res <= this.getMinResolution() || res > this.getMaxResolution()) {
+			if (res <= this.getMinResolution() || res >= this.getMaxResolution()) {
 				this._hoverOverlay.getSource().clear();
 				this._highlight = null;
 			}

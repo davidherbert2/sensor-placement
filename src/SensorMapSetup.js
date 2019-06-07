@@ -181,7 +181,7 @@ export const OA = () => {
 			type: "overlay", 
 			cluster: false,
 			visible: false,
-			maxResolution: 4,
+			maxResolution: 10,
 			extent: NEWCASTLE_CENTRE_3857,
 			style: (feature) => {
 				return(new Style({

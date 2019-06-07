@@ -4,6 +4,8 @@ $body-size: 0.75em;
 
 @import "../node_modules/bulma/bulma.sass";
 @import "ol_popup";
+@import "../node_modules/ol-layerswitcher/src/ol-layerswitcher";
+@import "../node_modules/ol/ol.css";
 
 $ol-map-width: 100%;
 $ol-map-height: 750px;

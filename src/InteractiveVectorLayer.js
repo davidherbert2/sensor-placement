@@ -70,8 +70,12 @@ export default class InteractiveVectorLayer extends VectorLayer {
 	assignHandlers(map) {
 
 		map.getView().on("change:resolution", evt => {
-			console.log(evt);
-			console.log(map.getView().getResolution());
+			console.log(this);
+			let res = map.getView().getResolution();
+			if (res <= this.getMinResolution() || res > this.getMaxResolution()) {
+				this._hoverOverlay.getSource().clear();
+				this._highlight = null;
+			}
 		});
 
 		/* Remove overlay when layer visibility changes */

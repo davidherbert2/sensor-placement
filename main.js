@@ -18,9 +18,9 @@ window.onload = (event) => {
 	 */
 	let osmLayer    = conf.OPENSTREETMAP();
 	let sensorLayer = conf.SENSORS();
-	let laLayer   = conf.LA();
+	let laLayer     = conf.LA();
 	let lsoaLayer   = conf.LSOA();
-	let oaLayer   = conf.OA();
+	let oaLayer     = conf.OA();
 	
 	/**
 	 * Create the map and layer tree
@@ -65,6 +65,7 @@ window.onload = (event) => {
 	 */
 	sensorLayer.assignHandlers(map);
 	lsoaLayer.assignHandlers(map);
+	oaLayer.assignHandlers(map);
 
 	let form = document.querySelector("form");	
 	let ddThemes = new DropDownListFromUrl(form, conf.UO_THEMES, "theme-list", ["theme-list"], "Select a theme", true);

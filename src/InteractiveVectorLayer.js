@@ -71,6 +71,7 @@ export default class InteractiveVectorLayer extends VectorLayer {
 
 		map.getView().on("change:resolution", evt => {
 			console.log(evt);
+			console.log(map.getView().getResolution());
 		});
 
 		/* Remove overlay when layer visibility changes */

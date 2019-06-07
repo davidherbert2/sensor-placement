@@ -149,7 +149,7 @@ export const LSOA = () => {
 					fill: new Fill({color: HEX2RGBA("#315c2b", 0.4)}),
 					text: new Text({
 						font: "12px DejaVu Sans",
-						text: feature.get("lsoa11nm"),
+						text: feature.get("name"),
 						overflow: true,
 						stroke: new Stroke({color: HEX2RGBA("#315c2b", 1.0)}),
 						fill: new Fill({color: HEX2RGBA("#315c2b", 1.0)})

@@ -68,6 +68,10 @@ export default class InteractiveVectorLayer extends VectorLayer {
 	 * @param {Map} map - OpenLayers map
 	 */
 	assignHandlers(map) {
+
+		this.on("change:visible", evt => {
+			console.log(evt);
+		});
 		
 		if (this._hoverInteract) {
 			/* Add handler for mouseover/pointermove interaction on layer */

@@ -130,7 +130,7 @@ export const LA = () => {
 			title: "Local Authority areas", 
 			type: "overlay", 
 			cluster: false,
-			minResolution: 20,
+			minResolution: 10,
 			extent: NEWCASTLE_CENTRE_3857,
 			style: (feature) => {
 				return(new Style({
@@ -155,7 +155,7 @@ export const LSOA = () => {
 			type: "overlay", 
 			cluster: false,
 			visible: false,
-			minResolution: 1.5,
+			minResolution: 2,
 			maxResolution: 20,
 			extent: NEWCASTLE_CENTRE_3857,
 			style: (feature) => {
@@ -181,7 +181,7 @@ export const OA = () => {
 			type: "overlay", 
 			cluster: false,
 			visible: false,
-			maxResolution: 1.5,
+			maxResolution: 4,
 			extent: NEWCASTLE_CENTRE_3857,
 			style: (feature) => {
 				return(new Style({

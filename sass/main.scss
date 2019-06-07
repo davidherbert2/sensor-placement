@@ -5,6 +5,11 @@ $body-size: 0.75em;
 @import "../node_modules/bulma/bulma.sass";
 @import "ol_popup";
 @import "../node_modules/ol-layerswitcher/src/ol-layerswitcher";
+
+ol.control.button {
+    font-size: 1.5em;
+}
+
 @import "../node_modules/ol/ol.css";
 
 $ol-map-width: 100%;

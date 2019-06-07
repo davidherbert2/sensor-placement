@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "npm run css-watch && parcel index.html",
     "build": "parcel build --public-url . index.html",
-    "css-build": "node-sass --omit-source-map-url sass/map.scss css/map.css",
+    "css-build": "node-sass --omit-source-map-url sass/main.scss css/main.css",
     "css-watch": "npm run css-build -- --watch"
   },
   "author": "David Herbert",

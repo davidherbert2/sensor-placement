@@ -69,6 +69,10 @@ export default class InteractiveVectorLayer extends VectorLayer {
 	 */
 	assignHandlers(map) {
 
+		map.getView().on("change:resolution", evt => {
+			console.log(evt);
+		});
+
 		/* Remove overlay when layer visibility changes */
 		this.on("change:visible", evt => {
 			this._hoverOverlay.getSource().clear();

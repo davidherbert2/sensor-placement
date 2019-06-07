@@ -58,11 +58,7 @@ window.onload = (event) => {
 			new Zoom(),
 			new LayerSwitcher()
 		]
-	});
-
-	map.getView().on("change:resolution", (evt) => {
-		console.log(evt);
-	});
+	});	
 	
 	/**
 	 * Assign click/hover handlers for layers 

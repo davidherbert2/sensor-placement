@@ -89,6 +89,24 @@ const GEOJSON_SOURCE = (feature) => {
 	});
 };
 
+const HOVER_STYLE = (col, opacity = 0.4, nameAttr = "name") => {
+	return({ /* Hover options */
+		style: (feature) => {
+			return(new Style({
+				stroke: new Stroke({color: HEX2RGBA(col, opacity)}),
+				fill: new Fill({color: HEX2RGBA(col, opacity)}),
+				text: new Text({
+					font: "12px DejaVu Sans",
+					text: feature.get(nameAttr),
+					overflow: true,
+					stroke: new Stroke({color: HEX2RGBA(col, 1.0)}),
+					fill: new Fill({color: HEX2RGBA(col, 1.0)})
+				})
+			}));
+		}
+	});
+};
+
 /**
  * Individual layer definitions
  * OpenStreetMap layer
@@ -142,21 +160,8 @@ export const LSOA = () => {
 			}
 		},
 		GEOJSON_SOURCE("siss:tyne_and_wear_lsoa"),
-		{ /* Hover options */
-			style: (feature) => {
-				return(new Style({
-					stroke: new Stroke({color: HEX2RGBA("#315c2b", 0.4)}),
-					fill: new Fill({color: HEX2RGBA("#315c2b", 0.4)}),
-					text: new Text({
-						font: "12px DejaVu Sans",
-						text: feature.get("name"),
-						overflow: true,
-						stroke: new Stroke({color: HEX2RGBA("#315c2b", 1.0)}),
-						fill: new Fill({color: HEX2RGBA("#315c2b", 1.0)})
-					})
-				}));
-			}
-		}));
+		HOVER_OPTIONS("#315c2b")
+	));
 };
 
 /**
@@ -177,7 +182,8 @@ export const OA = () => {
 				}));
 			}
 		},
-		GEOJSON_SOURCE("siss:tyne_and_wear_oa")
+		GEOJSON_SOURCE("siss:tyne_and_wear_oa"),
+		HOVER_OPTIONS("#60712f", 0.4, "code")
 	));
 };
 

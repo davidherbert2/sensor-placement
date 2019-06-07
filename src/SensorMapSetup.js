@@ -130,6 +130,7 @@ export const LA = () => {
 			title: "Local Authority areas", 
 			type: "overlay", 
 			cluster: false,
+			visible: true,
 			minResolution: 10,
 			extent: NEWCASTLE_CENTRE_3857,
 			style: (feature) => {
@@ -154,7 +155,7 @@ export const LSOA = () => {
 			title: "LSOAs", 
 			type: "overlay", 
 			cluster: false,
-			visible: false,
+			visible: true,
 			minResolution: 2,
 			maxResolution: 20,
 			extent: NEWCASTLE_CENTRE_3857,
@@ -180,7 +181,7 @@ export const OA = () => {
 			title: "OAs", 
 			type: "overlay", 
 			cluster: false,
-			visible: false,
+			visible: true,
 			maxResolution: 10,
 			extent: NEWCASTLE_CENTRE_3857,
 			style: (feature) => {
@@ -210,7 +211,7 @@ export const SENSORS = () => {
 				let size = clusterFeats ? clusterFeats.length : 1;
 				let style = new Style({
 					image: new CircleStyle({
-						radius: 5,
+						radius: 7,
 						fill: new Fill({color: "white"}),
 						stroke: new Stroke({color: "red", width: 2})
 					})

@@ -5,8 +5,10 @@
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "parcel index.html",
-    "build": "parcel build --public-url . index.html"
+    "start": "npm run css-watch && parcel index.html",
+    "build": "parcel build --public-url . index.html",
+    "css-build": "node-sass --omit-source-map-url sass/mystyles.scss css/mystyles.css",
+    "css-watch": "npm run css-build -- --watch"
   },
   "author": "David Herbert",
   "license": "ISC",
@@ -15,6 +17,8 @@
     "ol-layerswitcher": "^3.2.0"
   },
   "devDependencies": {
+    "bulma": "^0.7.5",
+    "node-sass": "^4.12.0",
     "parcel-bundler": "^1.12.3"
   },
   "repository": {

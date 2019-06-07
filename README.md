@@ -7,13 +7,39 @@ This repository contains front-end JavaScript code, and is [built into a web bun
 [ol-layerswitcher](https://github.com/walkermatt/ol-layerswitcher) for the mouseover layer tree and
 [bulma](https://bulma.io/documentation/customize/with-node-sass/) for some basic CSS classes 
 
-To build the project:
+## To build the project:
 
-# Install node and npm
-# Install Openlayers 
+### Pre-requisites
+
+1. Install node and npm
+2. Install Openlayers 
 `
 npm install ol
 `
+3. Install parcel bundler
+`
+npm install --save-dev parcel-bundler
+`
+4. Install the OpenLayers layer switcher
+`
+npm install --save ol-layerswitcher 
+`
+5. Install node-sass and bulma
+`
+npm install --save-dev node-sass
+npm install --save-dev bulma
+`
+
+### Build procedure
+
+`
+npm run css-build && npm run build
+`
+
+Will use parcel/node-sass etc to package up minified JS and CSS into the 'dist' directory, for direct copy to a server.
+
+
+
 
 
 

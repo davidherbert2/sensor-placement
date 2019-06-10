@@ -204,7 +204,7 @@ export const IMD = () => {
 	return(new TileLayer({
 		extent: NEWCASTLE_CENTRE_3857,
 		source: new TileWMS({
-			url: `${AWS_INSTANCE}/geoserver/ssis/wms`,
+			url: `${AWS_INSTANCE}/geoserver/siss/wms`,
 			params: {
 				layers: "siss:imd_2015_by_lsoa",
 				serverType: "geoserver",

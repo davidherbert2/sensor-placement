@@ -117,6 +117,7 @@ export const OPENSTREETMAP = () => {
 		title: "OpenStreetMap",
 		type: "base",
 		visible: true,
+		displayInLayerSwitcher: true,
 		source: new OSM()
 	}));
 };
@@ -134,6 +135,7 @@ export const LA = () => {
 			visible: true,
 			minResolution: 10,
 			extent: NEWCASTLE_CENTRE_3857,
+			displayInLayerSwitcher: true,
 			style: (feature) => {
 				return(new Style({
 					fill: new Fill({color: HEX2RGBA(LA_COL, 0.0)}),
@@ -160,6 +162,7 @@ export const LSOA = () => {
 			minResolution: 2,
 			maxResolution: 20,
 			extent: NEWCASTLE_CENTRE_3857,
+			displayInLayerSwitcher: true,
 			style: (feature) => {
 				return(new Style({
 					fill: new Fill({color: HEX2RGBA(LSOA_COL, 0.0)}),
@@ -185,6 +188,7 @@ export const OA = () => {
 			visible: true,
 			maxResolution: 10,
 			extent: NEWCASTLE_CENTRE_3857,
+			displayInLayerSwitcher: true,
 			style: (feature) => {
 				return(new Style({
 					fill: new Fill({color: HEX2RGBA(OA_COL, 0.0)}),
@@ -204,6 +208,7 @@ export const IMD = () => {
 	return(new TileLayer({
 		title: "Index of Multiple Deprivation",
 		visible: false,
+		displayInLayerSwitcher: true,
 		opacity: 0.6,
 		source: new TileWMS({
 			url: `${AWS_INSTANCE}/geoserver/siss/wms`,
@@ -223,6 +228,7 @@ export const DISABILITY = () => {
 	return(new TileLayer({
 		title: "Day-to-day disability limited (%)",
 		visible: false,
+		displayInLayerSwitcher: true,
 		opacity: 0.6,
 		source: new TileWMS({
 			url: `${AWS_INSTANCE}/geoserver/siss/wms`,
@@ -245,6 +251,7 @@ export const SENSORS = () => {
 			type: "overlay",
 			cluster: true,
 			visible: true,		
+			displayInLayerSwitcher: true,
 			style: (feature) => {
 				let	clusterFeats = feature.get("features");
 				let size = clusterFeats ? clusterFeats.length : 1;

@@ -197,6 +197,23 @@ export const OA = () => {
 };
 
 /**
+ * IMD layer
+ */
+export const IMD = () => {
+	return(new TileLayer({
+		extent: NEWCASTLE_CENTRE_3857,
+		source: new TileWMS({
+			url: `${AWS_INSTANCE}/geoserver/ssis/wms`,
+			params: {
+				layers: "siss:imd_2015_by_lsoa",
+				serverType: "geoserver",
+				wrapX: false
+			}
+		})
+	}));
+};
+
+/**
  * Sensor layer
  */
 export const SENSORS = () => {

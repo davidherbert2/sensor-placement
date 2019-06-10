@@ -21,6 +21,7 @@ window.onload = (event) => {
 	let laLayer     = conf.LA();
 	let lsoaLayer   = conf.LSOA();
 	let oaLayer     = conf.OA();
+	let imdLayer    = conf.IMD();
 	
 	/**
 	 * Create the map and layer tree
@@ -41,7 +42,7 @@ window.onload = (event) => {
 			new LayerGroup({
 				"title": "Office of National Statistics",
 				"fold": "open",
-				"layers": [oaLayer, lsoaLayer, laLayer]
+				"layers": [oaLayer, lsoaLayer, laLayer, imdLayer]
 			})					
 		],
 		view: new View({

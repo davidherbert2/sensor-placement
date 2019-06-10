@@ -202,6 +202,7 @@ export const OA = () => {
  */
 export const IMD = () => {
 	return(new TileLayer({
+		title: "Index of Multiple Deprivation",
 		visible: false,
 		opacity: 0.6,
 		source: new TileWMS({

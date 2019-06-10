@@ -58,9 +58,7 @@ window.onload = (event) => {
 				}
 			}),
 			new Zoom(),
-			new LayerSwitcher({
-					show_progress: true
-				},
+			new LayerSwitcher({},
 				true /* Show on mouseover */
 			)
 		]

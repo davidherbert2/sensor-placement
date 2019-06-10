@@ -7,10 +7,6 @@
 @import "../node_modules/ol-ext/control/LayerSwitcher";
 @import "ol_layerswitcher";
 
-.ol-control button {
-    font-size: 1.5em;
-}
-
 @import "../node_modules/ol/ol.css";
 
 $ol-map-width: 100%;

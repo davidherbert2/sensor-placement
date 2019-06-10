@@ -70,14 +70,12 @@ window.onload = (event) => {
 				}
 			}),
 			new Zoom(),
-			new LayerSwitcher({},
-				null,  /* Is in switcher? */
-				true,  /* Show on mouseover */
-				true,  /* Allow re-ordering */
-				false, /* Don't allow deletion */
-				true,  /* Info button */
-				true   /* Zoom to extent */
-			)
+			new LayerSwitcher({
+				show_progress: false,
+				mouseover: true,  	/* Show on mouseover */
+				oninfo: true,		/* Show info button */
+				extent: true   		/* Zoom to extent */
+			})
 		]
 	});	
 	

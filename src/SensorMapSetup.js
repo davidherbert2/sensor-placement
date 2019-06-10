@@ -12,6 +12,7 @@ import Text from "ol/style/Text";
 import GeoJSON from "ol/format/GeoJSON"; 
 import TileLayer from "ol/layer/Tile";
 import OSM from "ol/source/OSM";
+import TileWMS from "ol/source/TileWMS"
 
 import InteractiveVectorLayer from "./InteractiveVectorLayer.js";
 

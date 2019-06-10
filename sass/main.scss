@@ -4,8 +4,8 @@ $body-size: 0.75em;
 
 @import "../node_modules/bulma/bulma.sass";
 @import "ol_popup";
+@import "../node_modules/ol-ext/control/LayerSwitcher";
 @import "ol_layerswitcher";
-//@import "../node_modules/ol-ext/control/LayerSwitcher";
 
 .ol-control button {
     font-size: 1.5em;

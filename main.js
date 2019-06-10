@@ -12,6 +12,18 @@ import DropDownListFromUrl from "./src/DropDownListFromUrl.js";
 import * as conf from "./src/SensorMapSetup.js";
 
 window.onload = (event) => {
+
+	/** 
+	 * List of tips for internationalisation purposes
+	 */
+	ol_control_LayerSwitcher.prototype.tip = {
+		up: "Re-order layers up",
+		down: "Re-order layers down",
+		info: "Layer legend and metadata",
+		extent: "Zoom to layer extent",
+		trash: "Remove layer",
+		plus: "Open/close group"
+	};
 	
 	/**
 	 * Layer creation 

@@ -33,17 +33,17 @@ window.onload = (event) => {
 				"title": "Base maps",
 				"fold": "open",
 				"layers": [osmLayer]
+			}),			
+			new LayerGroup({
+				"title": "Office of National Statistics",
+				"fold": "open",
+				"layers": [oaLayer, lsoaLayer, laLayer, imdLayer]
 			}),
 			new LayerGroup({
 				"title": "Urban Observatory",
 				"fold": "open",
 				"layers": [sensorLayer]
-			}),
-			new LayerGroup({
-				"title": "Office of National Statistics",
-				"fold": "open",
-				"layers": [oaLayer, lsoaLayer, laLayer, imdLayer]
-			})					
+			})			
 		],
 		view: new View({
 			center: fromLonLat(conf.NEWCASTLE_CENTROID),

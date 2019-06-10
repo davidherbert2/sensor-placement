@@ -6,7 +6,7 @@ import {fromLonLat} from "ol/proj";
 import Point from "ol/geom/Point";
 import MousePosition from "ol/control/MousePosition";
 import Zoom from "ol/control/Zoom";
-import LayerSwitcher from "ol-ext/control";
+import LayerSwitcher from "ol-ext/control/LayerSwitcher";
 
 import DropDownListFromUrl from "./src/DropDownListFromUrl.js";		
 import * as conf from "./src/SensorMapSetup.js";

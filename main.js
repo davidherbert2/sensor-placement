@@ -16,12 +16,13 @@ window.onload = (event) => {
 	/**
 	 * Layer creation 
 	 */
-	let osmLayer    = conf.OPENSTREETMAP();
-	let sensorLayer = conf.SENSORS();
-	let laLayer     = conf.LA();
-	let lsoaLayer   = conf.LSOA();
-	let oaLayer     = conf.OA();
-	let imdLayer    = conf.IMD();
+	let osmLayer    	= conf.OPENSTREETMAP();
+	let sensorLayer 	= conf.SENSORS();
+	let laLayer    	 	= conf.LA();
+	let lsoaLayer  		= conf.LSOA();
+	let oaLayer    	 	= conf.OA();
+	let imdLayer    	= conf.IMD();
+	let disabilityLayer = conf.DISABILITY();
 	
 	/**
 	 * Create the map and layer tree
@@ -37,7 +38,7 @@ window.onload = (event) => {
 			new LayerGroup({
 				"title": "Office of National Statistics",
 				"fold": "open",
-				"layers": [oaLayer, lsoaLayer, laLayer, imdLayer]
+				"layers": [laLayer, lsoaLayer, oaLayer, imdLayer, disabilityLayer]
 			}),
 			new LayerGroup({
 				"title": "Urban Observatory",

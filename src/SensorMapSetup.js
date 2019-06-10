@@ -217,6 +217,25 @@ export const IMD = () => {
 };
 
 /**
+ * Disability layer
+ */
+export const DISABILITY = () => {
+	return(new TileLayer({
+		title: "Day-to-day disability limited (%)",
+		visible: false,
+		opacity: 0.6,
+		source: new TileWMS({
+			url: `${AWS_INSTANCE}/geoserver/siss/wms`,
+			params: {
+				layers: "siss:siss:disability_2015_by_lsoa",
+				serverType: "geoserver",
+				wrapX: false
+			}
+		})
+	}));
+};
+
+/**
  * Sensor layer
  */
 export const SENSORS = () => {

@@ -114,9 +114,10 @@ const HOVER_OPTIONS = (col, opacity = 0.4, nameAttr = "name") => {
  */
 export const OPENSTREETMAP = () => {
 	return(new TileLayer({
-		title: "OpenStreetMap",
+		title: "OSM",
 		type: "base",
 		visible: true,
+		baseLayer: true,
 		displayInLayerSwitcher: true,
 		source: new OSM()
 	}));
@@ -129,7 +130,7 @@ const LA_COL = "#7a4419"
 export const LA = () => {
 	return(new InteractiveVectorLayer(
 		{ /* Layer options */
-			title: "Local Authority areas", 
+			title: "LADs", 
 			type: "overlay", 
 			cluster: false,
 			visible: true,
@@ -206,7 +207,7 @@ export const OA = () => {
  */
 export const IMD = () => {
 	return(new TileLayer({
-		title: "Index of Multiple Deprivation",
+		title: "IMD",
 		visible: false,
 		displayInLayerSwitcher: true,
 		opacity: 0.6,
@@ -226,7 +227,7 @@ export const IMD = () => {
  */
 export const DISABILITY = () => {
 	return(new TileLayer({
-		title: "Day-to-day disability limited (%)",
+		title: "Disability",
 		visible: false,
 		displayInLayerSwitcher: true,
 		opacity: 0.6,
@@ -247,7 +248,7 @@ export const DISABILITY = () => {
 export const SENSORS = () => {
 	return(new InteractiveVectorLayer(
 		{
-			title: "Sensor locations",
+			title: "Sensors",
 			type: "overlay",
 			cluster: true,
 			visible: true,		

@@ -227,7 +227,7 @@ export const DISABILITY = () => {
 		source: new TileWMS({
 			url: `${AWS_INSTANCE}/geoserver/siss/wms`,
 			params: {
-				layers: "siss:siss:disability_2015_by_lsoa",
+				layers: "siss:disability_2015_by_lsoa",
 				serverType: "geoserver",
 				wrapX: false
 			}

@@ -1,4 +1,9 @@
-.ol-layerswitcher {
+.ol-layerswitcher.ol-collapsed {
+    width: unset;
+}
+
+.ol-layerswitcher,
+.ol-layerswitcher.ol-forceopen {
     width: 20em;
 }
 

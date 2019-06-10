@@ -16,7 +16,7 @@ window.onload = (event) => {
 	/** 
 	 * List of tips for internationalisation purposes
 	 */
-	ol_control_LayerSwitcher.prototype.tip = {
+	LayerSwitcher.prototype.tip = {
 		up: "Re-order layers up",
 		down: "Re-order layers down",
 		info: "Layer legend and metadata",

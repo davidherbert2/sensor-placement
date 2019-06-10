@@ -202,7 +202,8 @@ export const OA = () => {
  */
 export const IMD = () => {
 	return(new TileLayer({
-		extent: NEWCASTLE_CENTRE_3857,
+		visible: false,
+		opacity: 0.6,
 		source: new TileWMS({
 			url: `${AWS_INSTANCE}/geoserver/siss/wms`,
 			params: {

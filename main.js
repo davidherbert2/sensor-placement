@@ -56,7 +56,7 @@ window.onload = (event) => {
 		}
 		if (evt.layer.get("layerInfo") === true) {
 			let newBtn = document.createElement("div");
-			newBtn.setAttribute("title", LayerSwitcher.tip.info);
+			newBtn.setAttribute("title", switcher.tip.info);
 			newBtn.classList.add("layerInfo");
 			btnDiv.appendChild(newBtn); 
 		}

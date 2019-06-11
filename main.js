@@ -96,7 +96,7 @@ window.onload = (event) => {
 			btnDiv.appendChild(newBtn); 
 			let layer = evt.layer;
 			newBtn.addEventListener("click", () => {
-				this.getMap().getView().fit(layer.getExtent(), this.getMap().getSize());
+				map.getView().fit(layer.getExtent(), map.getSize());
 			});
 		}
 		if (evt.layer.get("layerInfo") === true) {

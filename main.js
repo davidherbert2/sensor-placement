@@ -46,10 +46,11 @@ window.onload = (event) => {
 	});
 
 	switcher.on("drawlist", (evt) => {
-		console.log(evt);
+		let li = evt.li;
+		console.log(li.querySelector(".ol-layerswitcher-buttons"));
 	});
 
-	switcher.on("info", (evt) => {
+	switcher.oninfo((evt) => {
 		console.log(evt);
 	});
 	

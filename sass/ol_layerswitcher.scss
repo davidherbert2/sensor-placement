@@ -48,15 +48,15 @@
     background: #369;
 } */
 
-.ol-layer-group >.ol-layerswitcher-buttons > .layerup {
+li.ol-layer-group > div.ol-layerswitcher-buttons > div.layerup {
     display: none;
 }
 
-.ol-layer-group > .li-content > .layerswitcher-opacity {
+li.ol-layer-group > div.li-content > div.layerswitcher-opacity {
     display: none;
 }
 
-.ol-layer-group > .li-content > label {
+li.ol-layer-group > div.li-content > label {
     font-weight: bold;
 }
 
@@ -66,4 +66,14 @@ li.ol-layer-tile > div.li-content > div.layerswitcher-opacity-label {
 
 li.ol-layer-vector > div.li-content > div.layerswitcher-opacity-label {
     display: block;
+}
+
+.ol-layerswitcher.ol-collapsed {
+    width: unset;
+    height: unset;
+}
+
+.ol-layerswitcher,
+.ol-layerswitcher.ol-forceopen {
+    width: 20em;
 }

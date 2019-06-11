@@ -52,6 +52,10 @@ window.onload = (event) => {
 			newBtn.setAttribute("title", switcher.tip.extent);
 			newBtn.classList.add("layerExtent");
 			btnDiv.appendChild(newBtn); 
+			let layer = evt.layer;
+			newBtn.addEventListener("click", () => {
+				switcher.getMap().getView().fit(layer.getExtent(), switcher.getMap().getSize());
+			});
 		}
 		if (evt.layer.get("layerInfo") === true) {
 			let newBtn = document.createElement("div");
@@ -69,22 +73,22 @@ window.onload = (event) => {
 		layers: [
 			new LayerGroup({
 				"title": "Base maps",
-				"fold": "closed",
+				"openInLayerSwitcher": false,
 				"layers": [osmLayer]
 			}),			
 			new LayerGroup({
 				"title": "Office of National Statistics",
-				"fold": "open",
+				"openInLayerSwitcher": true,
 				"layers": [imdLayer, disabilityLayer]
 			}),
 			new LayerGroup({
 				"title": "Boundaries",
-				"fold": "closed",
+				"openInLayerSwitcher": false,
 				"layers": [laLayer, lsoaLayer, oaLayer]
 			}),
 			new LayerGroup({
 				"title": "Urban Observatory",
-				"fold": "open",
+				"openInLayerSwitcher": true,
 				"layers": [sensorLayer]
 			})			
 		],

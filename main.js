@@ -37,35 +37,6 @@ window.onload = (event) => {
 	let disabilityLayer = conf.DISABILITY();
 
 	/**
-	 * Layer switcher 
-	 */
-	let switcher = new LayerSwitcher({
-		show_progress: false,
-		mouseover: false  	/* Show on mouseover */
-	});
-
-	switcher.on("drawlist", (evt) => {
-		console.log(evt.layer);
-		let btnDiv = evt.li.querySelector(".ol-layerswitcher-buttons");
-		if (evt.layer.get("layerExtent") === true) {
-			let newBtn = document.createElement("div");
-			newBtn.setAttribute("title", switcher.tip.extent);
-			newBtn.classList.add("layerExtent");
-			btnDiv.appendChild(newBtn); 
-			let layer = evt.layer;
-			newBtn.addEventListener("click", () => {
-				switcher.getMap().getView().fit(layer.getExtent(), switcher.getMap().getSize());
-			});
-		}
-		if (evt.layer.get("layerInfo") === true) {
-			let newBtn = document.createElement("div");
-			newBtn.setAttribute("title", switcher.tip.info);
-			newBtn.classList.add("layerInfo");
-			btnDiv.appendChild(newBtn); 
-		}
-	});
-
-	/**
 	 * Create the map and layer tree
 	 */
 	let map = new Map({
@@ -103,10 +74,40 @@ window.onload = (event) => {
 					return(`<strong>${coord[0].toFixed(4)},${coord[1].toFixed(4)}</strong>`);
 				}
 			}),
-			new Zoom(),
-			switcher
+			new Zoom()
 		]
 	});	
+
+	/**
+	 * Layer switcher 
+	 */
+	let switcher = new LayerSwitcher({
+		show_progress: false,
+		mouseover: false  	/* Show on mouseover */
+	});
+
+	switcher.on("drawlist", (evt) => {
+		console.log(evt.layer);
+		let btnDiv = evt.li.querySelector(".ol-layerswitcher-buttons");
+		if (evt.layer.get("layerExtent") === true) {
+			let newBtn = document.createElement("div");
+			newBtn.setAttribute("title", switcher.tip.extent);
+			newBtn.classList.add("layerExtent");
+			btnDiv.appendChild(newBtn); 
+			let layer = evt.layer;
+			newBtn.addEventListener("click", () => {
+				this.getMap().getView().fit(layer.getExtent(), this.getMap().getSize());
+			});
+		}
+		if (evt.layer.get("layerInfo") === true) {
+			let newBtn = document.createElement("div");
+			newBtn.setAttribute("title", switcher.tip.info);
+			newBtn.classList.add("layerInfo");
+			btnDiv.appendChild(newBtn); 
+		}
+	});
+
+	map.addControl(switcher);
 	
 	/**
 	 * Assign click/hover handlers for layers 

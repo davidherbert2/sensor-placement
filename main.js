@@ -49,12 +49,7 @@ window.onload = (event) => {
 		let li = evt.li;
 		console.log(li.querySelector(".ol-layerswitcher-buttons"));
 	});
-
-	switcher.oninfo((evt) => {
-		console.log(evt);
-	});
-	
-	
+		
 	/**
 	 * Create the map and layer tree
 	 */

@@ -55,3 +55,15 @@
 .ol-layer-group > .li-content > .layerswitcher-opacity {
     display: none;
 }
+
+.ol-layer-group > .li-content > label {
+    font-weight: bold;
+}
+
+li.ol-layer-tile > div.li-content > div.layerswitcher-opacity-label {
+    display: block;
+}
+
+li.ol-layer-vector > div.li-content > div.layerswitcher-opacity-label {
+    display: block;
+}

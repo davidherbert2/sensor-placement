@@ -48,12 +48,12 @@ window.onload = (event) => {
 		console.log(evt.layer);
 		if (!evt.layer.get("layers")) {
 			let btnDiv = evt.li.querySelector(".ol-layerswitcher-buttons");
-			if (!evt.layer.get("layerInfo")) {
+			if (evt.layer.get("layerInfo")) {
 				let newBtn = document.createElement("div");
 				newBtn.classList.add("layerInfo");
 				btnDiv.appendChild(newBtn); 
 			}
-			if (!evt.layer.get("layerExtent")) {
+			if (evt.layer.get("layerExtent")) {
 				let newBtn = document.createElement("div");
 				newBtn.classList.add("layerExtent");
 				btnDiv.appendChild(newBtn); 

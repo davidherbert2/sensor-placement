@@ -41,7 +41,7 @@ window.onload = (event) => {
 	 */
 	let switcher = new LayerSwitcher({
 		show_progress: false,
-		mouseover: true  	/* Show on mouseover */
+		mouseover: false  	/* Show on mouseover */
 	});
 
 	switcher.on("drawlist", (evt) => {

@@ -41,23 +41,24 @@ window.onload = (event) => {
 	 */
 	let switcher = new LayerSwitcher({
 		show_progress: false,
-		mouseover: true  	/* Show on mouseover */
+		mouseover: true,  	/* Show on mouseover */
+		extent: true		/* Zoom to layer extent button */
 	});
 
 	switcher.on("drawlist", (evt) => {
 		console.log(evt.layer);
-		if (!evt.layer.get("layers")) {
-			let btnDiv = evt.li.querySelector(".ol-layerswitcher-buttons");
-			if (evt.layer.get("layerInfo")) {
-				let newBtn = document.createElement("div");
-				newBtn.classList.add("layerInfo");
-				btnDiv.appendChild(newBtn); 
+		let btnDiv = evt.li.querySelector(".ol-layerswitcher-buttons");
+		if (evt.layer.get("layers") || evt.layer.get("layerExtent") !== true) {
+			let ztlBtn = btnDiv.querySelector(".layerExtent");
+			if (ztlBtn) {
+				ztlBtn.classList.remove("layerExtent");
 			}
-			if (evt.layer.get("layerExtent")) {
-				let newBtn = document.createElement("div");
-				newBtn.classList.add("layerExtent");
-				btnDiv.appendChild(newBtn); 
-			}
+		}
+		if (evt.layer.get("layerInfo") === true) {
+			let newBtn = document.createElement("div");
+			newBtn.setAttribute("title", LayerSwitcher.tip.info);
+			newBtn.classList.add("layerInfo");
+			btnDiv.appendChild(newBtn); 
 		}
 	});
 

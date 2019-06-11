@@ -46,6 +46,7 @@ window.onload = (event) => {
 	});
 
 	switcher.on("drawlist", (evt) => {
+		console.log(evt.layer);
 		let btnDiv = evt.li.querySelector(".ol-layerswitcher-buttons");
 		let newBtn = document.createElement("div");
 		newBtn.classList.add("layerInfo");

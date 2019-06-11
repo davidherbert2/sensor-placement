@@ -41,16 +41,25 @@ window.onload = (event) => {
 	 */
 	let switcher = new LayerSwitcher({
 		show_progress: false,
-		mouseover: true,  	/* Show on mouseover */
-		extent: true   		/* Zoom to extent */
+		mouseover: true  	/* Show on mouseover */
 	});
 
 	switcher.on("drawlist", (evt) => {
 		console.log(evt.layer);
-		let btnDiv = evt.li.querySelector(".ol-layerswitcher-buttons");
-		let newBtn = document.createElement("div");
-		newBtn.classList.add("layerInfo");
-		btnDiv.appendChild(newBtn); 
+		let layerProps = evt.layer.values;
+		if (!layerProps.layers) {
+			let btnDiv = evt.li.querySelector(".ol-layerswitcher-buttons");
+			if (layerProps.layerInfo) {
+				let newBtn = document.createElement("div");
+				newBtn.classList.add("layerInfo");
+				btnDiv.appendChild(newBtn); 
+			}
+			if (layerProps.layerExtent) {
+				let newBtn = document.createElement("div");
+				newBtn.classList.add("layerExtent");
+				btnDiv.appendChild(newBtn); 
+			}
+		}
 	});
 
 	/**

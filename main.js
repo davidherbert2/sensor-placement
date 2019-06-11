@@ -46,15 +46,14 @@ window.onload = (event) => {
 
 	switcher.on("drawlist", (evt) => {
 		console.log(evt.layer);
-		let layerProps = evt.layer.values;
-		if (!layerProps.layers) {
+		if (!evt.layer.get("layers")) {
 			let btnDiv = evt.li.querySelector(".ol-layerswitcher-buttons");
-			if (layerProps.layerInfo) {
+			if (!evt.layer.get("layerInfo")) {
 				let newBtn = document.createElement("div");
 				newBtn.classList.add("layerInfo");
 				btnDiv.appendChild(newBtn); 
 			}
-			if (layerProps.layerExtent) {
+			if (!evt.layer.get("layerExtent")) {
 				let newBtn = document.createElement("div");
 				newBtn.classList.add("layerExtent");
 				btnDiv.appendChild(newBtn); 

@@ -86,8 +86,7 @@ window.onload = (event) => {
 		mouseover: false  	/* Show on mouseover */
 	});
 
-	switcher.on("drawlist", (evt) => {
-		console.log(evt.layer);
+	switcher.on("drawlist", (evt) => {		
 		let btnDiv = evt.li.querySelector(".ol-layerswitcher-buttons");
 		if (evt.layer.get("layerExtent") === true) {
 			let newBtn = document.createElement("div");
@@ -96,6 +95,8 @@ window.onload = (event) => {
 			btnDiv.appendChild(newBtn); 
 			let layer = evt.layer;
 			newBtn.addEventListener("click", () => {
+				console.log(layer.getExtent());
+				console.log(map);
 				map.getView().fit(layer.getExtent(), map.getSize());
 			});
 		}

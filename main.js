@@ -17,8 +17,8 @@ window.onload = (event) => {
 	 * List of tips for internationalisation purposes
 	 */
 	LayerSwitcher.prototype.tip = {
-		up: "Re-order layers up",
-		down: "Re-order layers down",
+		up: "Re-order layers in stack",
+		down: "Re-order layers in stack",
 		info: "Layer legend and metadata",
 		extent: "Zoom to layer extent",
 		trash: "Remove layer",
@@ -41,18 +41,17 @@ window.onload = (event) => {
 	 */
 	let switcher = new LayerSwitcher({
 		show_progress: false,
-		mouseover: true,  	/* Show on mouseover */
-		extent: true		/* Zoom to layer extent button */
+		mouseover: true  	/* Show on mouseover */
 	});
 
 	switcher.on("drawlist", (evt) => {
 		console.log(evt.layer);
 		let btnDiv = evt.li.querySelector(".ol-layerswitcher-buttons");
-		if (evt.layer.get("layers") || evt.layer.get("layerExtent") !== true) {
-			let ztlBtn = btnDiv.querySelector(".layerExtent");
-			if (ztlBtn) {
-				ztlBtn.classList.remove("layerExtent");
-			}
+		if (evt.layer.get("layerExtent") === true) {
+			let newBtn = document.createElement("div");
+			newBtn.setAttribute("title", switcher.tip.extent);
+			newBtn.classList.add("layerExtent");
+			btnDiv.appendChild(newBtn); 
 		}
 		if (evt.layer.get("layerInfo") === true) {
 			let newBtn = document.createElement("div");

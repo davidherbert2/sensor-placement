@@ -94,11 +94,7 @@ window.onload = (event) => {
 			newBtn.classList.add("layerExtent");
 			btnDiv.appendChild(newBtn); 
 			let layer = evt.layer;
-			newBtn.addEventListener("click", () => {
-				console.log(layer.getExtent());
-				console.log(map);
-				map.getView().fit(layer.getExtent(), map.getSize());
-			});
+			newBtn.addEventListener("click", conf.MAP_SIZING_FACTORY(map, layer.getExtent()));
 		}
 		if (evt.layer.get("layerInfo") === true) {
 			let newBtn = document.createElement("div");

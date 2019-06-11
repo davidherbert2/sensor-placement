@@ -67,6 +67,12 @@ const HEX2RGBA = (hex, alpha = 1) => {
 	return `rgba(${r},${g},${b},${alpha})`;
 };
 
+export const MAP_SIZING_FACTORY = (map, extent) => {
+	return((evt) => {
+		return(map.getView().fit(extent, map.getSize()));
+	});
+};
+
 /**
  * Return a GeoJSON source pointing to the given typename
  * @param {string} feature - the name of the data layer, namespaced if necessary

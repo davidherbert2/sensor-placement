@@ -46,10 +46,12 @@ window.onload = (event) => {
 	});
 
 	switcher.on("drawlist", (evt) => {
-		let li = evt.li;
-		console.log(li.querySelector(".ol-layerswitcher-buttons"));
+		let btnDiv = evt.li.querySelector(".ol-layerswitcher-buttons");
+		newBtn = document.createElement("div");
+		newBtn.classList.add("layerInfo");
+		btnDiv.appendChild(newBtn);
 	});
-		
+
 	/**
 	 * Create the map and layer tree
 	 */

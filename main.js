@@ -54,6 +54,7 @@ window.onload = (event) => {
 		console.log(evt);
 	});
 	
+	
 	/**
 	 * Create the map and layer tree
 	 */

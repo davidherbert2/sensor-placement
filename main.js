@@ -49,7 +49,7 @@ window.onload = (event) => {
 		let btnDiv = evt.li.querySelector(".ol-layerswitcher-buttons");
 		newBtn = document.createElement("div");
 		newBtn.classList.add("layerInfo");
-		btnDiv.appendChild(newBtn);
+		btnDiv.appendChild(newBtn); 
 	});
 
 	/**

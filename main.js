@@ -69,13 +69,18 @@ window.onload = (event) => {
 		layers: [
 			new LayerGroup({
 				"title": "Base maps",
-				"fold": "open",
+				"fold": "closed",
 				"layers": [osmLayer]
 			}),			
 			new LayerGroup({
 				"title": "Office of National Statistics",
 				"fold": "open",
-				"layers": [laLayer, lsoaLayer, oaLayer, imdLayer, disabilityLayer]
+				"layers": [imdLayer, disabilityLayer]
+			}),
+			new LayerGroup({
+				"title": "Boundaries",
+				"fold": "closed",
+				"layers": [laLayer, lsoaLayer, oaLayer]
 			}),
 			new LayerGroup({
 				"title": "Urban Observatory",

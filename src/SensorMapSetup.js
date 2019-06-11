@@ -69,7 +69,7 @@ const HEX2RGBA = (hex, alpha = 1) => {
 
 export const MAP_SIZING_FACTORY = (map, extent) => {
 	return((evt) => {
-		return(map.getView().fit(extent, map.getSize()));
+		return(map.getView().fit(NEWCASTLE_CENTRE_3857, map.getSize()));
 	});
 };
 

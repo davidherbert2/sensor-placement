@@ -85,6 +85,7 @@ window.onload = (event) => {
 		show_progress: false,
 		mouseover: false  	/* Show on mouseover */
 	});
+	map.addControl(switcher);
 
 	switcher.on("drawlist", (evt) => {		
 		let btnDiv = evt.li.querySelector(".ol-layerswitcher-buttons");
@@ -103,8 +104,6 @@ window.onload = (event) => {
 			btnDiv.appendChild(newBtn); 
 		}
 	});
-
-	map.addControl(switcher);
 	
 	/**
 	 * Assign click/hover handlers for layers 

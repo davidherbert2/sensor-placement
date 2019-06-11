@@ -35,6 +35,23 @@ window.onload = (event) => {
 	let oaLayer    	 	= conf.OA();
 	let imdLayer    	= conf.IMD();
 	let disabilityLayer = conf.DISABILITY();
+
+	/**
+	 * Layer switcher 
+	 */
+	let switcher = new LayerSwitcher({
+		show_progress: false,
+		mouseover: true,  	/* Show on mouseover */
+		extent: true   		/* Zoom to extent */
+	});
+
+	switcher.on("drawlist", (evt) => {
+		console.log(evt);
+	});
+
+	switcher.on("info", (evt) => {
+		console.log(evt);
+	});
 	
 	/**
 	 * Create the map and layer tree
@@ -70,12 +87,7 @@ window.onload = (event) => {
 				}
 			}),
 			new Zoom(),
-			new LayerSwitcher({
-				show_progress: false,
-				mouseover: true,  	/* Show on mouseover */
-				oninfo: true,		/* Show info button */
-				extent: true   		/* Zoom to extent */
-			})
+			switcher
 		]
 	});	
 	

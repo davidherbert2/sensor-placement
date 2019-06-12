@@ -78,6 +78,11 @@ const HEX2RGBA = (hex, alpha = 1) => {
 	return `rgba(${r},${g},${b},${alpha})`;
 };
 
+/**
+ * Return a function to resize the map according to the extent of the supplied layer
+ * @param {ol.Map} map 
+ * @param {ol.Layer} layer 
+ */
 export const MAP_SIZING_FACTORY = (map, layer) => {
 	let source = layer.getSource();
 	let featureType = null;
@@ -102,10 +107,11 @@ export const MAP_SIZING_FACTORY = (map, layer) => {
 			fetch(`${GEOSERVER_REST}/featuretypes/${nonNsFeatureType}.json`)
 			.then(r => r.json())
 			.then(jsonResponse => {
-				let nbbox = jsonResponse["featureType"]["nativeBoundingBox"];
+				let nbbox = jsonResponse["featureType"]["latLonBoundingBox"];
 				let extent = NEWCASTLE_CENTRE_3857;
 				if (nbbox) {
-					extent = [nbbox.minx, nbbox.miny, nbbox.maxx, nbbox.maxy];
+					/* Reproject the bounding box from lat/lon to Speherical Mercator */
+					extent = [fromLonLat([nbbox.minx, nbbox.miny]), fromLonLat([nbbox.maxx, nbbox.maxy])].flat();
 				}
 				return(map.getView().fit(extent, {
 					size: map.getSize(),

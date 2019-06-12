@@ -13,6 +13,7 @@ import GeoJSON from "ol/format/GeoJSON";
 import TileLayer from "ol/layer/Tile";
 import OSM from "ol/source/OSM";
 import TileWMS from "ol/source/TileWMS"
+import Cluster from "ol/source/Cluster";
 
 import InteractiveVectorLayer from "./InteractiveVectorLayer.js";
 

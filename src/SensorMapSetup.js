@@ -102,7 +102,7 @@ export const MAP_SIZING_FACTORY = (map, layer) => {
 			fetch(`${GEOSERVER_REST}/featuretypes/${nonNsFeatureType}.json`)
 			.then(r => r.json())
 			.then(jsonResponse => {
-				let nbbox = jsonResponse["nativeBoundingBox"];
+				let nbbox = jsonResponse["featureType"]["nativeBoundingBox"];
 				let extent = NEWCASTLE_CENTRE_3857;
 				if (nbbox) {
 					extent = [nnbox.minx. nbbox.miny, nbbox.maxx, nbbox.maxy];

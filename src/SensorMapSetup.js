@@ -103,6 +103,7 @@ export const MAP_SIZING_FACTORY = (map, layer) => {
 	}
 	return((evt) => {
 		if (featureType) {
+			/* Call Geoserver REST API to get layer extent */
 			let nonNsFeatureType = featureType.split(":").pop();
 			fetch(`${GEOSERVER_REST}/featuretypes/${nonNsFeatureType}.json`)
 			.then(r => r.json())
@@ -123,7 +124,14 @@ export const MAP_SIZING_FACTORY = (map, layer) => {
 				console.log(error);
 				alert("Failed to get metadata for layer");
 			});		
-		}			
+		} else if (source && source instanceof VectorSource) {
+			/* Extent from features if possible */
+			return(map.getView().fit(source.getExtent(), {
+				size: map.getSize(),
+				nearest: true,
+				padding: [20, 20, 20, 20]
+			}));
+		}
 	});
 };
 

@@ -107,7 +107,11 @@ export const MAP_SIZING_FACTORY = (map, layer) => {
 				if (nbbox) {
 					extent = [nnbox.minx. nbbox.miny, nbbox.maxx, nbbox.maxy];
 				}
-				return(map.getView().fit(extent, map.getSize()));
+				return(map.getView().fit(extent, {
+					size: map.getSize(),
+					nearest: true,
+					padding: [20, 20, 20, 20]
+				}));
 			})
 			.catch(error => {
 				console.log(error);

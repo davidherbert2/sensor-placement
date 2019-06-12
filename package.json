@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "npm run css-watch && parcel index.html",
-    "build": "parcel build --public-url . index.html",
+    "build": "parcel build --experimental-scope-hoisting --public-url . index.html",
     "css-build": "node-sass --omit-source-map-url sass/main.scss css/main.css",
     "css-watch": "npm run css-build -- --watch"
   },

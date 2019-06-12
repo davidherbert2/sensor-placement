@@ -26,6 +26,16 @@ const MAP_PROJECTION = "EPSG:3857";
  */
 const AWS_INSTANCE = "http://ec2-18-209-223-88.compute-1.amazonaws.com:8080";
 const PROXY = `${AWS_INSTANCE}/sensor-placement/cgi-bin/uo_wrapper.py`;
+
+/**
+ *  Geoserver params 
+ */
+const GEOSERVER_ENDPOINT = `${AWS_INSTANCE}/geoserver`;
+const GEOSERVER_WORKSPACE = "siss";
+const GEOSERVER_PG_STORE = "pg_store";
+const GEOSERVER_WMS = `${GEOSERVER_ENDPOINT}/${GEOSERVER_WORKSPACE}/wms`				
+const GEOSERVER_WFS = `${GEOSERVER_ENDPOINT}/${GEOSERVER_WORKSPACE}/wfs?service=WFS&version=2.0.0&request=GetFeature&outputFormat=application/json&srsname=${MAP_PROJECTION}`
+const GEOSERVER_REST = `${GEOSERVER_ENDPOINT}/rest/workspaces/${GEOSERVER_WORKSPACE}/datastores/${GEOSERVER_PG_STORE}`
  
 /**
  * Urban Observatory API endpoint
@@ -67,9 +77,37 @@ const HEX2RGBA = (hex, alpha = 1) => {
 	return `rgba(${r},${g},${b},${alpha})`;
 };
 
-export const MAP_SIZING_FACTORY = (map, extent) => {
+export const MAP_SIZING_FACTORY = (map, layer) => {
+	let source = layer.getSource();
+	let featureType = null;
+	if (source instanceof TileWMS) {
+		/* Tile WMS layer */
+		featureType = source.getParams()["layers"];
+	} else {
+		if (source instanceof Cluster) {
+			/* Cluster layer */
+			source = source.getSource();
+		} 
+		/* Vectors here */
+		let url = source.getUrl();
+		let qry = new URLSearchParams(url.substring(url.indexOf("?") + 1));
+		featureType = qry.get("typename");		
+	}
 	return((evt) => {
-		return(map.getView().fit(NEWCASTLE_CENTRE_3857, map.getSize()));
+		fetch(`${GEOSERVER_REST}/featuretypes/${featureType}.json`)
+			.then(r => r.json())
+			.then(jsonResponse => {
+				let nbbox = jsonResponse["nativeBoundingBox"];
+				let extent = NEWCASTLE_CENTRE_3857;
+				if (nbbox) {
+					extent = [nnbox.minx. nbbox.miny, nbbox.maxx, nbbox.maxy];
+				}
+				return(map.getView().fit(extent, map.getSize()));
+			})
+			.catch(error => {
+				console.log(error);
+				alert("Failed to get metadata for layer");
+			});			
 	});
 };
 
@@ -82,13 +120,7 @@ const GEOJSON_SOURCE = (feature) => {
 	return({ /* Source options */
 		format: new GeoJSON(),
 		url: (extent) => {
-			return(`
-				${AWS_INSTANCE}/geoserver/siss/wfs?service=WFS&
-				version=2.0.0&request=GetFeature&typename=${feature}&
-				outputFormat=application/json&srsname=${MAP_PROJECTION}&bbox=
-				` 
-				+ extent.join(",") + `,${MAP_PROJECTION}`
-			);
+			return(`${GEOSERVER_WFS}&typename=${feature}&bbox=` + extent.join(",") + `,${MAP_PROJECTION}`);
 		},
 		strategy: bboxStrategy,
 		overlaps: false,
@@ -228,7 +260,7 @@ export const IMD = () => {
 		layerInfo: true,
 		opacity: 0.6,
 		source: new TileWMS({
-			url: `${AWS_INSTANCE}/geoserver/siss/wms`,
+			url: GEOSERVER_WMS,
 			params: {
 				layers: "siss:imd_2015_by_lsoa",
 				serverType: "geoserver",
@@ -250,7 +282,7 @@ export const DISABILITY = () => {
 		layerInfo: true,
 		opacity: 0.6,
 		source: new TileWMS({
-			url: `${AWS_INSTANCE}/geoserver/siss/wms`,
+			url: GEOSERVER_WMS,
 			params: {
 				layers: "siss:disability_2015_by_lsoa",
 				serverType: "geoserver",

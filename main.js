@@ -94,7 +94,7 @@ window.onload = (event) => {
 			newBtn.setAttribute("title", switcher.tip.extent);
 			newBtn.classList.add("layerExtent");
 			btnDiv.appendChild(newBtn); 
-			//newBtn.addEventListener("click", conf.MAP_SIZING_FACTORY(map, evt.layer));
+			newBtn.addEventListener("click", conf.MAP_SIZING_FACTORY(map, evt.layer));
 		}
 		if (evt.layer.get("layerInfo") === true) {
 			let newBtn = document.createElement("div");

@@ -91,11 +91,14 @@ export const MAP_SIZING_FACTORY = (map, layer) => {
 		} 
 		/* Vectors here */
 		let url = source.getUrl();
-		let qry = new URLSearchParams(url.substring(url.indexOf("?") + 1));
-		featureType = qry.get("typename");		
+		if (url) {
+			let qry = new URLSearchParams(url.substring(url.indexOf("?") + 1));
+			featureType = qry.get("typename");		
+		}		
 	}
 	return((evt) => {
-		fetch(`${GEOSERVER_REST}/featuretypes/${featureType}.json`)
+		if (featureType) {
+			fetch(`${GEOSERVER_REST}/featuretypes/${featureType}.json`)
 			.then(r => r.json())
 			.then(jsonResponse => {
 				let nbbox = jsonResponse["nativeBoundingBox"];
@@ -108,7 +111,8 @@ export const MAP_SIZING_FACTORY = (map, layer) => {
 			.catch(error => {
 				console.log(error);
 				alert("Failed to get metadata for layer");
-			});			
+			});		
+		}			
 	});
 };
 

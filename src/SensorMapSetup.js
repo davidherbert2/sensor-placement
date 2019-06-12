@@ -98,7 +98,8 @@ export const MAP_SIZING_FACTORY = (map, layer) => {
 	}
 	return((evt) => {
 		if (featureType) {
-			fetch(`${GEOSERVER_REST}/featuretypes/${featureType}.json`)
+			let nonNsFeatureType = featureType.split(":").pop();
+			fetch(`${GEOSERVER_REST}/featuretypes/${nonNsFeatureType}.json`)
 			.then(r => r.json())
 			.then(jsonResponse => {
 				let nbbox = jsonResponse["nativeBoundingBox"];

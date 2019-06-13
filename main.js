@@ -99,8 +99,9 @@ window.onload = (event) => {
 		if (evt.layer.get("layerInfo") === true) {
 			let newBtn = document.createElement("div");
 			newBtn.setAttribute("title", switcher.tip.info);
-			newBtn.classList.add("layerInfo");
+			newBtn.classList.add(["button", "popover-trigger", "layerInfo"]);
 			btnDiv.appendChild(newBtn); 
+			//TODO
 		}
 	});
 	

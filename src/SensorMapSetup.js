@@ -25,7 +25,7 @@ const MAP_PROJECTION = "EPSG:3857";
 /**
  * Address of Amazon AWS instance and proxy to circumvent CORS for the UO API
  */
-const AWS_INSTANCE = "http://ec2-18-209-223-88.compute-1.amazonaws.com:8080";
+const AWS_INSTANCE = "ec2-54-236-44-71.compute-1.amazonaws.com:8080";
 const PROXY = `${AWS_INSTANCE}/sensor-placement/cgi-bin/uo_wrapper.py`;
 
 /**

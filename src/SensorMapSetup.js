@@ -14,6 +14,7 @@ import TileLayer from "ol/layer/Tile";
 import OSM from "ol/source/OSM";
 import TileWMS from "ol/source/TileWMS"
 import Cluster from "ol/source/Cluster";
+import VectorSource from "ol/source/Vector";
 
 import InteractiveVectorLayer from "./InteractiveVectorLayer.js";
 
@@ -31,11 +32,11 @@ const PROXY = `${AWS_INSTANCE}/sensor-placement/cgi-bin/uo_wrapper.py`;
 /**
  *  Geoserver params 
  */
-const GEOSERVER_ENDPOINT = `${AWS_INSTANCE}/geoserver`;
+const GEOSERVER_ENDPOINT  = `${AWS_INSTANCE}/geoserver`;
 const GEOSERVER_WORKSPACE = "siss";
-const GEOSERVER_PG_STORE = "pg_store";
-const GEOSERVER_WMS = `${GEOSERVER_ENDPOINT}/${GEOSERVER_WORKSPACE}/wms`				
-const GEOSERVER_WFS = `${GEOSERVER_ENDPOINT}/${GEOSERVER_WORKSPACE}/wfs?service=WFS&version=2.0.0&request=GetFeature&outputFormat=application/json&srsname=${MAP_PROJECTION}`
+const GEOSERVER_PG_STORE  = "pg_store";
+const GEOSERVER_WMS  = `${GEOSERVER_ENDPOINT}/${GEOSERVER_WORKSPACE}/wms`				
+const GEOSERVER_WFS  = `${GEOSERVER_ENDPOINT}/${GEOSERVER_WORKSPACE}/wfs?service=WFS&version=2.0.0&request=GetFeature&outputFormat=application/json&srsname=${MAP_PROJECTION}`
 const GEOSERVER_REST = `${GEOSERVER_ENDPOINT}/rest/workspaces/${GEOSERVER_WORKSPACE}/datastores/${GEOSERVER_PG_STORE}`
  
 /**
@@ -79,11 +80,11 @@ const HEX2RGBA = (hex, alpha = 1) => {
 };
 
 /**
- * Return a function to resize the map according to the extent of the supplied layer
- * @param {ol.Map} map 
+ * Return feature source and feature type for a layer
  * @param {ol.Layer} layer 
+ * @return {Array} source, feature type
  */
-export const MAP_SIZING_FACTORY = (map, layer) => {
+const SOURCE_AND_FEATURE = (layer) => {
 	let source = layer.getSource();
 	let featureType = null;
 	if (source instanceof TileWMS) {
@@ -95,12 +96,25 @@ export const MAP_SIZING_FACTORY = (map, layer) => {
 			source = source.getSource();
 		} 
 		/* Vectors here */
-		let url = source.getUrl();
-		if (url) {
-			let qry = new URLSearchParams(url.substring(url.indexOf("?") + 1));
-			featureType = qry.get("typename");		
+		if (typeof source.getUrl == "function") {
+			let url = source.getUrl();
+			if (url) {
+				let qry = new URLSearchParams(url.substring(url.indexOf("?") + 1));
+				featureType = qry.get("typename");		
+			}		
 		}		
 	}
+	return([source, featureType]);
+};
+
+/**
+ * Return a function to resize the map according to the extent of the supplied layer
+ * @param {ol.Map} map 
+ * @param {ol.Layer} layer 
+ */
+export const MAP_SIZING_FACTORY = (map, layer) => {
+	let source = featureType = null;
+	[source, featureType] = SOURCE_AND_FEATURE(layer);
 	return((evt) => {
 		if (featureType) {
 			/* Call Geoserver REST API to get layer extent */
@@ -133,6 +147,24 @@ export const MAP_SIZING_FACTORY = (map, layer) => {
 			}));
 		}
 	});
+};
+
+/**
+ * Return a function to flash a legend for the given layer in a div.layer-legend
+ * @param {ol.Layer} layer 
+ */
+export const LEGEND_FACTORY = (layer) => {
+	let source = featureType = null;
+	[source, featureType] = SOURCE_AND_FEATURE(layer);
+	let glg = `${GEOSERVER_WMS}?request=GetLegendGraphic&version=1.3.0&format=image/png&width=20&height=20&layer=${featureType}`;
+	return((evt) => {
+		let legendDiv = document.querySelector("div.layer-legend");
+		if (legendDiv) {
+			legendDiv.style.display = "block";
+			legendDiv.innerHTML = `<img src="${glg}" alt="legend"/>`;
+		}
+	});
+	
 };
 
 /**

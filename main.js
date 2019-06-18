@@ -89,19 +89,30 @@ window.onload = (event) => {
 
 	switcher.on("drawlist", (evt) => {		
 		let btnDiv = evt.li.querySelector(".ol-layerswitcher-buttons");
-		if (evt.layer.get("layerExtent") === true) {
+		let layer = evt.layer;
+		if (layer.get("layerExtent") === true) {
 			let newBtn = document.createElement("div");
 			newBtn.setAttribute("title", switcher.tip.extent);
 			newBtn.classList.add("layerExtent");
-			btnDiv.appendChild(newBtn); 
-			newBtn.addEventListener("click", conf.MAP_SIZING_FACTORY(map, evt.layer));
+			btnDiv.appendChild(newBtn);
+			if (layer.getVisible()) {
+				newBtn.addEventListener("click", conf.MAP_SIZING_FACTORY(map, layer));
+			} else {
+				newBtn.classList.add("layerExtent-disabled");
+			}					
 		}
 		if (evt.layer.get("layerInfo") === true) {
 			let newBtn = document.createElement("div");
 			newBtn.setAttribute("title", switcher.tip.info);
-			newBtn.classList.add(["button", "popover-trigger", "layerInfo"]);
+			newBtn.classList.add(["layerInfo"]);
 			btnDiv.appendChild(newBtn); 
-			//TODO
+			btnDiv.addEventListener("mouseover", conf.LEGEND_FACTORY(layer));			
+			btnDiv.addEventListener("mouseout", evt => {
+				let legendDiv = document.querySelector("div.layer-legend");
+				if (legendDiv) {
+					legendDiv.style.display = "none";
+				}
+			});
 		}
 	});
 	

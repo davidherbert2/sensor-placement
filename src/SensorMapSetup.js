@@ -96,12 +96,13 @@ const SOURCE_AND_FEATURE = (layer) => {
 			source = source.getSource();
 		} 
 		/* Vectors here */
-		if (typeof source.getUrl == "function") {
+		try {
 			let url = source.getUrl();
 			if (url) {
 				let qry = new URLSearchParams(url.substring(url.indexOf("?") + 1));
 				featureType = qry.get("typename");		
 			}		
+		} catch(e) {			
 		}		
 	}
 	return([source, featureType]);

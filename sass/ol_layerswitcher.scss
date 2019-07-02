@@ -42,27 +42,11 @@
     border-bottom-right-radius: 30px;
 }
 
-.ol-layerswitcher-control ul.layer-label-list {
-    list-style: none;
+.ol-layerswitcher-control a[id^="do-layer"] {
+    display: inline-block;
 }
 
-.ol-layerswitcher-control ul.layer-icon-list {
-    list-style: none;
-}
-
-.ol-layerswitcher-control li.layer-label > div.label-wrapper {    
-    display: inline-block; 
-    
-}
-
-.ol-layerswitcher-control li.layer-icon > div.icon-wrapper {    
-    display: inline-block; 
-    text-align: center; 
-    width: 100%;
-    height: 30px;
-}
-
-li.layer-label > a {
+.ol-layerswitcher-control a[id^="do-layer"]:first-child {
     color: darkslategray;
     display: inline-block;
     font-size: 0.9em;
@@ -75,29 +59,33 @@ li.layer-label > a {
     overflow: hidden;
     vertical-align: top;
     width: 155px;
-    height: 30px;    
+    height: 30px;  
 }
 
-li.layer-label > a.level2 {
+.ol-layerswitcher-control a[id^="do-layer"] div.icon-wrapper {    
+    color: white;
+    display: inline-block; 
+    text-align: center; 
+    width: 100%;
+    height: 30px;
+}
+
+.ol-layerswitcher-control a[id^="do-layer"] div.icon-wrapper:hover {    
+    background-color: darkslategray;
+}
+
+div.level2 {
     font-size: 0.75em;
 }
 
-li.layer-label > a:hover {
+.ol-layerswitcher-control a[id^="do-layer"]:first-child:hover {
     color: white;
     background-color: black;
     opacity: 0.6;
     border-radius: 15px;
 }
 
-li.layer-icon > div.icon-wrapper > a {
-    color: white;
-}
-
-li.layer-icon div.icon-wrapper:hover {
-    background-color: darkslategray;
-}
-
-div.icon-wrapper > a > span {
+div.icon-wrapper > span {
     font-size: 0.65em;
     font-weight: bolder;
 }

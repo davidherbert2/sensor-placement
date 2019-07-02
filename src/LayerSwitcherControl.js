@@ -37,36 +37,20 @@ export default class LayerSwitcherControl extends Control {
         /* Unpack custom options */
         this._layers = options.layers;
 
-        /* Create the side-by-side divs */
+        /* Create the switcher header and footer */
         this.element.innerHTML = `
             <div class="box-row">
                 <div class="box-cell left-cell"></div>
                 <div class="box-cell right-cell control-header"></div>
-            </div>
-            <div class="box-row">
-                <div class="box-cell left-cell">
-                    <ul class="layer-label-list">
-                    </ul>
-                </div>
-                <div class="box-cell right-cell">
-                    <ul class="layer-icon-list">
-                    </ul>
-                </div>
-            </div>
+            </div>            
             <div class="box-row">
                 <div class="box-cell left-cell"></div>
                 <div class="box-cell right-cell control-footer"></div>
             </div>
         `;
-
+        
         /* Layer mapping */
-        this._layerCatalogue = {};
-
-        /* Find label list element */
-        this._layerLabelUl = this.element.querySelector(".layer-label-list");
-
-        /* Find icon list element */
-        this._layerIconUl = this.element.querySelector(".layer-icon-list");
+        this._layerCatalogue = {};        
 
         if (Array.isArray(this._layers)) {
             this._layers.forEach(layer => {
@@ -91,30 +75,25 @@ export default class LayerSwitcherControl extends Control {
         let layerId = utils.UUID4();
         this._layerCatalogue[layerId] = layer;
 
-        /* Render layer label */
-        let labelLi = document.createElement("li");
-        let fClass = level > 1 ? ` class="level2"` : "";
-        labelLi.className = "layer-label";
-        labelLi.innerHTML = `<a id="vis1-${layerId}"${fClass} href="Javascript:void(0)" title="${title}">${title}</a>`;
-        this._layerLabelUl.appendChild(labelLi);
+        /* Create the new row */
+        let insertAt = this.element.lastChild;
+        let levelCls = level > 1 ? ` class="level2"` : "";
+        let layerDiv = document.createElement("div");
+        layerDiv.className = "box-row";
 
-        /* Render layer icon */
-        let iconLi = document.createElement("li");
-        iconLi.className = "layer-icon";
-        let iconString = "";
-        if (icon.startsWith("literal:")) {
-            let iText = icon.replace(/^literal:/, "");
-            iconString = `<span class="icon-string">${iText}</span>`;
-        } else {
-            iconString = `<i class="fa fa-${icon}"></i>`;
-        }
-        iconLi.innerHTML = `
-            <div class="icon-wrapper">
-                <a id="vis2-${layerId}" href="Javascript:void(0)" title="${title}">
-                    ${iconString}
-                </a>
-            </div>`;
-        this._layerIconUl.appendChild(iconLi);
+        /* Decide on the icon, if any, or a text literal */
+        let iconString = icon.startsWith("literal:") 
+            ? `<span class="icon-string">${icon.replace(/^literal:/, "")}</span>`
+            : `<i class="fa fa-${icon}"></i>`;
+
+        layerDiv.innerHTML = 
+            `<a id="do-layer-${layerId}"${levelCls} href="Javascript:void(0)" title="${title}">
+                <div class="box-cell left-cell">${title}</div>
+                <div class="box-cell right-cell">
+                    <div class="icon-wrapper">${iconString}</div>
+                </div>
+            </a>`;
+        this.element.insertBefore(layerDiv, insertAt);
 
         if (layer instanceof LayerGroup) {            
             layer.getLayers().forEach(lyr => {

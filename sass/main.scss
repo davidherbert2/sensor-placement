@@ -1,18 +1,18 @@
 @charset "utf-8";
 
-//$body-size: 0.75em;
-
 @import "../node_modules/bulma/bulma.sass";
 @import "ol_popup";
-@import "../node_modules/ol-ext/control/LayerSwitcher";
 @import "ol_layerswitcher";
+@import "ol_zoom";
+@import "ol_mouse_position";
 
 @import "../node_modules/ol/ol.css";
 
 $ol-map-width: 100%;
-$ol-map-height: 600px;
+$ol-map-height: 100%;
 
-.map {
+body, html, .fullscreen-map, .map {
     width: $ol-map-width;
     height: $ol-map-height;
+    overflow: hidden;
 }

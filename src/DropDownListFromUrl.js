@@ -8,7 +8,7 @@ import DropDownList from "./DropDownList.js";
  */
 export default class DropDownListFromUrl extends DropDownList {		
 
-    /**
+  /**
 	 * Create a custom HTML drop-down list with options populated from a web service at 'url'
 	 * @param {Object} element - the DOM element to append the new drop-down to
 	 * @param {string} url - URL data endpoint
@@ -18,8 +18,8 @@ export default class DropDownListFromUrl extends DropDownList {
 	 * @param {boolean} [horizontal=false] - label beside field (true) or above (false)
 	 */
     constructor (element, url, id = null, cls = null, label = "", horizontal = false) {		
-		super(element, id, cls, label, horizontal);
-		this._url = url;
+				super(element, id, cls, label, horizontal);
+				this._url = url;
     }
 	
 	/**
@@ -32,24 +32,24 @@ export default class DropDownListFromUrl extends DropDownList {
 	 * @param {string} [prompt=Please select] - default prompt inviting selection
 	 */
 	populate(parms, arrname, defval = "", sortby = "Name", sortdir = "ascending", prompt = "Please select") {
-		let fetchUrl = this._url;
-		if (typeof parms == "object") {
-			let queryString = Object.keys(parms).map(key => key + "=" + parms[key]).join("&");
-			fetchUrl = fetchUrl + (queryString ? ("?" + queryString) : "");
-		}
-		fetch(fetchUrl)
-			.then(r => r.json())
-			.then(data => {
-				let dataArr = data[arrname];
-				dataArr.sort((a, b) => (sortdir == "ascending" ? (a[sortby] > b[sortby] ? 1 : -1) : (a[sortby] < b[sortby] ? 1 : -1)));
-				this.empty();
-				this._dd.appendChild(this.createOption(prompt, prompt, false));
-				dataArr.forEach((elt, idx) => {
-					let optVal = elt[sortby];
-					this._dd.appendChild(this.createOption(optVal, optVal, optVal.value == defval));
-				});
-			})
-			.catch(error => console.log(error));
+			let fetchUrl = this._url;
+			if (typeof parms == "object") {
+					let queryString = Object.keys(parms).map(key => key + "=" + parms[key]).join("&");
+					fetchUrl = fetchUrl + (queryString ? ("?" + queryString) : "");
+			}
+			fetch(fetchUrl)
+				.then(r => r.json())
+				.then(data => {
+						let dataArr = data[arrname];
+						dataArr.sort((a, b) => (sortdir == "ascending" ? (a[sortby] > b[sortby] ? 1 : -1) : (a[sortby] < b[sortby] ? 1 : -1)));
+						this.empty();
+						this._dd.appendChild(this.createOption(prompt, prompt, false));
+						dataArr.forEach((elt, idx) => {
+								let optVal = elt[sortby];
+								this._dd.appendChild(this.createOption(optVal, optVal, optVal.value == defval));
+						});
+				})
+				.catch(error => console.log(error));
 	}
 	
 }

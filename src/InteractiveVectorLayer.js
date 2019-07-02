@@ -12,15 +12,17 @@ import FeatureClusterPopover from "./FeatureClusterPopover.js";
 export default class InteractiveVectorLayer extends VectorLayer {
 
 	/**
-	 * Create a generalised map popover overlay
+	 * Create an interactive vector layer (optional hover and/or click interactions)
 	 * @param {Object} ]layerOpts={type: "overlay", cluster: false, visible: false}] - layer options, passed direct to the underlying layer
 	 * @param {Object} [sourceOpts={wrapX: false}] - vector source options, passed to the underlying vector source
 	 * @param {Object} [hoverOpts={}] - options for map hovers
 	 * @param {Object} [clickOpts={}] - options for map clicks
 	 */
 	constructor(layerOpts = {type: "overlay", cluster: false, visible: false}, sourceOpts = {wrapX: false}, hoverOpts = {}, clickOpts = {}) {
-		super(layerOpts);
-		this._featureSource = new VectorSource(sourceOpts);
+
+        super(layerOpts);
+        
+        this._featureSource = new VectorSource(sourceOpts);
 		let source = this._featureSource;
 		if (layerOpts.cluster) {
 			source = new Cluster({
@@ -72,17 +74,21 @@ export default class InteractiveVectorLayer extends VectorLayer {
 
 		/* Check in range of visibility and clear highlight if out of range */
 		map.getView().on("change:resolution", evt => {
-			let res = map.getView().getResolution();
-			if (res <= this.getMinResolution() || res >= this.getMaxResolution()) {
-				this._hoverOverlay.getSource().clear();
-				this._highlight = null;
-			}
+            if (this._hoverInteract) {
+                let res = map.getView().getResolution();
+                if (res <= this.getMinResolution() || res >= this.getMaxResolution()) {
+                    this._hoverOverlay.getSource().clear();
+                    this._highlight = null;
+                }
+            }			
 		});
 
 		/* Remove overlay when layer visibility changes */
 		this.on("change:visible", evt => {
-			this._hoverOverlay.getSource().clear();
-			this._highlight = null;
+            if (this._hoverInteract) {
+                this._hoverOverlay.getSource().clear();
+                this._highlight = null;
+            }
 		});
 		
 		if (this._hoverInteract) {

@@ -40,21 +40,22 @@ export default class LayerSwitcherControl extends Control {
         /* Create the switcher header and footer */
         this.element.innerHTML = `
             <div class="box-row">
-                <div class="box-cell left-cell"></div>
-                <div class="box-cell right-cell control-header"></div>
+                <a id="do-layer-head">
+                    <div class="box-cell left-cell"></div>
+                    <div class="box-cell right-cell header-element"></div>
+                </a>
             </div>            
             <div class="box-row">
-                <div class="box-cell left-cell"></div>
-                <div class="box-cell right-cell control-footer"></div>
+                <a id="do-layer-foot">
+                    <div class="box-cell left-cell"></div>
+                    <div class="box-cell right-cell footer-element"></div>
+                </a>
             </div>
         `;
         
-        /* Layer mapping */
-        this._layerCatalogue = {};        
-
         if (Array.isArray(this._layers)) {
             this._layers.forEach(layer => {
-                this._displayLayer(layer); 
+                this._displayLayer(layer, 1, true); 
             });            
         }
     }
@@ -63,43 +64,85 @@ export default class LayerSwitcherControl extends Control {
      * Display the switcher entry for a layer/group
      * @param {ol.Layer|ol.LayerGroup} layer 
      * @param {integer} level 
-     * @param {boolean} expanded
+     * @param {boolean} shown
      */
-    _displayLayer(layer, level = 1, expanded = false) {
+    _displayLayer(layer, level = 1, shown = true) {
 
         let opts = layer.get("switcherOpts") || {};
         let title = layer.get("title");
         let icon = opts.icon || "question";
+        let isGroup = layer instanceof LayerGroup;
 
         /* Record in catalogue */
         let layerId = utils.UUID4();
-        this._layerCatalogue[layerId] = layer;
+        layer.set("id", layerId);
 
         /* Create the new row */
-        let insertAt = this.element.lastChild;
-        let levelCls = level > 1 ? ` class="level2"` : "";
+        let insertAt = this.element.querySelector(".box-row:last-child");
         let layerDiv = document.createElement("div");
-        layerDiv.className = "box-row";
+        layerDiv.classList.add("box-row");
+        if (!shown) {
+            layerDiv.classList.add("row-hidden");
+        }
 
         /* Decide on the icon, if any, or a text literal */
         let iconString = icon.startsWith("literal:") 
-            ? `<span class="icon-string">${icon.replace(/^literal:/, "")}</span>`
-            : `<i class="fa fa-${icon}"></i>`;
+            ? `<span class="icon-string" style="vertical-align:bottom">${icon.replace(/^literal:/, "")}</span>`
+            : `<i class="fa fa-${icon}" style="vertical-align:bottom"></i>`;
+
+        let titleString = isGroup 
+            ? `<i class="fa fa-caret-${opts.expanded ? "up" : "down"}"></i>${title}`
+            : title;
 
         layerDiv.innerHTML = 
-            `<a id="do-layer-${layerId}"${levelCls} href="Javascript:void(0)" title="${title}">
-                <div class="box-cell left-cell">${title}</div>
+            `<a id="do-layer-${layerId}" class="level${level}" href="Javascript:void(0)" title="${title}">
+                <div class="box-cell left-cell general-element${opts.expanded ? " group-opened" : ""}">${titleString}</div>
                 <div class="box-cell right-cell">
                     <div class="icon-wrapper">${iconString}</div>
                 </div>
-            </a>`;
+            </a>`;        
         this.element.insertBefore(layerDiv, insertAt);
+        let layerAnchor = this.anchorFromId(layerId);
 
-        if (layer instanceof LayerGroup) {            
+        if (isGroup) {            
             layer.getLayers().forEach(lyr => {
                 this._displayLayer(lyr, level + 1, opts.expanded);
             });
+            /* Assign open/close group handler */
+            layerAnchor.addEventListener("click", evt => {
+                layer.getLayers().forEach(lyr => {
+                    let lyrDiv = this.anchorFromId(lyr.get("id")).parentNode;
+                    if (lyrDiv) {
+                        lyrDiv.classList.toggle("row-hidden");                        
+                    }
+                });
+                let titleCell = layerDiv.querySelector("div.left-cell");
+                let titleCaret = titleCell.querySelector("i");
+                if (titleCaret) {
+                    titleCaret.classList.toggle("fa-caret-up");
+                    titleCaret.classList.toggle("fa-caret-down");
+                }
+                titleCell.classList.toggle("group-opened");
+            });
+        } else {
+            /* Assign layer visibility on/off */
+            layerAnchor.addEventListener("click", evt => {
+                layer.setVisible(!layer.getVisible());
+                layerAnchor.querySelector("div.icon-wrapper").classList.toggle("layer-visible");
+            });
+            if (layer.getVisible()) {
+                layerAnchor.querySelector("div.icon-wrapper").classList.add("layer-visible");
+            }            
         }
+    }
+
+    /**
+     * Get the layer/group's <a> element from the layer/group id
+     * @param {string} id 
+     * @return {HTMLElement}
+     */
+    anchorFromId(id) {
+        return(this.element.querySelector(`a[id='do-layer-${id}']`));
     }
 
     /**
@@ -149,15 +192,11 @@ export default class LayerSwitcherControl extends Control {
             }
             /* Layer group visibility controls */
             let cb = btnDiv.querySelector("input");
-            console.log(btnDiv);
-            console.log(cb);
             if (cb) {
                 if (layer instanceof LayerGroup) {
                     /* Enable all layers on/off */
-                    console.log("Layer group");
                     cb.addEventListener("change", evt => {
                         let isChecked = evt.currentTarget.checked;
-                        console.log(`Listener, checked ${isChecked}`);
                         layer.getLayers().forEach(lyr => {
                             lyr.setVisible(isChecked);
                         });

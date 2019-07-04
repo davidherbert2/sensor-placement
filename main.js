@@ -3,6 +3,7 @@ import View from "ol/View";
 import LayerGroup from "ol/layer/Group";
 import {fromLonLat} from "ol/proj";
 import MousePosition from "ol/control/MousePosition";
+import ScaleLine from "ol/control/ScaleLine";
 import Zoom from "ol/control/Zoom";
 
 import * as geoconst from "./src/GeoConstants";
@@ -30,7 +31,7 @@ window.onload = () => {
         new LayerGroup({
             title: "Boundaries",
             switcherOpts: {
-                expanded: true,
+                expanded: false,
                 icon: "draw-polygon"
             },
             layers: [
@@ -77,12 +78,16 @@ window.onload = () => {
 				coordinateFormat: (coord) => {
 					return(`<strong>${coord[0].toFixed(4)},${coord[1].toFixed(4)}</strong>`);
 				}
-			}),
+            }),            
             new Zoom(),
             new LayerSwitcherControl({
                 layers: layers
             })
 		]
-	});	
+    });	
+    
+    map.addControl(new ScaleLine({
+        units: "metric"
+    }));
 	
 }

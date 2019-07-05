@@ -43,7 +43,7 @@ window.onload = () => {
         new LayerGroup({
             title: "Office of National Statistics",
             switcherOpts: {
-                expanded: true,
+                expanded: false,
                 icon: "user"
             },
             layers: [
@@ -55,7 +55,8 @@ window.onload = () => {
             title: "Base maps",
             switcherOpts: {
                 expanded: false,
-                icon: "map"
+                icon: "map",
+                base: true
             },
             layers: [layerspec.OPENSTREETMAP()]
         })		
@@ -69,7 +70,7 @@ window.onload = () => {
 		layers: layers,
 		view: new View({
 			center: fromLonLat(geoconst.NEWCASTLE_CENTROID),
-            zoom: 14,
+            zoom: 12,
             minZoom: 10
 		}),
 		controls: [

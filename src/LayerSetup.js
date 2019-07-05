@@ -103,10 +103,10 @@ const BOUNDARY_HOVER_OPTIONS = (col, opacity = 0.4, nameAttr = "name") => {
  */
 export const OPENSTREETMAP = () => {
 	return(new TileLayer({
-		title: "OpenStreetMap",
-		type: "base",
+        title: "OpenStreetMap",
+        type: "base",
         visible: true,
-        opacity: 0.6,
+        opacity: 0.7,
         zIndex: 1,
         switcherOpts: {
             icon: "literal:OSM",
@@ -124,9 +124,8 @@ export const LA = () => {
 	return(new InteractiveVectorLayer(
 		{ /* Layer options */
 			title: "Local Authority areas", 
-			type: "overlay", 
 			cluster: false,
-			visible: true,
+			visible: false,
 			minResolution: 10,
             extent: geoconst.NEWCASTLE_CENTRE_3857,
             zIndex: 100,
@@ -154,9 +153,8 @@ export const LSOA = () => {
 	return(new InteractiveVectorLayer(
 		{ /* Layer options */
 			title: "Lower Super Output Areas", 
-			type: "overlay", 
 			cluster: false,
-			visible: true,
+			visible: false,
 			minResolution: 2,
 			maxResolution: 20,
             extent: geoconst.NEWCASTLE_CENTRE_3857,
@@ -185,9 +183,8 @@ export const OA = () => {
 	return(new InteractiveVectorLayer(
 		{ /* Layer options */
 			title: "Output Areas", 
-			type: "overlay", 
 			cluster: false,
-			visible: true,
+			visible: false,
 			maxResolution: 10,
             extent: geoconst.NEWCASTLE_CENTRE_3857,
             zIndex: 120,
@@ -268,7 +265,6 @@ export const SENSORS = (theme , sensorType, zIndex, visible = false, icon = "que
 	return(new InteractiveVectorLayer(
 		{
 			title: `${sensorType} sensors`,
-			type: "overlay",
 			cluster: true,
             visible: visible,
             zIndex: zIndex,		

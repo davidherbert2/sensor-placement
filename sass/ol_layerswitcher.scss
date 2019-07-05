@@ -16,8 +16,13 @@
     display: table-row;
 }
 
+.ol-layerswitcher-control > .box-row > a {
+    display: block;
+    width: 100%;
+}
+
 .ol-layerswitcher-control > .box-row.row-hidden {
-    display: none;
+    display: none;    
 }
 
 .ol-layerswitcher-control > .box-row .box-cell {
@@ -33,7 +38,6 @@
 
 .ol-layerswitcher-control > .box-row .box-cell.left-cell.general-element {    
     color: darkslategray;
-    /*font-size: 0.85em;*/
     font-weight: bolder;
     padding: 2px 5px;
     text-decoration: none;
@@ -46,8 +50,7 @@
 
 .ol-layerswitcher-control > .box-row .box-cell.left-cell.general-element:hover {
     color: white;
-    background-color: black;
-    opacity: 0.6;
+    background-color: rgba(60,60,60,0.7);
     border-radius: 15px;
 }
 
@@ -56,8 +59,7 @@
 }
 
 .ol-layerswitcher-control > .box-row .box-cell.right-cell {
-    background-color: black;
-    opacity: 0.6;
+    background-color: rgba(60,60,60,0.85);
     width: 30px;  
     min-width: 30px;
     height: 30px;
@@ -74,11 +76,6 @@
     border-bottom-right-radius: 30px;
 }
 
-.ol-layerswitcher-control a[id^="do-layer"] {
-    display: block;
-    width: 100%;
-}
-
 .ol-layerswitcher-control > .box-row .box-cell.right-cell div.icon-wrapper {    
     color: white;
     display: inline-block; 
@@ -90,7 +87,7 @@
 }
 
 .ol-layerswitcher-control > .box-row .box-cell.right-cell div.icon-wrapper.layer-visible {    
-    background-image: radial-gradient(circle, lightgrey, gray, darkslategray);
+    background-image: radial-gradient(circle, yellow, orange, red);
     color: black;
 }
 

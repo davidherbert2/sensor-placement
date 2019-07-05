@@ -1,6 +1,6 @@
 div.ol-zoom {
     top: 0.8em;
-    right: 1.9em;
+    right: 2em;
     left: unset;
     background-color: transparent;
 }
@@ -12,8 +12,7 @@ div.ol-zoom:hover {
 .ol-zoom .ol-zoom-in,
 .ol-zoom .ol-zoom-out {
     border-radius: 30px;
-    background-color: black;
-    opacity: 0.6;
+    background-color: rgba(60,60,60,0.85);
     width: 30px;
     height: 30px;
     font-family: sans-serif;

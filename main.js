@@ -8,7 +8,7 @@ import Zoom from "ol/control/Zoom";
 
 import * as geoconst from "./src/GeoConstants";
 import * as layerspec from "./src/LayerSetup.js";
-import LayerSwitcherControl from "./src/LayerSwitcherControl";
+import LayerSwitcherControl from "./src/controls/LayerSwitcherControl";
 
 window.onload = () => {
 
@@ -79,16 +79,15 @@ window.onload = () => {
 				coordinateFormat: (coord) => {
 					return(`<strong>${coord[0].toFixed(4)},${coord[1].toFixed(4)}</strong>`);
 				}
-            }),            
+            }), 
+            new ScaleLine({
+                units: "metric"
+            }),
             new Zoom(),
             new LayerSwitcherControl({
                 layers: layers
             })
 		]
     });	
-    
-    map.addControl(new ScaleLine({
-        units: "metric"
-    }));
-	
+    	
 }

@@ -1,3 +1,5 @@
+/* Base layer switcher styles */
+
 .ol-layerswitcher-control {
     position: absolute; 
     width: 200px; 
@@ -8,17 +10,23 @@
     display: table;
 }
 
+.ol-layerswitcher-control.show-tools {
+    width: 270px;
+}
+
 .ol-layerswitcher-control:hover {
     background-color: transparent;
 }
 
 .ol-layerswitcher-control > .box-row {
     display: table-row;
+    max-height: 30px;
 }
 
 .ol-layerswitcher-control > .box-row > a {
     display: block;
     width: 100%;
+    height: 30px;    
 }
 
 .ol-layerswitcher-control > .box-row.row-hidden {
@@ -95,6 +103,38 @@
     background-color: darkslategray;
 }
 
+.ol-layerswitcher-control > .box-row .box-cell.tools-extension-cell {
+    display: none;
+}
+
+.ol-layerswitcher-control > .box-row .box-cell.tools-extension-cell.active {
+    display: table-cell;
+    width: 75px;
+    background-color: white;
+    opacity: 1.0;
+    height: 29px;
+    max-height: 29px;
+    padding: 0px 4px;
+    border-radius: 0px 15px 15px 0px;
+}
+
+.ol-layerswitcher-control > .box-row .box-cell.tools-extension-cell.active > a {
+    display: inline-block;
+    color: black;
+    opacity: 0.6;
+    text-align: bottom; 
+    font-size: smaller;
+}
+
+.ol-layerswitcher-control > .box-row .box-cell.tools-extension-cell.active > a.disabled {
+    color: darkslategray;
+    pointer-events: none;
+}
+
+.ol-layerswitcher-control > .box-row .box-cell.tools-extension-cell.active > a:hover {
+    color: darkslategray;
+}
+
 a.level1 {
     font-size: 1.0em;
 }
@@ -106,4 +146,16 @@ a.level2 {
 div.icon-wrapper > span {
     font-size: 0.7em;
     font-weight: bolder;
+}
+
+/* Legend styles */
+
+.ol-layer-legend {
+    display: none;
+    position: absolute;
+    bottom: 7em;
+    left: 1em;
+    background-color: rgba(60,60,60,0.85);
+    border-radius: 15px;
+    padding: 5px 10px;
 }

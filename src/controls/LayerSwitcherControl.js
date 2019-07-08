@@ -7,6 +7,7 @@ import TileWMS from "ol/source/TileWMS"
 import Cluster from "ol/source/Cluster";
 import Control from "ol/control/Control";
 import LayerGroup from "ol/layer/Group";
+import VectorSource from "ol/source/Vector";
 import * as geoconst from "./GeoConstants.js";
 import * as utils from "./Utilities.js";
 
@@ -37,6 +38,9 @@ export default class LayerSwitcherControl extends Control {
         /* Unpack custom options */
         this._layers = options.layers;
 
+        /* Layer mapping by id */
+        this._layerMapping = {};
+
         /* Get the first expanded layer group, if any */
         this._expanded = this._initialExpandedGroup();
 
@@ -51,16 +55,18 @@ export default class LayerSwitcherControl extends Control {
             <div class="box-row">
                 <a>
                     <div class="box-cell left-cell"></div>
-                    <div class="box-cell right-cell header-element"></div>
+                    <div class="box-cell right-cell header-element"></div>                    
                 </a>
+                <div class="box-cell"></div>
             </div>            
             <div class="box-row">
-                <a>
+                <a class="tools-extension-button" title="Show layer tools...">
                     <div class="box-cell left-cell"></div>
                     <div class="box-cell right-cell footer-element">
                         <div class="icon-wrapper"><i class="fa fa-cog" style="vertical-align:bottom"></i></div>
-                    </div>
+                    </div>                    
                 </a>
+                <div class="box-cell"></div>
             </div>
         `;
         
@@ -68,6 +74,34 @@ export default class LayerSwitcherControl extends Control {
             this._layers.forEach(layer => {
                 this._insertRow(layer);                        
             });            
+        }
+
+        let teb = this.element.querySelector("a.tools-extension-button");
+        if (teb) {
+            teb.addEventListener("click", evt => {
+                this.element.classList.toggle("show-tools");
+                if (this.element.classList.contains("show-tools")) {
+                    /* Button shows the 'minimise tools' option */
+                    teb.setAttribute("title", "Hide layer tools...");
+                    teb.querySelector("i").classList.remove("fa-cog");
+                    teb.querySelector("i").classList.add("fa-angle-right");
+                } else {
+                    /* Button shows the 'show settings' icon */
+                    teb.setAttribute("title", "Show layer tools...");
+                    teb.querySelector("i").classList.remove("fa-angle-right");
+                    teb.querySelector("i").classList.add("fa-cog");
+                }
+                this.element.querySelectorAll(".tools-extension-cell").forEach(tec => {
+                    tec.classList.toggle("active");
+                    /* Determine statuses of layer manipulation tools (some only available if layer is visible) */
+                    let toolsDivId = tec.getAttribute("id").replace(/^tools-/, "");
+                    let layer = this._layerMapping[toolsDivId];
+                    if (layer) {
+                        tec.querySelector("a.tool-opacity").classList.toggle("disabled", !layer.getVisible());
+                        tec.querySelector("a.tool-ztl").classList.toggle("disabled", !layer.getVisible());
+                    }
+                })
+            });
         }
     }
 
@@ -150,6 +184,7 @@ export default class LayerSwitcherControl extends Control {
         /* Assign layer/group a unique id */
         let layerId = utils.UUID4();
         layer.set("id", layerId);
+        this._layerMapping[layerId] = layer;
 
         /* Insert a row */
         let insertAt = this.element.querySelector(".box-row:last-child");
@@ -162,13 +197,15 @@ export default class LayerSwitcherControl extends Control {
         this.element.insertBefore(rowDiv, insertAt);   
 
         /* Populate row */
-        rowDiv.innerHTML = 
-            `<a class="level${level}" href="Javascript:void(0)" title="${title}">
+        rowDiv.innerHTML = `
+            <a class="level${level}" href="Javascript:void(0)" title="${title}">
                 <div class="box-cell left-cell general-element">${title}</div>
                 <div class="box-cell right-cell">
                     <div class="icon-wrapper">${this._getIconMarkup(opts.icon || "question")}</div>
-                </div>
-            </a>`;
+                </div>                
+            </a>
+            <div id="tools-${layerId}" class="box-cell"></div>
+           `;
         if (expanded) {
             rowDiv.querySelector("div.left-cell").classList.add("group-opened");
         }
@@ -181,11 +218,34 @@ export default class LayerSwitcherControl extends Control {
             }));
             anchor.addEventListener("click", this._toggleGroupStatesFactory(layer));
         } else {
+            /* Create individual layer row markup */
             anchor.addEventListener("click", this._toggleLayerVisibilityFactory(layer, anchor));
             if ((type == "overlay" && layer.getVisible()) || (type == "base" && layer == this._visibleBase)) {
                 /* Set visibility indicator class on row */
                 anchor.querySelector("div.icon-wrapper").classList.add("layer-visible");
-            }               
+            }
+            /* Create layer tools markup */
+            let toolsDiv = rowDiv.querySelector("[id^='tools-']");
+            toolsDiv.classList.add("tools-extension-cell");
+            toolsDiv.innerHTML = `
+                <a class="tool-info"><i class="fa fa-info-circle"></i></a>                
+                <a class="tool-legend"><i class="fa fa-th-list"></i></a>
+                <a class="tool-opacity"><i class="fa fa-adjust"></i></a>
+                <a class="tool-ztl"><i class="fa fa-expand"></i></a>
+                `;
+            /* Add info (metadata/attribution) handler */
+            toolsDiv.querySelector("a.tool-info").addEventListener("click", evt => {
+                console.log(this.getMap());
+            });
+            /* Add opacity change handler */
+            toolsDiv.querySelector("a.tool-opacity").addEventListener("click", evt => {
+                console.log(this.getMap());
+            });
+            /* Add legend handler */
+            toolsDiv.querySelector("a.tool-legend").addEventListener("click", this._legendFactory(layer));
+
+            /* Add zoom-to-layer-extent handler */
+            toolsDiv.querySelector("a.tool-ztl").addEventListener("click", this._mapSizingFactory(layer));
         }
     }
 
@@ -235,6 +295,12 @@ export default class LayerSwitcherControl extends Control {
                     anchor.querySelector("div.icon-wrapper").classList.toggle("layer-visible");
                 });
             }
+            /* Update tools icon visibility */
+            let toolsDiv = anchor.parentNode.querySelector("div.tools-extension-cell.active");
+            if(toolsDiv) {
+                toolsDiv.querySelector("a.tool-opacity").classList.toggle("disabled", !layer.getVisible());
+                toolsDiv.querySelector("a.tool-ztl").classList.toggle("disabled", !layer.getVisible());
+            }            
         })        
     }
 
@@ -249,6 +315,110 @@ export default class LayerSwitcherControl extends Control {
             : `<i class="fa fa-${icon}" style="vertical-align:bottom"></i>`
         );
     }
+
+    /**
+     * Return a function to resize the map according to the extent of the supplied layer
+     * @param {ol.Layer} layer 
+     */
+    _mapSizingFactory(layer) {
+        return((evt) => {
+            if (layer.getVisible()) {
+                [source, featureType] = this._sourceFeature(layer);
+                if (featureType) {
+                    /* Call Geoserver REST API to get layer extent */
+                    let nonNsFeatureType = featureType.split(":").pop();
+                    console.log(nonNsFeatureType);
+                    fetch(`${geoconst.GEOSERVER_REST}/featuretypes/${nonNsFeatureType}.json`)
+                    .then(r => r.json())
+                    .then(jsonResponse => {
+                        let nbbox = jsonResponse["featureType"]["latLonBoundingBox"];
+                        let extent = null;
+                        if (nbbox) {
+                            /* Reproject the bounding box from lat/lon to Spherical Mercator */
+                            extent = [fromLonLat([nbbox.minx, nbbox.miny]), fromLonLat([nbbox.maxx, nbbox.maxy])].flat();
+                            this.getMap().getView().fit(extent, {
+                                size: this.getMap().getSize(),
+                                nearest: true,
+                                padding: [20, 20, 20, 20]
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.log(error);
+                        alert("Failed to get metadata for layer");
+                    });		
+                } else if (source && source instanceof VectorSource) {
+                    /* Extent from features if possible */
+                    this.getMap().getView().fit(source.getExtent(), {
+                        size: this.getMap().getSize(),
+                        nearest: true,
+                        padding: [20, 20, 20, 20]
+                    });
+                }
+            }            
+        });
+    };
+
+    /**
+     * Return a function to flash a legend for the given layer in a div.layer-legend
+     * @param {ol.Layer} layer 
+     */
+    _legendFactory(layer) {
+        let source = featureType = null;
+        [source, featureType] = this._sourceFeature(layer);
+        let glg = `${geoconst.GEOSERVER_WMS}?request=GetLegendGraphic&version=1.3.0&format=image/png&width=30&height=30&layer=${featureType}`;
+        return((evt) => {
+            let legendDiv = document.querySelector("ol-layer-legend");            
+            let legendHeaderDiv = null;
+            let legendBodyDiv = null;    
+            if (legendDiv) {
+                legendDiv.style.display = "block";
+                if (legendDiv.children.length != 0) {
+                    legendHeaderDiv = legendDiv.children[0];
+                    legendBodyDiv = legendDiv.children[1];
+                } else {
+                    legendHeaderDiv = document.createElement("div");
+                    legendHeaderDiv.classList.add(`${this._legendDivCls}-head`);
+                    legendDiv.appendChild(legendHeaderDiv);
+                    legendBodyDiv = document.createElement("div");
+                    legendBodyDiv.classList.add(`${this._legendDivCls}-body`);                    
+                    legendDiv.appendChild(legendBodyDiv);
+                }                                
+                legendHeaderDiv.innerHTML = layer.get("legendAnnotation") || "Legend";
+                legendBodyDiv.innerHTML = `<img src="${glg}" alt="legend"/>`;
+            }
+        });
+        
+    };
+
+    /**
+     * Return feature source and feature type for a layer
+     * @param {ol.Layer} layer 
+     * @return {Array} source, feature type
+     */
+    _sourceFeature(layer) {
+        let source = layer.getSource();
+        let featureType = null;
+        if (source instanceof TileWMS) {
+            /* Tile WMS layer */
+            featureType = source.getParams()["layers"];
+        } else {
+            if (source instanceof Cluster) {
+                /* Cluster layer */
+                source = source.getSource();
+            } 
+            /* Vectors here */
+            try {
+                let url = source.getUrl();
+                if (url) {
+                    let qry = new URLSearchParams(url.substring(url.indexOf("?") + 1));
+                    featureType = qry.get("typename");		
+                }		
+            } catch(e) {			
+            }		
+        }      
+        return([source, featureType]);
+    };
 
     /**
      * Assign the layer button handlers
@@ -311,109 +481,5 @@ export default class LayerSwitcherControl extends Control {
             
         });
     };
-
-    /**
-     * Return feature source and feature type for a layer
-     * @param {ol.Layer} layer 
-     * @return {Array} source, feature type
-     */
-    sourceFeature(layer) {
-        let source = layer.getSource();
-        let featureType = null;
-        if (source instanceof TileWMS) {
-            /* Tile WMS layer */
-            featureType = source.getParams()["layers"];
-        } else {
-            if (source instanceof Cluster) {
-                /* Cluster layer */
-                source = source.getSource();
-            } 
-            /* Vectors here */
-            try {
-                let url = source.getUrl();
-                if (url) {
-                    let qry = new URLSearchParams(url.substring(url.indexOf("?") + 1));
-                    featureType = qry.get("typename");		
-                }		
-            } catch(e) {			
-            }		
-        }
-        return([source, featureType]);
-    };
-
-    /**
-     * Return a function to flash a legend for the given layer in a div.layer-legend
-     * @param {ol.Layer} layer 
-     */
-    legendFactory(layer) {
-        let source = featureType = null;
-        [source, featureType] = this.sourceFeature(layer);
-        let glg = `${geoconst.GEOSERVER_WMS}?request=GetLegendGraphic&version=1.3.0&format=image/png&width=30&height=30&layer=${featureType}`;
-        return((evt) => {
-            let legendDiv = document.querySelector(`div.${this._legendDivCls}`);
-            let legendHeaderDiv = null;
-            let legendBodyDiv = null;    
-            if (legendDiv) {
-                legendDiv.style.display = "block";
-                if (legendDiv.children.length != 0) {
-                    legendHeaderDiv = legendDiv.children[0];
-                    legendBodyDiv = legendDiv.children[1];
-                } else {
-                    legendHeaderDiv = document.createElement("div");
-                    legendHeaderDiv.classList.add(`${this._legendDivCls}-head`);
-                    legendDiv.appendChild(legendHeaderDiv);
-                    legendBodyDiv = document.createElement("div");
-                    legendBodyDiv.classList.add(`${this._legendDivCls}-body`);                    
-                    legendDiv.appendChild(legendBodyDiv);
-                }                                
-                legendHeaderDiv.innerHTML = layer.get("legendAnnotation") || "Legend";
-                legendBodyDiv.innerHTML = `<img src="${glg}" alt="legend"/>`;
-            }
-        });
-        
-    };
     
-    /**
-     * Return a function to resize the map according to the extent of the supplied layer
-     * @param {ol.Map} map 
-     * @param {ol.Layer} layer 
-     * @param {ol.Extent} defaultExtent in EPSG:3857
-     */
-    mapSizingFactory(map, layer, defaultExtent) {
-        let source = featureType = null;
-        [source, featureType] = this.sourceFeature(layer);
-        return((evt) => {
-            if (featureType) {
-                /* Call Geoserver REST API to get layer extent */
-                let nonNsFeatureType = featureType.split(":").pop();
-                fetch(`${geoconst.GEOSERVER_REST}/featuretypes/${nonNsFeatureType}.json`)
-                .then(r => r.json())
-                .then(jsonResponse => {
-                    let nbbox = jsonResponse["featureType"]["latLonBoundingBox"];
-                    let extent = defaultExtent;
-                    if (nbbox) {
-                        /* Reproject the bounding box from lat/lon to Spherical Mercator */
-                        extent = [fromLonLat([nbbox.minx, nbbox.miny]), fromLonLat([nbbox.maxx, nbbox.maxy])].flat();
-                    }
-                    return(map.getView().fit(extent, {
-                        size: map.getSize(),
-                        nearest: true,
-                        padding: [20, 20, 20, 20]
-                    }));
-                })
-                .catch(error => {
-                    console.log(error);
-                    alert("Failed to get metadata for layer");
-                });		
-            } else if (source && source instanceof VectorSource) {
-                /* Extent from features if possible */
-                return(map.getView().fit(source.getExtent(), {
-                    size: map.getSize(),
-                    nearest: true,
-                    padding: [20, 20, 20, 20]
-                }));
-            }
-        });
-    };
-
 }

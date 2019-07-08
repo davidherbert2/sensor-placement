@@ -8,7 +8,8 @@ import Zoom from "ol/control/Zoom";
 
 import * as geoconst from "./src/GeoConstants";
 import * as layerspec from "./src/LayerSetup.js";
-import LayerSwitcherControl from "./src/controls/LayerSwitcherControl";
+import LayerSwitcher from "./src/controls/LayerSwitcher";
+import Legend from "./src/controls/Legend";
 
 window.onload = () => {
 
@@ -84,9 +85,10 @@ window.onload = () => {
                 units: "metric"
             }),
             new Zoom(),
-            new LayerSwitcherControl({
+            new LayerSwitcher({
                 layers: layers
-            })
+            }),
+            new Legend()
 		]
     });	
     	

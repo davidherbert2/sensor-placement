@@ -2,10 +2,10 @@
 
 @import "../node_modules/bulma/bulma.sass";
 @import "ol_popup";
-@import "ol_layerswitcher";
-@import "ol_zoom";
-@import "ol_mouse_position";
-@import "ol_scaleline";
+@import "controls/ol_layerswitcher";
+@import "controls/ol_zoom";
+@import "controls/ol_mouse_position";
+@import "controls/ol_scaleline";
 
 @import "../node_modules/ol/ol.css";
 

@@ -1,5 +1,5 @@
 /**
- * @module LayerSwitcherControl
+ * @module LayerSwitcher
  */
  
 import {fromLonLat} from "ol/proj";
@@ -8,13 +8,13 @@ import Cluster from "ol/source/Cluster";
 import Control from "ol/control/Control";
 import LayerGroup from "ol/layer/Group";
 import VectorSource from "ol/source/Vector";
-import * as geoconst from "./GeoConstants.js";
-import * as utils from "./Utilities.js";
+import * as geoconst from "../GeoConstants.js";
+import * as utils from "../Utilities.js";
 
 /** 
  * @classdesc Class for a more fully-functional layer switcher
  */
-export default class LayerSwitcherControl extends Control {
+export default class LayerSwitcher extends Control {
 
 	/**
 	 * Create layer tree switcher
@@ -103,7 +103,7 @@ export default class LayerSwitcherControl extends Control {
                 })
             });
         }
-    }
+    };
 
     /**
      * Decide which layer group to display expanded on initial render
@@ -246,6 +246,8 @@ export default class LayerSwitcherControl extends Control {
 
             /* Add zoom-to-layer-extent handler */
             toolsDiv.querySelector("a.tool-ztl").addEventListener("click", this._mapSizingFactory(layer));
+
+            console.log(layer);
         }
     }
 
@@ -357,39 +359,7 @@ export default class LayerSwitcherControl extends Control {
                 }
             }            
         });
-    };
-
-    /**
-     * Return a function to flash a legend for the given layer in a div.layer-legend
-     * @param {ol.Layer} layer 
-     */
-    _legendFactory(layer) {
-        let source = featureType = null;
-        [source, featureType] = this._sourceFeature(layer);
-        let glg = `${geoconst.GEOSERVER_WMS}?request=GetLegendGraphic&version=1.3.0&format=image/png&width=30&height=30&layer=${featureType}`;
-        return((evt) => {
-            let legendDiv = document.querySelector("ol-layer-legend");            
-            let legendHeaderDiv = null;
-            let legendBodyDiv = null;    
-            if (legendDiv) {
-                legendDiv.style.display = "block";
-                if (legendDiv.children.length != 0) {
-                    legendHeaderDiv = legendDiv.children[0];
-                    legendBodyDiv = legendDiv.children[1];
-                } else {
-                    legendHeaderDiv = document.createElement("div");
-                    legendHeaderDiv.classList.add(`${this._legendDivCls}-head`);
-                    legendDiv.appendChild(legendHeaderDiv);
-                    legendBodyDiv = document.createElement("div");
-                    legendBodyDiv.classList.add(`${this._legendDivCls}-body`);                    
-                    legendDiv.appendChild(legendBodyDiv);
-                }                                
-                legendHeaderDiv.innerHTML = layer.get("legendAnnotation") || "Legend";
-                legendBodyDiv.innerHTML = `<img src="${glg}" alt="legend"/>`;
-            }
-        });
-        
-    };
+    }
 
     /**
      * Return feature source and feature type for a layer
@@ -418,68 +388,6 @@ export default class LayerSwitcherControl extends Control {
             }		
         }      
         return([source, featureType]);
-    };
-
-    /**
-     * Assign the layer button handlers
-     * @param {ol.Map} map 
-     */
-    assignHandlers(map) {
-        this.on("drawlist", (evt) => {		
-            let btnDiv = evt.li.querySelector(".ol-layerswitcher-buttons");
-            let layer = evt.layer;
-            /* Turn on any click/hover handlers */
-            if (typeof layer.assignHandlers == "function") {
-                layer.assignHandlers(map);
-            }
-            /* Whether to display an opacity slider */
-            if (!layer.get("layerOpacity") !== true) {
-                let opacitySlider = btnDiv.querySelector(".layerswitcher-opacity");
-                if (opacitySlider) {
-                    opacitySlider.style.display = "none";
-                }
-            }
-            /* Whether to display the zoom to extent control */
-            if (layer.get("layerExtent") === true) {
-                let newBtn = document.createElement("div");
-                newBtn.setAttribute("title", this.tip.extent);
-                newBtn.classList.add("layerExtent");
-                btnDiv.appendChild(newBtn);
-                if (layer.getVisible()) {
-                    newBtn.addEventListener("click", this.mapSizingFactory(map, layer, geoconst.NEWCASTLE_CENTRE_3857));
-                } else {
-                    newBtn.classList.add("layerExtent-disabled");
-                }					
-            }
-            /* Whether to display the info (legend) button */
-            if (layer.get("layerInfo") === true) {
-                let newBtn = document.createElement("div");
-                newBtn.setAttribute("title", this.tip.info);
-                newBtn.classList.add(["layerInfo"]);
-                btnDiv.appendChild(newBtn); 
-                newBtn.addEventListener("mouseover", this.legendFactory(layer));			
-                newBtn.addEventListener("mouseout", evt => {
-                    let legendDiv = document.querySelector(`div.${this._legendDivCls}`);
-                    if (legendDiv) {
-                        legendDiv.style.display = "none";
-                    }
-                });
-            }
-            /* Layer group visibility controls */
-            let cb = btnDiv.querySelector("input");
-            if (cb) {
-                if (layer instanceof LayerGroup) {
-                    /* Enable all layers on/off */
-                    cb.addEventListener("change", evt => {
-                        let isChecked = evt.currentTarget.checked;
-                        layer.getLayers().forEach(lyr => {
-                            lyr.setVisible(isChecked);
-                        });
-                    });
-                }
-            }
-            
-        });
-    };
+    }
     
 }

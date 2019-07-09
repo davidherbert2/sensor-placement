@@ -3,13 +3,13 @@
  */
  
 import {fromLonLat} from "ol/proj";
-import TileWMS from "ol/source/TileWMS"
-import Cluster from "ol/source/Cluster";
 import Control from "ol/control/Control";
 import LayerGroup from "ol/layer/Group";
 import VectorSource from "ol/source/Vector";
 import * as geoconst from "../GeoConstants.js";
 import * as utils from "../Utilities.js";
+import * as common from "./Common.js";
+import Legend from "./Legend.js";
 
 /** 
  * @classdesc Class for a more fully-functional layer switcher
@@ -237,17 +237,30 @@ export default class LayerSwitcher extends Control {
             toolsDiv.querySelector("a.tool-info").addEventListener("click", evt => {
                 console.log(this.getMap());
             });
+
+            /* Add legend handler */            
+            let legendAnchor = toolsDiv.querySelector("a.tool-legend");
+            
+            /* Add a legend handler */            
+            legendAnchor.addEventListener("click", evt => { 
+                let legendControl = common.findControl(this.getMap(), Legend);
+                if (legendControl) {               
+                    legendControl.show(layer);
+                } else {
+                    /* Disable the control */
+                    if (!legendAnchor.classList.contains("disabled")) {
+                        legendAnchor.classList.add("disabled");
+                    }    
+                }
+            });                
+
             /* Add opacity change handler */
             toolsDiv.querySelector("a.tool-opacity").addEventListener("click", evt => {
                 console.log(this.getMap());
             });
-            /* Add legend handler */
-            toolsDiv.querySelector("a.tool-legend").addEventListener("click", this._legendFactory(layer));
-
+            
             /* Add zoom-to-layer-extent handler */
             toolsDiv.querySelector("a.tool-ztl").addEventListener("click", this._mapSizingFactory(layer));
-
-            console.log(layer);
         }
     }
 
@@ -325,7 +338,7 @@ export default class LayerSwitcher extends Control {
     _mapSizingFactory(layer) {
         return((evt) => {
             if (layer.getVisible()) {
-                [source, featureType] = this._sourceFeature(layer);
+                [source, featureType] = common.sourceFeature(layer);
                 if (featureType) {
                     /* Call Geoserver REST API to get layer extent */
                     let nonNsFeatureType = featureType.split(":").pop();
@@ -359,35 +372,6 @@ export default class LayerSwitcher extends Control {
                 }
             }            
         });
-    }
-
-    /**
-     * Return feature source and feature type for a layer
-     * @param {ol.Layer} layer 
-     * @return {Array} source, feature type
-     */
-    _sourceFeature(layer) {
-        let source = layer.getSource();
-        let featureType = null;
-        if (source instanceof TileWMS) {
-            /* Tile WMS layer */
-            featureType = source.getParams()["layers"];
-        } else {
-            if (source instanceof Cluster) {
-                /* Cluster layer */
-                source = source.getSource();
-            } 
-            /* Vectors here */
-            try {
-                let url = source.getUrl();
-                if (url) {
-                    let qry = new URLSearchParams(url.substring(url.indexOf("?") + 1));
-                    featureType = qry.get("typename");		
-                }		
-            } catch(e) {			
-            }		
-        }      
-        return([source, featureType]);
     }
     
 }

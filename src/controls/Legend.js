@@ -2,6 +2,10 @@
  * @module Legend
  */
 
+import Control from "ol/control/Control";
+import * as geoconst from "../GeoConstants.js";
+import * as common from "./Common.js";
+
 /** 
  * @classdesc Class to render a layer legend
  */
@@ -24,42 +28,47 @@ export default class Legend extends Control {
             element: element,
             target: options.target
         });
-    }
 
-    render(layer) {
-        
+        /* Create header and body */
+        this._legendHeaderDiv = document.createElement("div");
+        this._legendHeaderDiv.classList.add("legend-header");
+        this.element.appendChild(this._legendHeaderDiv);
+        this._legendBodyDiv = document.createElement("div");
+        this._legendBodyDiv.classList.add("legend-body");                    
+        this.element.appendChild(this._legendBodyDiv);
     }
 
     /**
-     * Return a function to flash a legend for the given layer in a div.layer-legend
+     * Show a legend for the given layer
      * @param {ol.Layer} layer 
      */
-    // _legendFactory(layer) {
-    //     let source = featureType = null;
-    //     [source, featureType] = this._sourceFeature(layer);
-    //     let glg = `${geoconst.GEOSERVER_WMS}?request=GetLegendGraphic&version=1.3.0&format=image/png&width=30&height=30&layer=${featureType}`;
-    //     return((evt) => {
-    //         let legendDiv = document.querySelector("ol-layer-legend");            
-    //         let legendHeaderDiv = null;
-    //         let legendBodyDiv = null;    
-    //         if (legendDiv) {
-    //             legendDiv.style.display = "block";
-    //             if (legendDiv.children.length != 0) {
-    //                 legendHeaderDiv = legendDiv.children[0];
-    //                 legendBodyDiv = legendDiv.children[1];
-    //             } else {
-    //                 legendHeaderDiv = document.createElement("div");
-    //                 legendHeaderDiv.classList.add(`${this._legendDivCls}-head`);
-    //                 legendDiv.appendChild(legendHeaderDiv);
-    //                 legendBodyDiv = document.createElement("div");
-    //                 legendBodyDiv.classList.add(`${this._legendDivCls}-body`);                    
-    //                 legendDiv.appendChild(legendBodyDiv);
-    //             }                                
-    //             legendHeaderDiv.innerHTML = layer.get("legendAnnotation") || "Legend";
-    //             legendBodyDiv.innerHTML = `<img src="${glg}" alt="legend"/>`;
-    //         }
-    //     });
-        
-    // };
+    show(layer) {
+        let source = featureType = null;
+        [source, featureType] = common.sourceFeature(layer);
+        let parms = {
+            "request": "GetLegendGraphic",
+            "version": "1.3",
+            "format": "image/png",
+            "width": 30,
+            "height": 30,
+            "layer": featureType,
+            "legend_options": "layout:horizontal;rowwidth:300;fontColor:ffffff;fontName=sansserif;bgColor:000000"
+        };        
+        let queryString = Object.keys(parms).map(key => key + "=" + parms[key]).join("&");
+        if (!this.element.classList.contains("active")) {
+            this.element.classList.add("active");
+        }        
+        this._legendHeaderDiv.innerHTML = layer.get("legend") || "Legend";
+        this._legendBodyDiv.innerHTML = `<img src="${geoconst.GEOSERVER_WMS}?${queryString}" alt="legend"/>`;            
+    }
+
+    /**
+     * Hide the legend
+     */
+    hide() {
+        if (this.element.classList.contains("active")) {
+            this.element.classList.remove("active");
+        }  
+    }      
 
 }

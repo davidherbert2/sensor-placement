@@ -88,7 +88,7 @@ window.onload = () => {
             new LayerSwitcher({
                 layers: layers
             }),
-            new Legend()
+            new Legend({})
 		]
     });	
     	

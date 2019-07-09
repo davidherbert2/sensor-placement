@@ -19,12 +19,24 @@
 }
 
 .ol-legend-control > .legend-header {
-
+    color: white;
+    font-family: sans-serif;
+    font-weight: bold;
 }
 
-.ol-legend-control > .legend-body {
-
+.ol-legend-control > .legend-header > div:first-child {
+    float: left;
 }
 
+.ol-legend-control > .legend-header > div:last-child {
+    float: right;
+}
 
+.ol-legend-control > .legend-header > div:last-child > a {
+    display: inline-block;
+    color: white;
+}
 
+.ol-legend-control > .legend-header > div:last-child > a:hover {
+    color: lightgray;
+}

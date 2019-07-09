@@ -32,10 +32,16 @@ export default class Legend extends Control {
         /* Create header and body */
         this._legendHeaderDiv = document.createElement("div");
         this._legendHeaderDiv.classList.add("legend-header");
+        this._legendHeaderDiv.innerHTML = `
+            <div></div><div><a href="JavaScript:void(0)"><i class="fa fa-times"></i></a></div>
+        `;
         this.element.appendChild(this._legendHeaderDiv);
         this._legendBodyDiv = document.createElement("div");
         this._legendBodyDiv.classList.add("legend-body");                    
         this.element.appendChild(this._legendBodyDiv);
+
+        /* Close button handler */
+        this._legendHeaderDiv.querySelector("a").addEventListener("click", this.hide.bind(this));
     }
 
     /**
@@ -58,7 +64,7 @@ export default class Legend extends Control {
         if (!this.element.classList.contains("active")) {
             this.element.classList.add("active");
         }        
-        this._legendHeaderDiv.innerHTML = layer.get("legend") || "Legend";
+        this._legendHeaderDiv.querySelector("div:first-child").innerHTML = this._getLegendCaption(layer);
         this._legendBodyDiv.innerHTML = `<img src="${geoconst.GEOSERVER_WMS}?${queryString}" alt="legend"/>`;            
     }
 
@@ -69,6 +75,15 @@ export default class Legend extends Control {
         if (this.element.classList.contains("active")) {
             this.element.classList.remove("active");
         }  
-    }      
+    }   
+    
+    _getLegendCaption(layer) {
+        let caption = "Legend";
+        let opts = layer.get("switcherOpts");
+        if (opts && opts.legend) {
+            caption = opts.legend;
+        }
+        return(caption);
+    }
 
 }

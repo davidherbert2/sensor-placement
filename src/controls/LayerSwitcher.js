@@ -10,6 +10,7 @@ import * as geoconst from "../GeoConstants.js";
 import * as utils from "../Utilities.js";
 import * as common from "./Common.js";
 import Legend from "./Legend.js";
+import OpacitySlider from "./OpacitySlider.js";
 
 /** 
  * @classdesc Class for a more fully-functional layer switcher
@@ -237,11 +238,9 @@ export default class LayerSwitcher extends Control {
             toolsDiv.querySelector("a.tool-info").addEventListener("click", evt => {
                 console.log(this.getMap());
             });
-
-            /* Add legend handler */            
-            let legendAnchor = toolsDiv.querySelector("a.tool-legend");
             
             /* Add a legend handler */            
+            let legendAnchor = toolsDiv.querySelector("a.tool-legend");
             legendAnchor.addEventListener("click", evt => { 
                 let legendControl = common.findControl(this.getMap(), Legend);
                 if (legendControl) {               
@@ -255,8 +254,18 @@ export default class LayerSwitcher extends Control {
             });                
 
             /* Add opacity change handler */
-            toolsDiv.querySelector("a.tool-opacity").addEventListener("click", evt => {
-                console.log(this.getMap());
+            let opacityAnchor = toolsDiv.querySelector("a.tool-opacity");
+            opacityAnchor.addEventListener("click", evt => {
+                let opacitySliderControl = common.findControl(this.getMap(), OpacitySlider);
+                console.log(opacitySliderControl);
+                if (opacitySliderControl) {               
+                    opacitySliderControl.show(layer);
+                } else {
+                    /* Disable the control */
+                    if (!opacityAnchor.classList.contains("disabled")) {
+                        opacityAnchor.classList.add("disabled");
+                    }    
+                }
             });
             
             /* Add zoom-to-layer-extent handler */

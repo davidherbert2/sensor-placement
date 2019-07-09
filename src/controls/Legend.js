@@ -29,6 +29,9 @@ export default class Legend extends Control {
             target: options.target
         });
 
+        /* Record of the layer legend is shown for */
+        this._layer = null;
+
         /* Create header and body */
         this._legendHeaderDiv = document.createElement("div");
         this._legendHeaderDiv.classList.add("legend-header");
@@ -58,14 +61,15 @@ export default class Legend extends Control {
             "width": 30,
             "height": 30,
             "layer": featureType,
-            "legend_options": "layout:horizontal;rowwidth:300;fontColor:ffffff;fontName=sansserif;bgColor:000000"
+            "legend_options": "layout:horizontal;rowwidth:300;fontColor:ffffff;fontName=sans-serif;bgColor:202020"
         };        
         let queryString = Object.keys(parms).map(key => key + "=" + parms[key]).join("&");
         if (!this.element.classList.contains("active")) {
             this.element.classList.add("active");
         }        
         this._legendHeaderDiv.querySelector("div:first-child").innerHTML = this._getLegendCaption(layer);
-        this._legendBodyDiv.innerHTML = `<img src="${geoconst.GEOSERVER_WMS}?${queryString}" alt="legend"/>`;            
+        this._legendBodyDiv.innerHTML = `<img src="${geoconst.GEOSERVER_WMS}?${queryString}" alt="legend"/>`;
+        this._layer = layer;           
     }
 
     /**
@@ -74,9 +78,19 @@ export default class Legend extends Control {
     hide() {
         if (this.element.classList.contains("active")) {
             this.element.classList.remove("active");
-        }  
+        } 
+        this._layer = null; 
     }   
+
+    get layer() {
+        return(this._layer);
+    }
     
+    /**
+     * Get a caption from the layer's switcher options
+     * @param {ol.Layer} layer
+     * @return {string}
+     */
     _getLegendCaption(layer) {
         let caption = "Legend";
         let opts = layer.get("switcherOpts");

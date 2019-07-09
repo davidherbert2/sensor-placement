@@ -10,6 +10,7 @@ import * as geoconst from "./src/GeoConstants";
 import * as layerspec from "./src/LayerSetup.js";
 import LayerSwitcher from "./src/controls/LayerSwitcher";
 import Legend from "./src/controls/Legend";
+import OpacitySlider from "./src/controls/OpacitySlider";
 
 window.onload = () => {
 
@@ -88,7 +89,8 @@ window.onload = () => {
             new LayerSwitcher({
                 layers: layers
             }),
-            new Legend({})
+            new Legend({}),
+            new OpacitySlider({})
 		]
     });	
     	

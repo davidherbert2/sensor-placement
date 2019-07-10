@@ -94,6 +94,18 @@ export default class Legend extends Control {
     get active() {
         return(this.active);
     }
+
+    addActivationCallback(cb) {
+        this.on("propertychange", evt => {
+            if (evt.key === "active") {
+                console.log(evt);
+            }
+        });
+    }
+
+    removeActivationCallback(cb) {
+
+    }
     
     /**
      * Get a caption from the layer's switcher options

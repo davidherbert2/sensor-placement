@@ -260,8 +260,11 @@ export default class LayerSwitcher extends Control {
         let anchor = toolsDiv.querySelector(`a.tool-${toolAnchorCss}`);
         anchor.addEventListener("click", evt => {
             let control = common.findControl(this.getMap(), toolClass);
-            if (control) {               
-                control.show(layer, this._nextAvailablePosition(control));
+            if (control) {
+                if (typeof control.addActivationCallback === "function") {
+                    control.addActivationCallback(new Function());
+                }                             
+                control.show(layer);
             } else {
                 /* Disable the control */
                 if (!anchor.classList.contains("disabled")) {

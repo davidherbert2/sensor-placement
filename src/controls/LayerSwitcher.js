@@ -6,11 +6,11 @@ import {fromLonLat} from "ol/proj";
 import Control from "ol/control/Control";
 import LayerGroup from "ol/layer/Group";
 import VectorSource from "ol/source/Vector";
-import * as geoconst from "../GeoConstants.js";
-import * as common from "./Common.js";
-import Legend from "./Legend.js";
-import OpacitySlider from "./OpacitySlider.js";
-import SourceMetadata from "./SourceMetadata.js";
+import * as geoconst from "../GeoConstants";
+import * as common from "./Common";
+import Legend from "./Legend";
+import OpacitySlider from "./OpacitySlider";
+import SourceMetadata from "./SourceMetadata";
 
 /** 
  * @classdesc Class for a more fully-functional layer switcher
@@ -20,9 +20,10 @@ export default class LayerSwitcher extends Control {
 	/**
 	 * Create layer tree switcher
      * Possible options:
-     *  - element HTMLElement        - container element
-     *  - target  HTMLElement|string - (id of) target if required outside of map viewport
-     *  - layers  Array              - list of layer groups/layers (nesting > 1 level not supported)
+     *  - element  HTMLElement        - container element
+     *  - target   HTMLElement|string - (id of) target if required outside of map viewport
+     *  - layers   Array              - list of layer groups/layers (nesting > 1 level not supported)
+     *  - controls Array              - list of ol sub-controls belonging to this switcher
 	 * @param {Object} options - options passed directly to base class constructor
 	 */
 	constructor(options) {
@@ -36,7 +37,16 @@ export default class LayerSwitcher extends Control {
             target: options.target
         });
 
-        /* Unpack custom options */
+        /**
+         * Unpack custom options
+         * 
+         * Controls can be:
+         * - info     => SourceMetadata
+         * - legend   => Legend
+         * - opacity  => OpacitySlider
+         * Zoom to layer is included in basic switcher functionality 
+         */      
+        this.controls = options.controls;
         this._layers = options.layers;
 
         /* Layer mapping by id */
@@ -259,10 +269,20 @@ export default class LayerSwitcher extends Control {
     _addSwitcherToolAction(layer, toolsDiv, toolAnchorCss, toolClass) {
         let anchor = toolsDiv.querySelector(`a.tool-${toolAnchorCss}`);
         anchor.addEventListener("click", evt => {
-            let control = common.findControl(this.getMap(), toolClass);
-            if (control) {
+            let control = null;
+            for (let c of this.controls) {
+                if (c instanceof toolClass) {
+                    control = c;
+                    break;
+                }
+            }
+            if (control != null) {
+                if (!control.getMap()) {
+                    /* Add the sub-control to the map */
+                    control.setMap(this.getMap());
+                }                
                 if (typeof control.addActivationCallback === "function") {
-                    control.addActivationCallback(new Function());
+                    control.addActivationCallback(this._positionSubControls.bind(this));
                 }                             
                 control.show(layer);
             } else {
@@ -272,6 +292,24 @@ export default class LayerSwitcher extends Control {
                 }    
             }
         });
+    }
+
+    /**
+     * When a sub-control's activation state changes, make sure the controls take up minimal space on the map
+     * @param {ol.Control} changedCtrl
+     */
+    _positionSubControls(changedCtrl) {
+        console.log("_positionSubControls");
+        console.log(this);
+        let totalHeight = 0;
+        for (let c of this.controls) {
+            if (c != changedCtrl) {
+                if (typeof c.getHeight === "function") {
+                    totalHeight += c.getHeight();
+                }
+            }
+        }        
+        console.log("Done");
     }
 
     /**
@@ -348,7 +386,7 @@ export default class LayerSwitcher extends Control {
     _mapSizingFactory(layer) {
         return((evt) => {
             if (layer.getVisible()) {
-                [source, featureType] = common.sourceFeature(layer);
+                [source, featureType] = this._sourceFeature(layer);
                 if (featureType) {
                     /* Call Geoserver REST API to get layer extent */
                     let nonNsFeatureType = featureType.split(":").pop();
@@ -381,6 +419,35 @@ export default class LayerSwitcher extends Control {
                 }
             }            
         });
+    }
+
+    /**
+     * Return a source and feature type for the given layer
+     * @param {ol.Layer} layer 
+     * @return {Array}
+     */
+    _sourceFeature(layer) {
+        let source = layer.getSource();
+        let featureType = null;
+        if (source instanceof TileWMS) {
+            /* Tile WMS layer */
+            featureType = source.getParams()["layers"];
+        } else {
+            if (source instanceof Cluster) {
+                /* Cluster layer */
+                source = source.getSource();
+            } 
+            /* Vectors here */
+            try {
+                let url = source.getUrl();
+                if (url) {
+                    let qry = new URLSearchParams(url.substring(url.indexOf("?") + 1));
+                    featureType = qry.get("typename");		
+                }		
+            } catch(e) {			
+            }		
+        }      
+        return([source, featureType]);
     }
     
 }

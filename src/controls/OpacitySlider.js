@@ -28,7 +28,7 @@ export default class OpacitySlider extends Control {
         });
 
         /* If control is active */
-        this.active = false;
+        this.set("active", false);
 
         /* Record of the layer opacity slider is shown for */
         this._layer = null;
@@ -75,7 +75,7 @@ export default class OpacitySlider extends Control {
         this._inputListener = this._opacityInputHandlerFactory(layer);
         this._rangeSlider.addEventListener("input", this._inputListener);
         this._layer = layer; 
-        this.active = true;          
+        this.set("active", true);          
     }
 
     /**
@@ -88,7 +88,7 @@ export default class OpacitySlider extends Control {
         this._rangeSlider.removeEventListener("input", this.__inputListener);
         this._inputListener = null;
         this._layer = null; 
-        this.active = false;
+        this.set("active", false);
     }   
 
     get layer() {
@@ -96,7 +96,24 @@ export default class OpacitySlider extends Control {
     }
 
     get active() {
-        return(this.active);
+        return(this.get("active"));
+    }
+
+    getHeight() {
+        let boundingRect = this.element.getBoundingClientRect();
+        return(boundingRect.height);
+    }
+
+    setVerticalPos(pos) {
+        this.element.style.bottom = pos;
+    }
+
+    addActivationCallback(cb) {
+        this.on("propertychange", evt => {
+            if (evt.key === "active") {
+                cb();
+            }
+        });
     }
 
     _opacityInputHandlerFactory(layer) {

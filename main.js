@@ -6,9 +6,9 @@ import MousePosition from "ol/control/MousePosition";
 import ScaleLine from "ol/control/ScaleLine";
 import Zoom from "ol/control/Zoom";
 
-import * as utils from "./src/Utilities.js";
+import * as utils from "./src/utilities/String";
 import * as geoconst from "./src/GeoConstants";
-import * as layerspec from "./src/LayerSetup.js";
+import * as layerspec from "./src/LayerSetup";
 import LayerSwitcher from "./src/controls/LayerSwitcher";
 import Legend from "./src/controls/Legend";
 import OpacitySlider from "./src/controls/OpacitySlider";
@@ -89,11 +89,13 @@ window.onload = () => {
             }),
             new Zoom(),
             new LayerSwitcher({
-                layers: layers
-            }),
-            new Legend({}),
-            new OpacitySlider({}),
-            new SourceMetadata({})
+                layers: layers,
+                controls: [
+                    new Legend({}),
+                    new OpacitySlider({}),
+                    new SourceMetadata({})
+                ]
+            })            
 		]
     });	
     	

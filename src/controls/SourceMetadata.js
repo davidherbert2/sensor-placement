@@ -3,8 +3,8 @@
  */
 
 import Control from "ol/control/Control";
-import * as common from "./Common.js";
-import * as geoconst from "../GeoConstants.js";
+import * as common from "./Common";
+import * as geoconst from "../GeoConstants";
 
 /** 
  * @classdesc Class to render the source metadata for a layer
@@ -30,7 +30,7 @@ export default class SourceMetadata extends Control {
         });
 
         /* If control is active */
-        this.active = false;
+        this.set("active", false);
 
         /* Record of the layer source metadata is shown for */
         this._layer = null;
@@ -60,7 +60,7 @@ export default class SourceMetadata extends Control {
             this.element.classList.add("active");
         }        
         this._metadataHeaderDiv.querySelector("div:first-child").innerHTML = `Metadata for ${layer.get("title")}`;
-        [source, featureType] = common.sourceFeature(layer);
+        let featureType = this._getFeature(layer);
         if (featureType) {
             /* Call Geoserver REST API to get layer extent */
             let nonNsFeatureType = featureType.split(":").pop();
@@ -78,7 +78,7 @@ export default class SourceMetadata extends Control {
             this._metadataBodyDiv.innerHTML = `No feature type defined for layer ${layer.get("title")}`;
         }
         this._layer = layer;  
-        this.active = true;         
+        this.set("active", true);         
     }
 
     /**
@@ -89,7 +89,7 @@ export default class SourceMetadata extends Control {
             this.element.classList.remove("active");
         } 
         this._layer = null; 
-        this.active = false;
+        this.set("active", false);
     }   
 
     get layer() {
@@ -97,7 +97,24 @@ export default class SourceMetadata extends Control {
     }
 
     get active() {
-        return(this.active);
+        return(this.get("active"));
+    }
+
+    getHeight() {
+        let boundingRect = this.element.getBoundingClientRect();
+        return(boundingRect.height);
+    }
+
+    setVerticalPos(pos) {
+        this.element.style.bottom = pos;
+    }
+
+    addActivationCallback(cb) {
+        this.on("propertychange", evt => {
+            if (evt.key === "active") {
+                cb();
+            }
+        });
     }
     
 }

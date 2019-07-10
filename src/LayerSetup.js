@@ -16,8 +16,8 @@ import TileLayer from "ol/layer/Tile";
 import OSM from "ol/source/OSM";
 import TileWMS from "ol/source/TileWMS"
 
-import * as geoconst from "./GeoConstants.js";
-import InteractiveVectorLayer from "./InteractiveVectorLayer.js";
+import * as geoconst from "./GeoConstants";
+import InteractiveVectorLayer from "./InteractiveVectorLayer";
 
 /**
  * Return options for a GeoJSON source pointing to the given typename

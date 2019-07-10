@@ -27,6 +27,9 @@ export default class OpacitySlider extends Control {
             target: options.target
         });
 
+        /* If control is active */
+        this.active = false;
+
         /* Record of the layer opacity slider is shown for */
         this._layer = null;
 
@@ -40,17 +43,19 @@ export default class OpacitySlider extends Control {
         this._opacityBodyDiv = document.createElement("div");
         this._opacityBodyDiv.classList.add("opacity-body");  
         this._opacityBodyDiv.innerHTML = `
-            <div style="float:right;width:20px;text-align:bottom;padding-left:4px;background-color:white;color:black">
+            <div class="endstop right">
                 <i class="fa fa-circle-o"></i>
             </div>
-            <div style="float:left;width:20px;text-align:bottom;padding-right:4px;background-color:white;color:black">
+            <div class="endstop left">
                 <i class="fa fa-circle"></i>
             </div>
-            <div style="margin:0 20px">
-                <input type="range"></input>
+            <div class="range-slider">
+                <input type="range" min="0.0" max="1.0" step="0.1"></input>
             </div>
         `;                  
         this.element.appendChild(this._opacityBodyDiv);
+
+        this._rangeSlider = this._opacityBodyDiv.querySelector("input[type='range']");
 
         /* Close button handler */
         this._opacityHeaderDiv.querySelector("a").addEventListener("click", this.hide.bind(this));
@@ -65,7 +70,12 @@ export default class OpacitySlider extends Control {
             this.element.classList.add("active");
         }        
         this._opacityHeaderDiv.querySelector("div:first-child").innerHTML = `Change opacity for ${layer.get("title")}`;
-        this._layer = layer;           
+        this._rangeSlider.value = layer.getOpacity();
+        /* See https://www.impressivewebs.com/onchange-vs-oninput-for-range-sliders/ for explanation of why 'input' is used rather than 'change' */
+        this._inputListener = this._opacityInputHandlerFactory(layer);
+        this._rangeSlider.addEventListener("input", this._inputListener);
+        this._layer = layer; 
+        this.active = true;          
     }
 
     /**
@@ -75,11 +85,24 @@ export default class OpacitySlider extends Control {
         if (this.element.classList.contains("active")) {
             this.element.classList.remove("active");
         } 
+        this._rangeSlider.removeEventListener("input", this.__inputListener);
+        this._inputListener = null;
         this._layer = null; 
+        this.active = false;
     }   
 
     get layer() {
         return(this._layer);
     }
-    
+
+    get active() {
+        return(this.active);
+    }
+
+    _opacityInputHandlerFactory(layer) {
+        return(evt => {
+            layer.setOpacity(this._rangeSlider.value);
+        });
+    }
+                                                      
 }

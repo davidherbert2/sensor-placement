@@ -7,10 +7,10 @@ import Control from "ol/control/Control";
 import LayerGroup from "ol/layer/Group";
 import VectorSource from "ol/source/Vector";
 import * as geoconst from "../GeoConstants.js";
-import * as utils from "../Utilities.js";
 import * as common from "./Common.js";
 import Legend from "./Legend.js";
 import OpacitySlider from "./OpacitySlider.js";
+import SourceMetadata from "./SourceMetadata.js";
 
 /** 
  * @classdesc Class for a more fully-functional layer switcher
@@ -183,7 +183,7 @@ export default class LayerSwitcher extends Control {
         let expanded = isGroup && layer == this._expanded;
 
         /* Assign layer/group a unique id */
-        let layerId = utils.UUID4();
+        let layerId = String.prototype.uuid4();
         layer.set("id", layerId);
         this._layerMapping[layerId] = layer;
 
@@ -234,43 +234,41 @@ export default class LayerSwitcher extends Control {
                 <a class="tool-opacity"><i class="fa fa-adjust"></i></a>
                 <a class="tool-ztl"><i class="fa fa-expand"></i></a>
                 `;
+
             /* Add info (metadata/attribution) handler */
-            toolsDiv.querySelector("a.tool-info").addEventListener("click", evt => {
-                console.log(this.getMap());
-            });
+            this._addSwitcherToolAction(layer, toolsDiv, "info", SourceMetadata);          
             
-            /* Add a legend handler */            
-            let legendAnchor = toolsDiv.querySelector("a.tool-legend");
-            legendAnchor.addEventListener("click", evt => { 
-                let legendControl = common.findControl(this.getMap(), Legend);
-                if (legendControl) {               
-                    legendControl.show(layer);
-                } else {
-                    /* Disable the control */
-                    if (!legendAnchor.classList.contains("disabled")) {
-                        legendAnchor.classList.add("disabled");
-                    }    
-                }
-            });                
+            /* Add a legend handler */    
+            this._addSwitcherToolAction(layer, toolsDiv, "legend", Legend);                  
 
             /* Add opacity change handler */
-            let opacityAnchor = toolsDiv.querySelector("a.tool-opacity");
-            opacityAnchor.addEventListener("click", evt => {
-                let opacitySliderControl = common.findControl(this.getMap(), OpacitySlider);
-                console.log(opacitySliderControl);
-                if (opacitySliderControl) {               
-                    opacitySliderControl.show(layer);
-                } else {
-                    /* Disable the control */
-                    if (!opacityAnchor.classList.contains("disabled")) {
-                        opacityAnchor.classList.add("disabled");
-                    }    
-                }
-            });
+            this._addSwitcherToolAction(layer, toolsDiv, "opacity", OpacitySlider);
             
             /* Add zoom-to-layer-extent handler */
             toolsDiv.querySelector("a.tool-ztl").addEventListener("click", this._mapSizingFactory(layer));
         }
+    }
+
+    /**
+     * Assign a click handler to a generic tool, assuming the corresponding sub-tool has been added to the map
+     * @param {ol.Layer} layer            - the layer
+     * @param {HTMLElement} toolsDiv      - div containing all the tools
+     * @param {string} toolAnchorCss      - info|legend|opacity
+     * @param {ol.ControlClass} toolClass - SourceMetadata|Legend|OpacitySlider
+     */
+    _addSwitcherToolAction(layer, toolsDiv, toolAnchorCss, toolClass) {
+        let anchor = toolsDiv.querySelector(`a.tool-${toolAnchorCss}`);
+        anchor.addEventListener("click", evt => {
+            let control = common.findControl(this.getMap(), toolClass);
+            if (control) {               
+                control.show(layer, this._nextAvailablePosition(control));
+            } else {
+                /* Disable the control */
+                if (!anchor.classList.contains("disabled")) {
+                    anchor.classList.add("disabled");
+                }    
+            }
+        });
     }
 
     /**
@@ -351,7 +349,6 @@ export default class LayerSwitcher extends Control {
                 if (featureType) {
                     /* Call Geoserver REST API to get layer extent */
                     let nonNsFeatureType = featureType.split(":").pop();
-                    console.log(nonNsFeatureType);
                     fetch(`${geoconst.GEOSERVER_REST}/featuretypes/${nonNsFeatureType}.json`)
                     .then(r => r.json())
                     .then(jsonResponse => {

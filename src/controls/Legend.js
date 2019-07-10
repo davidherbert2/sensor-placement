@@ -29,6 +29,9 @@ export default class Legend extends Control {
             target: options.target
         });
 
+        /* If control is active */
+        this.active = false;
+
         /* Record of the layer legend is shown for */
         this._layer = null;
 
@@ -61,7 +64,7 @@ export default class Legend extends Control {
             "width": 30,
             "height": 30,
             "layer": featureType,
-            "legend_options": "layout:horizontal;rowwidth:300;fontColor:ffffff;fontName=sans-serif;bgColor:202020"
+            "legend_options": "layout:horizontal;rowwidth:300;fontColor:ffffff;fontName=sans-serif;bgColor:000000"
         };        
         let queryString = Object.keys(parms).map(key => key + "=" + parms[key]).join("&");
         if (!this.element.classList.contains("active")) {
@@ -69,7 +72,8 @@ export default class Legend extends Control {
         }        
         this._legendHeaderDiv.querySelector("div:first-child").innerHTML = this._getLegendCaption(layer);
         this._legendBodyDiv.innerHTML = `<img src="${geoconst.GEOSERVER_WMS}?${queryString}" alt="legend"/>`;
-        this._layer = layer;           
+        this._layer = layer;
+        this.active = true;        
     }
 
     /**
@@ -80,10 +84,15 @@ export default class Legend extends Control {
             this.element.classList.remove("active");
         } 
         this._layer = null; 
+        this.active = false;
     }   
 
     get layer() {
         return(this._layer);
+    }
+
+    get active() {
+        return(this.active);
     }
     
     /**

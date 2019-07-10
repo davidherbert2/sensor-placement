@@ -16,7 +16,6 @@ import TileLayer from "ol/layer/Tile";
 import OSM from "ol/source/OSM";
 import TileWMS from "ol/source/TileWMS"
 
-import * as utils from "./Utilities.js"
 import * as geoconst from "./GeoConstants.js";
 import InteractiveVectorLayer from "./InteractiveVectorLayer.js";
 
@@ -83,14 +82,14 @@ const BOUNDARY_HOVER_OPTIONS = (col, opacity = 0.4, nameAttr = "name") => {
 	return({ /* Hover options */
 		style: (feature) => {
 			return(new Style({
-				stroke: new Stroke({color: utils.HEX2RGBA(col, opacity)}),
-				fill: new Fill({color: utils.HEX2RGBA(col, opacity)}),
+				stroke: new Stroke({color: col.toRgba(opacity)}),
+				fill: new Fill({color: col.toRgba(opacity)}),
 				text: new Text({
 					font: "12px DejaVu Sans",
 					text: feature.get(nameAttr),
 					overflow: true,
-					stroke: new Stroke({color: utils.HEX2RGBA(col, 1.0)}),
-					fill: new Fill({color: utils.HEX2RGBA(col, 1.0)})
+					stroke: new Stroke({color: col.toRgba(1.0)}),
+					fill: new Fill({color: col.toRgbaA(1.0)})
 				})
 			}));
 		}
@@ -135,8 +134,8 @@ export const LA = () => {
             },
 			style: (feature) => {
 				return(new Style({
-					fill: new Fill({color: utils.HEX2RGBA(LA_COL, 0.0)}),
-					stroke: new Stroke({color: utils.HEX2RGBA(LA_COL, 0.0)})		
+					fill: new Fill({color: LA_COL.toRgba(0.0)}),
+					stroke: new Stroke({color: LA_COL.toRgba(0.0)})		
 				}));
 			}
 		},
@@ -165,8 +164,8 @@ export const LSOA = () => {
             },
 			style: (feature) => {
 				return(new Style({
-					fill: new Fill({color: utils.HEX2RGBA(LSOA_COL, 0.0)}),
-					stroke: new Stroke({color: utils.HEX2RGBA(LSOA_COL, 0.0)})		
+					fill: new Fill({color: LSOA_COL.toRgba(0.0)}),
+					stroke: new Stroke({color: LSOA_COL.toRgba(0.0)})		
 				}));
 			}
 		},
@@ -194,8 +193,8 @@ export const OA = () => {
             },
 			style: (feature) => {
 				return(new Style({
-					fill: new Fill({color: utils.HEX2RGBA(OA_COL, 0.0)}),
-					stroke: new Stroke({color: utils.HEX2RGBA(OA_COL, 0,0)})		
+					fill: new Fill({color: OA_COL.toRgba(0.0)}),
+					stroke: new Stroke({color: OA_COL.toRgba(0,0)})		
 				}));
 			}
 		},

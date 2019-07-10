@@ -2,14 +2,13 @@
  * @module SourceMetadata
  */
 
-import Control from "ol/control/Control";
-import * as common from "./Common";
 import * as geoconst from "../GeoConstants";
+import SwitcherSubControl from "./base/SwitcherSubControl";
 
 /** 
  * @classdesc Class to render the source metadata for a layer
  */
-export default class SourceMetadata extends Control {
+export default class SourceMetadata extends SwitcherSubControl {
 
 	/**
 	 * Create source metadata attribution control
@@ -22,33 +21,16 @@ export default class SourceMetadata extends Control {
 
         /* Create the element div */
         let element = document.createElement("div");
-        element.className = "ol-source-metadata-control ol-unselectable ol-control";
 
         super({
             element: element,
-            target: options.target
+            elementClass: "ol-source-metadata-control",
+            target: options.target,
+            headerClass: "metadata-header",
+            bodyClass: "metadata-body"
         });
-
-        /* If control is active */
-        this.set("active", false);
-
-        /* Record of the layer source metadata is shown for */
-        this._layer = null;
-
-        /* Create header and body */
-        this._metadataHeaderDiv = document.createElement("div");
-        this._metadataHeaderDiv.classList.add("metadata-header");
-        this._metadataHeaderDiv.innerHTML = `
-            <div></div><div><a href="JavaScript:void(0)"><i class="fa fa-times"></i></a></div>
-        `;
-        this.element.appendChild(this._metadataHeaderDiv);
-        this._metadataBodyDiv = document.createElement("div");
-        this._metadataBodyDiv.classList.add("metadata-body");  
-        this._metadataBodyDiv.innerHTML = "Loading...";
-        this.element.appendChild(this._metadataBodyDiv);
-
-        /* Close button handler */
-        this._metadataHeaderDiv.querySelector("a").addEventListener("click", this.hide.bind(this));
+ 
+        this._bodyDiv.innerHTML = "Loading...";
     }
 
     /**
@@ -79,42 +61,6 @@ export default class SourceMetadata extends Control {
         }
         this._layer = layer;  
         this.set("active", true);         
-    }
-
-    /**
-     * Hide metadata
-     */
-    hide() {
-        if (this.element.classList.contains("active")) {
-            this.element.classList.remove("active");
-        } 
-        this._layer = null; 
-        this.set("active", false);
-    }   
-
-    get layer() {
-        return(this._layer);
-    }
-
-    get active() {
-        return(this.get("active"));
-    }
-
-    getHeight() {
-        let boundingRect = this.element.getBoundingClientRect();
-        return(boundingRect.height);
-    }
-
-    setVerticalPos(pos) {
-        this.element.style.bottom = pos;
-    }
-
-    addActivationCallback(cb) {
-        this.on("propertychange", evt => {
-            if (evt.key === "active") {
-                cb();
-            }
-        });
     }
     
 }

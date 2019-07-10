@@ -3,7 +3,6 @@
  */
 
 import * as geoconst from "../GeoConstants";
-import * as common from "./Common";
 import SwitcherSubControl from "./base/SwitcherSubControl";
 
 /** 

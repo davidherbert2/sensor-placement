@@ -2,12 +2,12 @@
  * @module OpacitySlider
  */
 
-import Control from "ol/control/Control";
+import SwitcherSubControl from "./base/SwitcherSubControl";
 
 /** 
  * @classdesc Class to render an opacity change slider for a layer
  */
-export default class OpacitySlider extends Control {
+export default class OpacitySlider extends SwitcherSubControl {
 
 	/**
 	 * Create layer opacity slider control
@@ -20,29 +20,16 @@ export default class OpacitySlider extends Control {
 
         /* Create the element div */
         let element = document.createElement("div");
-        element.className = "ol-opacity-slider-control ol-unselectable ol-control";
 
         super({
             element: element,
-            target: options.target
+            elementClass: "ol-opacity-slider-control",
+            target: options.target,
+            headerClass: "opacity-header",
+            bodyClass: "opacity-body"
         });
-
-        /* If control is active */
-        this.set("active", false);
-
-        /* Record of the layer opacity slider is shown for */
-        this._layer = null;
-
-        /* Create header and body */
-        this._opacityHeaderDiv = document.createElement("div");
-        this._opacityHeaderDiv.classList.add("opacity-header");
-        this._opacityHeaderDiv.innerHTML = `
-            <div></div><div><a href="JavaScript:void(0)"><i class="fa fa-times"></i></a></div>
-        `;
-        this.element.appendChild(this._opacityHeaderDiv);
-        this._opacityBodyDiv = document.createElement("div");
-        this._opacityBodyDiv.classList.add("opacity-body");  
-        this._opacityBodyDiv.innerHTML = `
+        
+        this._bodyDiv.innerHTML = `
             <div class="endstop right">
                 <i class="fa fa-circle-o"></i>
             </div>
@@ -53,12 +40,7 @@ export default class OpacitySlider extends Control {
                 <input type="range" min="0.0" max="1.0" step="0.1"></input>
             </div>
         `;                  
-        this.element.appendChild(this._opacityBodyDiv);
-
-        this._rangeSlider = this._opacityBodyDiv.querySelector("input[type='range']");
-
-        /* Close button handler */
-        this._opacityHeaderDiv.querySelector("a").addEventListener("click", this.hide.bind(this));
+        this._rangeSlider = this._bodyDiv.querySelector("input[type='range']");
     }
 
     /**
@@ -77,45 +59,7 @@ export default class OpacitySlider extends Control {
         this._layer = layer; 
         this.set("active", true);          
     }
-
-    /**
-     * Hide the opacity slider
-     */
-    hide() {
-        if (this.element.classList.contains("active")) {
-            this.element.classList.remove("active");
-        } 
-        this._rangeSlider.removeEventListener("input", this.__inputListener);
-        this._inputListener = null;
-        this._layer = null; 
-        this.set("active", false);
-    }   
-
-    get layer() {
-        return(this._layer);
-    }
-
-    get active() {
-        return(this.get("active"));
-    }
-
-    getHeight() {
-        let boundingRect = this.element.getBoundingClientRect();
-        return(boundingRect.height);
-    }
-
-    setVerticalPos(pos) {
-        this.element.style.bottom = pos;
-    }
-
-    addActivationCallback(cb) {
-        this.on("propertychange", evt => {
-            if (evt.key === "active") {
-                cb();
-            }
-        });
-    }
-
+    
     _opacityInputHandlerFactory(layer) {
         return(evt => {
             layer.setOpacity(this._rangeSlider.value);

@@ -7,7 +7,6 @@ import Control from "ol/control/Control";
 import LayerGroup from "ol/layer/Group";
 import VectorSource from "ol/source/Vector";
 import * as geoconst from "../GeoConstants";
-import * as common from "./Common";
 import Legend from "./Legend";
 import OpacitySlider from "./OpacitySlider";
 import SourceMetadata from "./SourceMetadata";

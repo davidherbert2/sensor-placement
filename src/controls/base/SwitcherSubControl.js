@@ -25,7 +25,7 @@ export default class SwitcherSubControl extends Control {
 
         /* Create the element div */
         let element = document.createElement("div");
-        element.className = `${options.elementClass} ol-unselectable ol-control`;
+        element.className = `${options.elementClass} ol-switcher-sub-control ol-unselectable ol-control`;
 
         super({
             element: element,
@@ -42,6 +42,7 @@ export default class SwitcherSubControl extends Control {
         this._headerDiv = document.createElement("div");
         if (options.headerClass) {
             this._headerDiv.classList.add(options.headerClass);
+            this._headerDiv.classList.add("sub-control-header");
         }        
         this._headerDiv.innerHTML = `
             <div></div><div><a href="JavaScript:void(0)"><i class="fa fa-times"></i></a></div>
@@ -51,6 +52,7 @@ export default class SwitcherSubControl extends Control {
         this._bodyDiv = document.createElement("div");
         if (options.bodyClass) {
             this._bodyDiv.classList.add(options.bodyClass);
+            this._bodyDiv.classList.add("sub-control-body");
         }                             
         this.element.appendChild(this._bodyDiv);
 

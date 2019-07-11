@@ -40,8 +40,12 @@ export default class SourceMetadata extends SwitcherSubControl {
     show(layer) {        
         if (!this.element.classList.contains("active")) {
             this.element.classList.add("active");
-        }        
-        this._headerDiv.querySelector("div:first-child").innerHTML = `Metadata for ${layer.get("title")}`;
+        } 
+        let titleDiv = this._headerDiv.querySelector("div:first-child"); 
+        let caption = `Metadata for ${layer.get("title")}`;
+        titleDiv.innerHTML = caption;
+        titleDiv.setAttribute("title", caption);
+        
         let featureType = this._getFeature(layer);
         if (featureType) {
             /* Call Geoserver REST API to get layer extent */

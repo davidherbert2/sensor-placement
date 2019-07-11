@@ -1,50 +1,6 @@
 /* Opacity slider styles */
 
 .ol-opacity-slider-control {
-    display: none;
-    position: absolute;
-    bottom: 7em;
-    left: 1em;
-    background-color: rgba(60,60,60,0.85);
-    border-radius: 15px;
-    padding: 5px 10px;
-    width: 300px;
-}
-
-.ol-opacity-slider-control.active {
-    display: block;
-}
-
-.ol-opacity-slider-control.active:hover {
-    background-color: rgba(60,60,60,0.85);
-}
-
-.ol-opacity-slider-control > .opacity-header {
-    color: white;
-    font-family: sans-serif;
-    font-weight: bold;
-}
-
-.ol-opacity-slider-control > .opacity-header > div:first-child {
-    float: left;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
-    width: 85%;
-}
-
-.ol-opacity-slider-control > .opacity-header > div:last-child {
-    float: right;
-    padding-left: 5px;
-}
-
-.ol-opacity-slider-control > .opacity-header > div:last-child > a {
-    display: inline-block;
-    color: white;
-}
-
-.ol-opacity-slider-control > .opacity-header > div:last-child > a:hover {
-    color: lightgray;
 }
 
 .opacity-body > div.endstop {   

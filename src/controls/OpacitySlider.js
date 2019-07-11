@@ -50,8 +50,11 @@ export default class OpacitySlider extends SwitcherSubControl {
     show(layer) {        
         if (!this.element.classList.contains("active")) {
             this.element.classList.add("active");
-        }        
-        this._opacityHeaderDiv.querySelector("div:first-child").innerHTML = `Change opacity for ${layer.get("title")}`;
+        }
+        let titleDiv = this._headerDiv.querySelector("div:first-child");
+        let caption = `Change opacity for ${layer.get("title")}`;
+        titleDiv.setAttribute("title", caption);
+        titleDiv.innerHTML = caption;
         this._rangeSlider.value = layer.getOpacity();
         /* See https://www.impressivewebs.com/onchange-vs-oninput-for-range-sliders/ for explanation of why 'input' is used rather than 'change' */
         this._inputListener = this._opacityInputHandlerFactory(layer);

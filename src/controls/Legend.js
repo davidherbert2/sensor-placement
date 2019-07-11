@@ -43,13 +43,16 @@ export default class Legend extends SwitcherSubControl {
             "width": 30,
             "height": 30,
             "layer": this._getFeature(layer),
-            "legend_options": "layout:horizontal;rowwidth:300;fontColor:ffffff;fontName=sans-serif;bgColor:000000"
+            "legend_options": "layout:horizontal;rows:4;rowwidth:200;fontColor:ffffff;fontName=sans-serif;fontAntiAliasing:true;bgColor:000000"
         };        
         let queryString = Object.keys(parms).map(key => key + "=" + parms[key]).join("&");
         if (!this.element.classList.contains("active")) {
             this.element.classList.add("active");
-        }        
-        this._headerDiv.querySelector("div:first-child").innerHTML = this._getLegendCaption(layer);
+        }
+        let titleDiv = this._headerDiv.querySelector("div:first-child");
+        let caption = this._getLegendCaption(layer);
+        titleDiv.setAttribute("title", caption);
+        titleDiv.innerHTML = caption;
         this._bodyDiv.innerHTML = `<img src="${geoconst.GEOSERVER_WMS}?${queryString}" alt="legend"/>`;
         this._layer = layer;
         this.set("active", true);        
@@ -61,10 +64,12 @@ export default class Legend extends SwitcherSubControl {
      * @return {string}
      */
     _getLegendCaption(layer) {
-        let caption = "Legend";
+        let caption = null;
         let opts = layer.get("switcherOpts");
         if (opts && opts.legend) {
             caption = opts.legend;
+        } else {
+            caption = layer.get("title");
         }
         return(caption);
     }

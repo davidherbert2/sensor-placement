@@ -41,7 +41,7 @@ export default class SourceMetadata extends SwitcherSubControl {
         if (!this.element.classList.contains("active")) {
             this.element.classList.add("active");
         }        
-        this._metadataHeaderDiv.querySelector("div:first-child").innerHTML = `Metadata for ${layer.get("title")}`;
+        this._headerDiv.querySelector("div:first-child").innerHTML = `Metadata for ${layer.get("title")}`;
         let featureType = this._getFeature(layer);
         if (featureType) {
             /* Call Geoserver REST API to get layer extent */
@@ -50,14 +50,14 @@ export default class SourceMetadata extends SwitcherSubControl {
             .then(r => r.json())
             .then(jsonResponse => {
                 let abstract = jsonResponse["featureType"]["abstract"];
-                this._metadataBodyDiv.innerHTML = abstract.linkify();
+                this._bodyDiv.innerHTML = abstract.linkify();
             })
             .catch(error => {
-                this._metadataBodyDiv.innerHTML = `Failed to retrieve abstract for layer ${layer.get("title")} - JSON error`;
+                this._bodyDiv.innerHTML = `Failed to retrieve abstract for layer ${layer.get("title")} - JSON error`;
                 console.log(error);
             });		
         } else {
-            this._metadataBodyDiv.innerHTML = `No feature type defined for layer ${layer.get("title")}`;
+            this._bodyDiv.innerHTML = `No feature type defined for layer ${layer.get("title")}`;
         }
         this._layer = layer;  
         this.set("active", true);         

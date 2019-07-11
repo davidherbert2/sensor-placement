@@ -8,6 +8,7 @@
     background-color: rgba(60,60,60,0.85);
     border-radius: 15px;
     padding: 5px 10px;
+    width: 300px;
 }
 
 .ol-source-metadata-control.active {
@@ -22,7 +23,7 @@
     color: white;
     font-family: sans-serif;
     font-weight: bold;
-    width: 400px;
+    width: 300px;
     height: 30px;
 }
 
@@ -31,7 +32,7 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
-    width: 350px;
+    width: 85%;
 }
 
 .ol-source-metadata-control > .metadata-header > div:last-child {

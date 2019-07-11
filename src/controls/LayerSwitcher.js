@@ -5,6 +5,8 @@
 import {fromLonLat} from "ol/proj";
 import Control from "ol/control/Control";
 import LayerGroup from "ol/layer/Group";
+import TileWMS from "ol/source/TileWMS";
+import Cluster from "ol/source/Cluster";
 import VectorSource from "ol/source/Vector";
 import * as geoconst from "../GeoConstants";
 import Legend from "./Legend";
@@ -23,6 +25,7 @@ export default class LayerSwitcher extends Control {
      *  - target   HTMLElement|string - (id of) target if required outside of map viewport
      *  - layers   Array              - list of layer groups/layers (nesting > 1 level not supported)
      *  - controls Array              - list of ol sub-controls belonging to this switcher
+     *  - controlStackBl Array        - [left, bottom] offset (in em units) into the map of control stack bottom-left corner
 	 * @param {Object} options - options passed directly to base class constructor
 	 */
 	constructor(options) {
@@ -45,7 +48,9 @@ export default class LayerSwitcher extends Control {
          * - opacity  => OpacitySlider
          * Zoom to layer is included in basic switcher functionality 
          */      
-        this.controls = options.controls;
+        this.controls = options.controls || [];
+        this.controlStackBl = options.controlStackBl || [1, 7];
+
         this._layers = options.layers;
 
         /* Layer mapping by id */
@@ -294,20 +299,22 @@ export default class LayerSwitcher extends Control {
     }
 
     /**
-     * When a sub-control's activation state changes, make sure the controls take up minimal space on the map
+     * When a sub-control's activation state changes, update the control stack to economise on space taken from the map
+     * Any newly-activated control should go at the top of the stack
      * @param {ol.Control} changedCtrl
      */
     _positionSubControls(changedCtrl) {
         console.log("_positionSubControls");
-        console.log(this);
-        let totalHeight = 0;
-        for (let c of this.controls) {
-            if (c != changedCtrl) {
-                if (typeof c.getHeight === "function") {
-                    totalHeight += c.getHeight();
-                }
-            }
-        }        
+        let stackBase = this.controlStackBl[1];
+        for (let ctrl of this.controls) {
+            if (ctrl.active && ctrl != changedCtrl) {
+                ctrl.setVerticalPos(`${stackBase}em`);
+                stackBase += (parseInt(ctrl.getHeight()/16) + 1)
+            }            
+        }
+        if (changedCtrl.active) {
+            changedCtrl.setVerticalPos(`${stackBase}em`);
+        }
         console.log("Done");
     }
 

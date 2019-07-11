@@ -2,6 +2,10 @@
  * @module SwitcherSubControl
  */
 
+import Control from "ol/control/Control";
+import TileWMS from "ol/source/TileWMS";
+import Cluster from "ol/source/Cluster";
+
 /** 
  * @classdesc Class for custom controls belonging to a layer switcher 
  */
@@ -96,6 +100,7 @@ export default class SwitcherSubControl extends Control {
     }
 
     setVerticalPos(pos) {
+        console.log(`Set vertical position to ${pos}`);
         this.element.style.bottom = pos;
     }
 

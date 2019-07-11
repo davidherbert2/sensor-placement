@@ -8,6 +8,7 @@
     background-color: rgba(60,60,60,0.85);
     border-radius: 15px;
     padding: 5px 10px;
+    width: 300px;
 }
 
 .ol-opacity-slider-control.active {
@@ -29,6 +30,7 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
+    width: 85%;
 }
 
 .ol-opacity-slider-control > .opacity-header > div:last-child {

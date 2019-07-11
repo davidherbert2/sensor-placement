@@ -8,7 +8,7 @@ import LayerGroup from "ol/layer/Group";
 import TileWMS from "ol/source/TileWMS";
 import Cluster from "ol/source/Cluster";
 import VectorSource from "ol/source/Vector";
-import * as geoconst from "../GeoConstants";
+import * as geoconst from "../utilities/GeoConstants";
 import Legend from "./Legend";
 import OpacitySlider from "./OpacitySlider";
 import SourceMetadata from "./SourceMetadata";
@@ -105,6 +105,7 @@ export default class LayerSwitcher extends Control {
                     teb.setAttribute("title", "Show layer tools...");
                     teb.querySelector("i").classList.remove("fa-angle-right");
                     teb.querySelector("i").classList.add("fa-cog");
+                    this.controls.map(c => {c.hide()});
                 }
                 this.element.querySelectorAll(".tools-extension-cell").forEach(tec => {
                     tec.classList.toggle("active");

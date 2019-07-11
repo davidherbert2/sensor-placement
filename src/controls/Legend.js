@@ -2,7 +2,7 @@
  * @module Legend
  */
 
-import * as geoconst from "../GeoConstants";
+import * as geoconst from "../utilities/GeoConstants";
 import SwitcherSubControl from "./base/SwitcherSubControl";
 
 /** 
@@ -53,7 +53,14 @@ export default class Legend extends SwitcherSubControl {
         let caption = this._getLegendCaption(layer);
         titleDiv.setAttribute("title", caption);
         titleDiv.innerHTML = caption;
-        this._bodyDiv.innerHTML = `<img src="${geoconst.GEOSERVER_WMS}?${queryString}" alt="legend"/>`;
+
+        this._bodyDiv.innerHTML = `<img alt="legend"/>`;
+        let legendImage = this._bodyDiv.querySelector("img");
+        legendImage.addEventListener("error", () => {
+            this._bodyDiv.innerHTML = "No legend available";
+        });
+        legendImage.setAttribute("src", `${geoconst.GEOSERVER_WMS}?${queryString}`);
+
         this._layer = layer;
         this.set("active", true);        
     }

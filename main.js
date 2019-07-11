@@ -7,7 +7,7 @@ import ScaleLine from "ol/control/ScaleLine";
 import Zoom from "ol/control/Zoom";
 
 import * as utils from "./src/utilities/String";
-import * as geoconst from "./src/GeoConstants";
+import * as geoconst from "./src/utilities/GeoConstants";
 import * as layerspec from "./src/LayerSetup";
 import LayerSwitcher from "./src/controls/LayerSwitcher";
 import Legend from "./src/controls/Legend";
@@ -97,6 +97,59 @@ window.onload = () => {
                 ]
             })            
 		]
-    });	
-    	
+    });
+
+    /* Check in range of visibility and clear highlight if out of range */
+    map.getView().on("change:resolution", evt => {
+        let res = evt.oldValue;
+        map.getLayers().forEach(lyr => {
+            if (lyr.hoverInteractive === true) {
+                lyr.hideHover(res);
+            }
+        });        		
+    });
+
+    /* Map hover interactions */
+    map.on("pointermove", evt => {
+        if (!evt.dragging) {
+            console.log("pointermove : not dragging");
+            map.forEachFeatureAtPixel(map.getEventPixel(evt.originalEvent),
+                (feat, layer) => {
+                    console.log(layer);
+                    if (layer != null && layer.hoverInteractive === true) {
+                        console.log("about to show hover");
+                        layer.showHover(feat);
+                    }
+                }, {
+                    layerFilter: layerCandidate => {
+                        console.log("layerFilter");
+                        console.log(layerCandidate);
+                        console.log(layerCandidate.hoverInteractive);
+                        console.log("Done");
+                        return(layerCandidate.hoverInteractive === true);
+                    }
+                }
+            );            
+        }
+    });
+
+    /* Map click interactions */
+    map.on("singleclick", evt => {
+        map.forEachFeatureAtPixel(evt.pixel, 
+            (feat, layer) => {
+                console.log(layer);
+                if (layer != null && layer.clickInteractive === true) {
+                    console.log("about to show popup");
+                    layer.showPopup(feat);
+                    return(true);   /* Only respond to the first one, otherwise confusing */
+                }
+            }, {
+                layerFilter: layerCandidate => {
+                    return(layerCandidate.clickInteractive === true);
+                }
+            }
+        );       
+    });
+
+        	
 }

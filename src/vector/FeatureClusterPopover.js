@@ -1,7 +1,7 @@
 /**
  * @module FeatureClusterPopover
  */
-import MapPopover from "./MapPopover.js";
+import MapPopover from "./MapPopover";
 
 /** 
  * @classdesc Class for Map popovers containing tabulated feature attributes

@@ -16,8 +16,8 @@ import TileLayer from "ol/layer/Tile";
 import OSM from "ol/source/OSM";
 import TileWMS from "ol/source/TileWMS"
 
-import * as geoconst from "./GeoConstants";
-import InteractiveVectorLayer from "./InteractiveVectorLayer";
+import * as geoconst from "./utilities/GeoConstants";
+import InteractiveVectorLayer from "./vector/InteractiveVectorLayer";
 
 /**
  * Return options for a GeoJSON source pointing to the given typename
@@ -109,7 +109,7 @@ export const OPENSTREETMAP = () => {
         zIndex: 1,
         switcherOpts: {
             icon: "literal:OSM",
-            attribution: true
+            attribution: "© OpenStreetMap contributors"
         },		
 		source: new OSM()
 	}));
@@ -130,7 +130,7 @@ export const LA = () => {
             zIndex: 100,
 			switcherOpts: {
                 icon: "literal:LA",
-                attribution: true
+                attribution: "Local Authority boundaries for Tyne & Wear area."
             },
 			style: (feature) => {
 				return(new Style({
@@ -160,7 +160,12 @@ export const LSOA = () => {
             zIndex: 110,
 			switcherOpts: {
                 icon: "literal:LSOA",
-                attribution: true
+                attribution: `
+                    Lower Layer Super Output Areas. December 2011.  
+                    Full extent boundaries for England and Wales.  
+                    Downloaded 03/05/2019 16:48 from http://geoportal.statistics.gov.uk/datasets/da831f80764346889837c72508f046fa_1/data,
+                    LSOA dataset clipped to Tyne & Wear area only.
+                    `
             },
 			style: (feature) => {
 				return(new Style({
@@ -189,12 +194,12 @@ export const OA = () => {
             zIndex: 120,
 			switcherOpts: {
                 icon: "literal:OA",
-                attribution: true
+                attribution: "OA dataset clipped to include Tyne & Wear area only."
             },
 			style: (feature) => {
 				return(new Style({
 					fill: new Fill({color: OA_COL.toRgba(0.0)}),
-					stroke: new Stroke({color: OA_COL.toRgba(0,0)})		
+					stroke: new Stroke({color: OA_COL.toRgba(0.0)})		
 				}));
 			}
 		},

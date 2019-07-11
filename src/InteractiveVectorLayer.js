@@ -4,7 +4,7 @@
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import Cluster from "ol/source/Cluster";
-import FeatureClusterPopover from "./FeatureClusterPopover.js";
+import FeatureClusterPopover from "./vector/FeatureClusterPopover";
  
 /** 
  * @classdesc Class for Interactive (hover and/or click) Vector Layers

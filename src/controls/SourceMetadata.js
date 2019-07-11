@@ -2,7 +2,7 @@
  * @module SourceMetadata
  */
 
-import * as geoconst from "../GeoConstants";
+import * as geoconst from "../utilities/GeoConstants";
 import SwitcherSubControl from "./base/SwitcherSubControl";
 
 /** 
@@ -45,23 +45,29 @@ export default class SourceMetadata extends SwitcherSubControl {
         let caption = `Metadata for ${layer.get("title")}`;
         titleDiv.innerHTML = caption;
         titleDiv.setAttribute("title", caption);
-        
-        let featureType = this._getFeature(layer);
-        if (featureType) {
-            /* Call Geoserver REST API to get layer extent */
-            let nonNsFeatureType = featureType.split(":").pop();
-            fetch(`${geoconst.GEOSERVER_REST}/featuretypes/${nonNsFeatureType}.json`)
-            .then(r => r.json())
-            .then(jsonResponse => {
-                let abstract = jsonResponse["featureType"]["abstract"];
-                this._bodyDiv.innerHTML = abstract.linkify();
-            })
-            .catch(error => {
-                this._bodyDiv.innerHTML = `Failed to retrieve abstract for layer ${layer.get("title")} - JSON error`;
-                console.log(error);
-            });		
+
+        let so = layer.get("switcherOpts");
+        if (so && so.attribution) {
+            /* Canned attribution */
+            this._bodyDiv.innerHTML = so.attribution;
         } else {
-            this._bodyDiv.innerHTML = `No feature type defined for layer ${layer.get("title")}`;
+            let featureType = this._getFeature(layer);
+            if (featureType) {
+                /* Call Geoserver REST API to get layer extent */
+                let nonNsFeatureType = featureType.split(":").pop();
+                fetch(`${geoconst.GEOSERVER_REST}/featuretypes/${nonNsFeatureType}.json`)
+                .then(r => r.json())
+                .then(jsonResponse => {
+                    let abstract = jsonResponse["featureType"]["abstract"];
+                    this._bodyDiv.innerHTML = abstract.linkify();
+                })
+                .catch(error => {
+                    this._bodyDiv.innerHTML = `Failed to retrieve abstract for layer ${layer.get("title")} - JSON error`;
+                    console.log(error);
+                });		
+            } else {
+                this._bodyDiv.innerHTML = `No feature type defined for layer ${layer.get("title")}`;
+            }
         }
         this._layer = layer;  
         this.set("active", true);         

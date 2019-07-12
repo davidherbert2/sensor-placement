@@ -2,7 +2,7 @@
 
 .ol-layerswitcher-control {
     position: absolute; 
-    width: 200px; 
+    width: 300px; 
     height: auto; 
     background-color: transparent;
     top: 6em; 
@@ -11,7 +11,7 @@
 }
 
 .ol-layerswitcher-control.show-tools {
-    width: 270px;
+    width: 370px;
 }
 
 .ol-layerswitcher-control:hover {
@@ -42,16 +42,17 @@
 }
 
 .ol-layerswitcher-control > .box-row .box-cell.left-cell {
-    max-width: 165px;
-    width: 165px;
+    max-width: 265px;
+    width: 265px;
     max-height: 30px;
-    height: 30px;
+    height: 30px;    
 }
 
 .ol-layerswitcher-control > .box-row .box-cell.left-cell.general-element {    
-    color: darkslategray;
+    color: silver;
     font-weight: bolder;
     padding: 2px 5px;
+    text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;    
     text-decoration: none;
     text-align: right; 
     text-overflow: ellipsis;
@@ -61,7 +62,7 @@
 }
 
 .ol-layerswitcher-control > .box-row .box-cell.left-cell.general-element.layer-disabled {    
-    color: gray;    
+    color: silver;    
 }
 
 .ol-layerswitcher-control > .box-row .box-cell.left-cell.general-element:hover {

@@ -51,7 +51,7 @@ export default class LayerSwitcher extends Control {
         this.controls = options.controls || [];
         this.controlStackBl = options.controlStackBl || [1, 7];
 
-        this._layers = options.layers;
+        this._layers = options.layers || [];
 
         /* Layer mapping by id */
         this._layerMapping = {};
@@ -105,7 +105,7 @@ export default class LayerSwitcher extends Control {
                     teb.setAttribute("title", "Show layer tools...");
                     teb.querySelector("i").classList.remove("fa-angle-right");
                     teb.querySelector("i").classList.add("fa-cog");
-                    this.controls.map(c => {c.hide()});
+                    this.controls.map(c => c.hide());
                 }
                 this.element.querySelectorAll(".tools-extension-cell").forEach(tec => {
                     tec.classList.toggle("active");
@@ -120,6 +120,43 @@ export default class LayerSwitcher extends Control {
             });
         }
     };
+
+    /**
+     * Initialisation required once control added to map
+     */
+    init() {
+        this.getMap() && this._setLayerVisibilityControlStatus(this.getMap().getView().getResolution());
+        this.getMap() && this.getMap().getView().on("change:resolution", evt => this._setLayerVisibilityControlStatus(evt.oldValue));
+    }
+
+    /**
+     * Callback for map resolution change - disable the visibility toggle for out-of-range layers
+     * @param {float} resolution - the new map resolution 
+     */
+    _setLayerVisibilityControlStatus(resolution) {
+        for (let layerDiv of this.element.querySelectorAll("div[id^='entry-']")) {
+            let layerId = layerDiv.getAttribute("id").replace(/^entry-/, "");
+            let layer = this._layerMapping[layerId];
+            let anchor = layerDiv.querySelector("a");
+            if (layer && anchor) {
+                /* Check the viewability of the layer w.r.t current map resolution supplied */
+                let inRange = this._layerInRange(layer, resolution);
+                anchor.classList.toggle("disabled", inRange);
+                anchor.querySelector("div.general-element").classList.toggle("layer-disabled", inRange);
+                anchor.querySelector("div.icon-wrapper").classList.toggle("layer-disabled", inRange);
+            }
+        }
+    }
+
+    /**
+     * Is given layer in range, given a resolution (or current map resolution)
+     * @param {ol.Layer} layer  
+     * @param {float} [resolution = null] - resolution
+     */
+    _layerInRange(layer, resolution = null) {
+        resolution = resolution || this.getMap().getView().getResolution();
+        return(resolution < layer.getMinResolution() || resolution > layer.getMaxResolution());
+    }
 
     /**
      * Decide which layer group to display expanded on initial render
@@ -148,19 +185,7 @@ export default class LayerSwitcher extends Control {
      * Get the base layer group, if any
      */
     _baseGroup() {
-        let baseGroup = null;
-        if (Array.isArray(this._layers)) {
-            for (let layer of this._layers) {
-                if (layer instanceof LayerGroup) {
-                    let opts = layer.get("switcherOpts") || {};
-                    if (opts.base === true) {
-                        baseGroup = layer;
-                        break;
-                    }                    
-                }
-            }                  
-        }
-        return(baseGroup);
+        return(this._layers.find(layer => layer instanceof LayerGroup && layer.get("switcherOpts") && layer.get("switcherOpts")["base"] === true));                           
     }
 
     /**
@@ -170,12 +195,7 @@ export default class LayerSwitcher extends Control {
         let visBase = null;
         if (this._baseGroup != null) {
             let childLayers = this._baseGroup.getLayers().getArray();
-            for (let childLayer of childLayers) {
-                if (childLayer.get("visible")) {
-                    visBase = childLayer;
-                    break;
-                }                
-            }
+            visBase = childLayers.find(cl => cl.get("visible"));            
             if (visBase == null) {
                 visBase = childLayers[0];
             }
@@ -207,9 +227,7 @@ export default class LayerSwitcher extends Control {
         let rowDiv = document.createElement("div");
         rowDiv.classList.add("box-row");
         rowDiv.setAttribute("id", `entry-${layerId}`);        
-        if (!visible) {
-            rowDiv.classList.add("row-hidden");
-        }
+        !visible && rowDiv.classList.add("row-hidden");
         this.element.insertBefore(rowDiv, insertAt);   
 
         /* Populate row */
@@ -222,11 +240,9 @@ export default class LayerSwitcher extends Control {
             </a>
             <div id="tools-${layerId}" class="box-cell"></div>
            `;
-        if (expanded) {
-            rowDiv.querySelector("div.left-cell").classList.add("group-opened");
-        }
-        let anchor = rowDiv.querySelector("a");
-            
+        expanded && rowDiv.querySelector("div.left-cell").classList.add("group-opened");        
+        
+        let anchor = rowDiv.querySelector("a");            
         if (isGroup) {
             /* Create all child layer row markup */
             layer.getLayers().forEach((childLayer => {
@@ -272,29 +288,15 @@ export default class LayerSwitcher extends Control {
      * @param {ol.ControlClass} toolClass - SourceMetadata|Legend|OpacitySlider
      */
     _addSwitcherToolAction(layer, toolsDiv, toolAnchorCss, toolClass) {
-        let anchor = toolsDiv.querySelector(`a.tool-${toolAnchorCss}`);
-        anchor.addEventListener("click", evt => {
-            let control = null;
-            for (let c of this.controls) {
-                if (c instanceof toolClass) {
-                    control = c;
-                    break;
-                }
-            }
+        toolsDiv.querySelector(`a.tool-${toolAnchorCss}`).addEventListener("click", evt => {
+            let control = this.controls.find(c => c instanceof toolClass);            
             if (control != null) {
-                if (!control.getMap()) {
-                    /* Add the sub-control to the map */
-                    control.setMap(this.getMap());
-                }                
-                if (typeof control.addActivationCallback === "function") {
-                    control.addActivationCallback(this._positionSubControls.bind(this));
-                }                             
+                !control.getMap() && control.setMap(this.getMap());
+                typeof control.addActivationCallback === "function" && control.addActivationCallback(this._positionSubControls.bind(this));
                 control.show(layer);
             } else {
                 /* Disable the control */
-                if (!anchor.classList.contains("disabled")) {
-                    anchor.classList.add("disabled");
-                }    
+                !anchor.classList.contains("disabled") && anchor.classList.add("disabled");
             }
         });
     }
@@ -305,18 +307,14 @@ export default class LayerSwitcher extends Control {
      * @param {ol.Control} changedCtrl
      */
     _positionSubControls(changedCtrl) {
-        console.log("_positionSubControls");
         let stackBase = this.controlStackBl[1];
         for (let ctrl of this.controls) {
             if (ctrl.active && ctrl != changedCtrl) {
                 ctrl.setVerticalPos(`${stackBase}em`);
-                stackBase += (parseInt(ctrl.getHeight()/16) + 1)
+                stackBase += Math.ceil(ctrl.getHeight()/16.0 + 1.0);
             }            
         }
-        if (changedCtrl.active) {
-            changedCtrl.setVerticalPos(`${stackBase}em`);
-        }
-        console.log("Done");
+        changedCtrl.active && changedCtrl.setVerticalPos(`${stackBase}em`);
     }
 
     /**
@@ -335,9 +333,7 @@ export default class LayerSwitcher extends Control {
                         /* Change open state */
                         grp.getLayers().forEach(lyr => {
                             let lyrDiv = this.element.querySelector(`div[id='entry-${lyr.get("id")}']`);
-                            if (lyrDiv) {
-                                lyrDiv.classList.toggle("row-hidden");                        
-                            }
+                            lyrDiv && lyrDiv.classList.toggle("row-hidden");                        
                         });
                         titleCell.classList.toggle("group-opened");
                     }                    
@@ -367,7 +363,7 @@ export default class LayerSwitcher extends Control {
             }
             /* Update tools icon visibility */
             let toolsDiv = anchor.parentNode.querySelector("div.tools-extension-cell.active");
-            if(toolsDiv) {
+            if (toolsDiv) {
                 toolsDiv.querySelector("a.tool-opacity").classList.toggle("disabled", !layer.getVisible());
                 toolsDiv.querySelector("a.tool-ztl").classList.toggle("disabled", !layer.getVisible());
             }            

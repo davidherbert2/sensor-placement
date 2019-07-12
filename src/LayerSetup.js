@@ -82,14 +82,16 @@ const BOUNDARY_HOVER_OPTIONS = (col, opacity = 0.4, nameAttr = "name") => {
 	return({ /* Hover options */
 		style: (feature) => {
 			return(new Style({
-				stroke: new Stroke({color: col.toRgba(opacity)}),
+				stroke: new Stroke({color: col.toRgba(1.0)}),
 				fill: new Fill({color: col.toRgba(opacity)}),
 				text: new Text({
-					font: "12px DejaVu Sans",
-					text: feature.get(nameAttr),
+					font: "14px sans serif",
+                    text: feature.get(nameAttr),
+                    placement: "point",
 					overflow: true,
-					stroke: new Stroke({color: col.toRgba(1.0)}),
-					fill: new Fill({color: col.toRgbaA(1.0)})
+					stroke: new Stroke({color: "#ffffff".toRgba(1.0), width: 3}),
+                    fill: new Fill({color: col.toRgba(1.0)}),
+                    padding: [10, 10, 10, 10]
 				})
 			}));
 		}
@@ -119,6 +121,8 @@ export const OPENSTREETMAP = () => {
  * LA layer
  */
 const LA_COL = "#7a4419"
+const LA_OPACITY = 0.5
+const LA_FEATURE = "siss:tyne_and_wear_la"
 export const LA = () => {
 	return(new InteractiveVectorLayer(
 		{ /* Layer options */
@@ -128,9 +132,10 @@ export const LA = () => {
 			minResolution: 10,
             extent: geoconst.NEWCASTLE_CENTRE_3857,
             zIndex: 100,
+            opacity: LA_OPACITY,
 			switcherOpts: {
                 icon: "literal:LA",
-                attribution: "Local Authority boundaries for Tyne & Wear area."
+                feature: LA_FEATURE
             },
 			style: (feature) => {
 				return(new Style({
@@ -139,8 +144,8 @@ export const LA = () => {
 				}));
 			}
 		},
-		GEOJSON_SOURCE("siss:tyne_and_wear_la"),
-		BOUNDARY_HOVER_OPTIONS(LA_COL, 0.4)
+		GEOJSON_SOURCE(LA_FEATURE),
+		BOUNDARY_HOVER_OPTIONS(LA_COL, LA_OPACITY)
 	));
 };
 
@@ -148,6 +153,8 @@ export const LA = () => {
  * LSOA layer
  */
 const LSOA_COL = "#63535b"
+const LSOA_OPACITY = 0.5
+const LSOA_FEATURE = "siss:tyne_and_wear_lsoa"
 export const LSOA = () => {
 	return(new InteractiveVectorLayer(
 		{ /* Layer options */
@@ -158,14 +165,10 @@ export const LSOA = () => {
 			maxResolution: 20,
             extent: geoconst.NEWCASTLE_CENTRE_3857,
             zIndex: 110,
+            opacity: LSOA_OPACITY,
 			switcherOpts: {
                 icon: "literal:LSOA",
-                attribution: `
-                    Lower Layer Super Output Areas. December 2011.  
-                    Full extent boundaries for England and Wales.  
-                    Downloaded 03/05/2019 16:48 from http://geoportal.statistics.gov.uk/datasets/da831f80764346889837c72508f046fa_1/data,
-                    LSOA dataset clipped to Tyne & Wear area only.
-                    `
+                feature: LSOA_FEATURE
             },
 			style: (feature) => {
 				return(new Style({
@@ -174,8 +177,8 @@ export const LSOA = () => {
 				}));
 			}
 		},
-		GEOJSON_SOURCE("siss:tyne_and_wear_lsoa"),
-		BOUNDARY_HOVER_OPTIONS(LSOA_COL)
+		GEOJSON_SOURCE(LSOA_FEATURE),
+		BOUNDARY_HOVER_OPTIONS(LSOA_COL, LSOA_OPACITY)
 	));
 };
 
@@ -183,6 +186,8 @@ export const LSOA = () => {
  * OA layer
  */
 const OA_COL = "#400406"
+const OA_OPACITY = 0.5
+const OA_FEATURE = "siss:tyne_and_wear_oa"
 export const OA = () => {
 	return(new InteractiveVectorLayer(
 		{ /* Layer options */
@@ -192,9 +197,10 @@ export const OA = () => {
 			maxResolution: 10,
             extent: geoconst.NEWCASTLE_CENTRE_3857,
             zIndex: 120,
+            opacity: OA_OPACITY,
 			switcherOpts: {
                 icon: "literal:OA",
-                attribution: "OA dataset clipped to include Tyne & Wear area only."
+                feature: OA_FEATURE
             },
 			style: (feature) => {
 				return(new Style({
@@ -203,8 +209,8 @@ export const OA = () => {
 				}));
 			}
 		},
-		GEOJSON_SOURCE("siss:tyne_and_wear_oa"),
-		BOUNDARY_HOVER_OPTIONS(OA_COL, 0.4, "code")
+		GEOJSON_SOURCE(OA_FEATURE),
+		BOUNDARY_HOVER_OPTIONS(OA_COL, OA_OPACITY, "code")
 	));
 };
 

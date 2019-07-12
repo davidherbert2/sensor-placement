@@ -5,6 +5,7 @@ import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import Cluster from "ol/source/Cluster";
 import FeatureClusterPopover from "./FeatureClusterPopover";
+import { throws } from "assert";
  
 /** 
  * @classdesc Class for Interactive (hover and/or click) Vector Layers
@@ -43,13 +44,18 @@ export default class InteractiveVectorLayer extends VectorLayer {
 			 */
 			this._hoverOverlay = new VectorLayer({
 				source: new VectorSource(),
-				zIndex: this.getZIndex() + 1000,				
-				style: hoverOpts.style
+				zIndex: this.getZIndex() + 1,				
+                style: hoverOpts.style,
+                activated: false
             });
-            /* Remove overlay when layer visibility changes */
+            /* Remove overlay features when layer visibility changes */
             this.on("change:visible", evt => {
                 this._hoverOverlay.getSource().clear();
                 this._highlight = null;
+            });
+            /* Change opacity of hover layer if appropriate */
+            this.on("change:opacity", evt => {                
+                this._hoverOverlay.setOpacity(parseFloat(this.getOpacity()));
             });
         }        
 		
@@ -82,12 +88,15 @@ export default class InteractiveVectorLayer extends VectorLayer {
     /**
      * Show hover overlay for given feature
      * @param {ol.Feature} feature 
+     * @param {ol.Map} olMap
      */
-    showHover(feature) {        
-        if (feature && feature !== this._highlight) {
-            if (this._hoverOverlay.getMap() == null) {
-                this._hoverOverlay.setMap(this.getMap());
-            }
+    showHover(feature, olMap) {     
+        if (this._hoverOverlay.get("activated") === false) {
+            /* Add the hover overlay to the map's unmanaged layer stack */
+            this._hoverOverlay.setMap(olMap);
+            this._hoverOverlay.set("activated", true);
+        }   
+        if (feature && feature !== this._highlight) {            
             if (this._highlight) {
                 this._hoverOverlay.getSource().removeFeature(this._highlight);
             }
@@ -109,10 +118,11 @@ export default class InteractiveVectorLayer extends VectorLayer {
 
     /**
      * Add popup overlay to the map
-     * @param {ol.Feature} feature 
+     * @param {ol.Feature} feature
+     * @param {ol.Map}  olMap
      * @param {ol.coordinate} coord 
      */
-    showPopup(feature, coord) {
+    showPopup(feature, olMap, coord) {
         if (this._clickOverlay.getMap() == null) {
             this._clickOverlay.setMap(this.getMap());
         }

@@ -29,6 +29,10 @@
     height: 30px;    
 }
 
+.ol-layerswitcher-control > .box-row > a.disabled {
+    pointer-events: none;  
+}
+
 .ol-layerswitcher-control > .box-row.row-hidden {
     display: none;    
 }
@@ -54,6 +58,10 @@
     white-space: nowrap;
     overflow: hidden;
     vertical-align: top;
+}
+
+.ol-layerswitcher-control > .box-row .box-cell.left-cell.general-element.layer-disabled {    
+    color: gray;    
 }
 
 .ol-layerswitcher-control > .box-row .box-cell.left-cell.general-element:hover {
@@ -96,6 +104,11 @@
 
 .ol-layerswitcher-control > .box-row .box-cell.right-cell div.icon-wrapper.layer-visible {    
     background-image: radial-gradient(circle, yellow, orange, red);
+    color: black;
+}
+
+.ol-layerswitcher-control > .box-row .box-cell.right-cell div.icon-wrapper.layer-disabled {    
+    background-image: radial-gradient(circle, lightgray, gray, darkslategray);
     color: black;
 }
 

@@ -15,9 +15,9 @@ export default class SourceMetadata extends SwitcherSubControl {
      * Possible options:
      *  - element HTMLElement        - container element
      *  - target  HTMLElement|string - (id of) target if required outside of map viewport
-	 * @param {Object} options - options passed directly to base class constructor
+	 * @param {Object} [options = {}] - options passed directly to base class constructor
 	 */
-	constructor(options) {
+	constructor(options = {}) {
 
         /* Create the element div */
         let element = document.createElement("div");
@@ -47,7 +47,7 @@ export default class SourceMetadata extends SwitcherSubControl {
         titleDiv.setAttribute("title", caption);
 
         let so = layer.get("switcherOpts");
-        if (so && so.attribution) {
+        if (so && typeof so.attribution === "string") {
             /* Canned attribution */
             this._bodyDiv.innerHTML = so.attribution;
         } else {

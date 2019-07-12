@@ -87,48 +87,33 @@ window.onload = () => {
             new ScaleLine({
                 units: "metric"
             }),
-            new Zoom(),
-            new LayerSwitcher({
-                layers: layers,
-                controls: [
-                    new Legend({}),
-                    new OpacitySlider({}),
-                    new SourceMetadata({})
-                ]
-            })            
+            new Zoom()                    
 		]
     });
 
+    /* Create a layer switcher */
+    let switcher = new LayerSwitcher({
+        layers: layers,
+        controls: [
+            new Legend(),
+            new OpacitySlider(),
+            new SourceMetadata()
+        ]
+    });
+    map.addControl(switcher);
+    switcher.init();
+
     /* Check in range of visibility and clear highlight if out of range */
     map.getView().on("change:resolution", evt => {
-        let res = evt.oldValue;
-        map.getLayers().forEach(lyr => {
-            if (lyr.hoverInteractive === true) {
-                lyr.hideHover(res);
-            }
-        });        		
+        map.getLayers().forEach(lyr => lyr.hoverInteractive === true && lyr.hideHover(evt.oldValue))
     });
 
     /* Map hover interactions */
     map.on("pointermove", evt => {
         if (!evt.dragging) {
-            console.log("pointermove : not dragging");
             map.forEachFeatureAtPixel(map.getEventPixel(evt.originalEvent),
-                (feat, layer) => {
-                    console.log(layer);
-                    if (layer != null && layer.hoverInteractive === true) {
-                        console.log("about to show hover");
-                        layer.showHover(feat);
-                    }
-                }, {
-                    layerFilter: layerCandidate => {
-                        console.log("layerFilter");
-                        console.log(layerCandidate);
-                        console.log(layerCandidate.hoverInteractive);
-                        console.log("Done");
-                        return(layerCandidate.hoverInteractive === true);
-                    }
-                }
+                (feat, layer) => layer != null && layer.hoverInteractive === true && layer.showHover(feat, map), 
+                {layerFilter: layerCandidate => layerCandidate.hoverInteractive === true}
             );            
         }
     });
@@ -137,19 +122,13 @@ window.onload = () => {
     map.on("singleclick", evt => {
         map.forEachFeatureAtPixel(evt.pixel, 
             (feat, layer) => {
-                console.log(layer);
                 if (layer != null && layer.clickInteractive === true) {
-                    console.log("about to show popup");
-                    layer.showPopup(feat);
+                    layer.showPopup(feat, evt.coordinate);
                     return(true);   /* Only respond to the first one, otherwise confusing */
                 }
-            }, {
-                layerFilter: layerCandidate => {
-                    return(layerCandidate.clickInteractive === true);
-                }
-            }
+            }, 
+            {layerFilter: layerCandidate => layerCandidate.clickInteractive === true}
         );       
     });
-
         	
 }

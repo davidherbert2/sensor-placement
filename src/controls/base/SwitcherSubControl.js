@@ -97,12 +97,10 @@ export default class SwitcherSubControl extends Control {
     }
 
     getHeight() {
-        let boundingRect = this.element.getBoundingClientRect();
-        return(boundingRect.height);
+        return(this.element.getBoundingClientRect()["height"]);
     }
 
     setVerticalPos(pos) {
-        console.log(`Set vertical position to ${pos}`);
         this.element.style.bottom = pos;
     }
 
@@ -115,7 +113,7 @@ export default class SwitcherSubControl extends Control {
         let source = layer.getSource();
         let featureType = null;
         if (source instanceof TileWMS) {
-            /* Tile WMS layer */
+            /* Tile WMS layer */            
             featureType = source.getParams()["layers"];
         } else {
             if (source instanceof Cluster) {
@@ -124,11 +122,17 @@ export default class SwitcherSubControl extends Control {
             } 
             /* Vectors here */
             try {
-                let url = source.getUrl();
-                if (url) {
+                let url = source.getUrl();                
+                if (typeof url === "string") {
                     let qry = new URLSearchParams(url.substring(url.indexOf("?") + 1));
                     featureType = qry.get("typename");		
-                }		
+                } else {
+                    /* Probably a feature loader, so look for some help in switcherOpts */
+                    let so = layer.get("switcherOpts");
+                    if (so && so.feature) {
+                        featureType = so.feature;
+                    }
+                }	
             } catch(e) {			
             }		
         }      

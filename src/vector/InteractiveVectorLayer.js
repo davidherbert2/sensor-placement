@@ -33,50 +33,32 @@ export default class InteractiveVectorLayer extends VectorLayer {
 			});
 		}
         this.setSource(source);
+        /* Add a layer back-pointer to every feature */
+        this._featureSource.on("addfeature", evt => evt.feature.set("layer", this));
 		
-		this._hoverOverlay = null;
-		this._highlight = null;
 		this._hoverInteract = Object.keys(hoverOpts).length > 0;
 		if (this._hoverInteract) {
 			/**
 			 * Possible options:
 			 * - style - the style to be applied hovering over a feature
 			 */
-			this._hoverOverlay = new VectorLayer({
-				source: new VectorSource(),
-				zIndex: this.getZIndex() + 1,				
-                style: hoverOpts.style,
-                activated: false
-            });
-            /* Remove overlay features when layer visibility changes */
-            this.on("change:visible", evt => {
-                this._hoverOverlay.getSource().clear();
-                this._highlight = null;
-            });
-            /* Change opacity of hover layer if appropriate */
-            this.on("change:opacity", evt => {                
-                this._hoverOverlay.setOpacity(parseFloat(this.getOpacity()));
-            });
-        }        
-		
-		this._popup = null;
-		this._clickInteract = Object.keys(clickOpts).length > 0;
-		if (this._clickInteract) {
+            this._hoverStyle = hoverOpts.style;
+        }  
+        
+        this._clickInteract = Object.keys(clickOpts).length > 0;
+        if (this._clickInteract) {
 			/**
 			 * Possible options:
-			 * Possible options:
-			 * - ordering - array of human-friendly attribute names defining the attribute order in a pop-up
-			 * - translation - object mapping human-friendly attribute names (keys) with the actual ones (values)
-			 * - nameattr - name of the naming attribute, used to disambiguate when we have a cluster
+			 * - style - the style to be applied single-clicking a feature
 			 */
-            this._popup = new FeatureClusterPopover("body", clickOpts.ordering, clickOpts.translation, clickOpts.nameattr);            
-		}
-	}
-	
-	get popup() {
-		return(this._popup);
+            this._clickStyle = clickOpts.style;
+        }  
     }
-    
+
+    get featureSource() {
+        return(this._featureSource);
+    }
+	
     get hoverInteractive() {
         return(this._hoverInteract);
     }
@@ -85,55 +67,12 @@ export default class InteractiveVectorLayer extends VectorLayer {
         return(this._clickInteract);
     }
 
-    /**
-     * Show hover overlay for given feature
-     * @param {ol.Feature} feature 
-     * @param {ol.Map} olMap
-     */
-    showHover(feature, olMap) {     
-        if (this._hoverOverlay.get("activated") === false) {
-            /* Add the hover overlay to the map's unmanaged layer stack */
-            this._hoverOverlay.setMap(olMap);
-            this._hoverOverlay.set("activated", true);
-        }   
-        if (feature && feature !== this._highlight) {            
-            if (this._highlight) {
-                this._hoverOverlay.getSource().removeFeature(this._highlight);
-            }
-            this._hoverOverlay.getSource().addFeature(feature);
-            this._highlight = feature;
-        }
+    get hoverStyle() {
+        return(this._hoverStyle);
     }
 
-    /**
-     * Clear all overlays when map resolution changes to 'resolution'
-     * @param {float} resolution 
-     */
-    hideHover(resolution = null) {
-        if (resolution == null || (resolution <= this.getMinResolution() || resolution >= this.getMaxResolution())) {
-            this._hoverOverlay.getSource().clear();
-            this._highlight = null;
-        }
-    }
-
-    /**
-     * Add popup overlay to the map
-     * @param {ol.Feature} feature
-     * @param {ol.Map}  olMap
-     * @param {ol.coordinate} coord 
-     */
-    showPopup(feature, olMap, coord) {
-        if (this._clickOverlay.getMap() == null) {
-            this._clickOverlay.setMap(this.getMap());
-        }
-        this._popup.show(coord, feature);	
-    }
-
-    /**
-     * Hide popup overlay
-     */
-    hidePopup() {
-        this._popup.hide();
+    get clickStyle() {
+        return(this._clickStyle);
     }
 
 }

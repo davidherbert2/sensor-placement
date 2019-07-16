@@ -16,6 +16,8 @@ import TileLayer from "ol/layer/Tile";
 import OSM from "ol/source/OSM";
 import TileWMS from "ol/source/TileWMS"
 
+import Chart from "ol-ext/style/Chart";
+
 import * as geoconst from "./utilities/GeoConstants";
 import InteractiveVectorLayer from "./vector/InteractiveVectorLayer";
 
@@ -78,23 +80,28 @@ const UO_LOADER = (theme, sensorType) => {
  * @param {float} opacity 
  * @param {string} nameAttr 
  */
-const BOUNDARY_HOVER_OPTIONS = (col, opacity = 0.4, nameAttr = "name") => {
-	return({ /* Hover options */
-		style: (feature) => {
-			return(new Style({
-				stroke: new Stroke({color: col.toRgba(1.0)}),
-				fill: new Fill({color: col.toRgba(opacity)}),
-				text: new Text({
-					font: "14px sans serif",
-                    text: feature.get(nameAttr),
-                    placement: "point",
-					overflow: true,
-					stroke: new Stroke({color: "#ffffff".toRgba(1.0), width: 3}),
-                    fill: new Fill({color: col.toRgba(1.0)}),
-                    padding: [10, 10, 10, 10]
-				})
-			}));
-		}
+const BOUNDARY_HOVER_STYLE = (col, opacity = 0.4, nameAttr = "name") => {
+	return((feature, res) => {
+        let layer = feature.get("layer"), style = null;
+        if (layer) {
+            if (res >= layer.getMinResolution() && (!isFinite(layer.getMaxResolution()) || res <= layer.getMaxResolution())) {
+                /* Layer in range */
+                style = new Style({
+                    stroke: new Stroke({color: col.toRgba(1.0)}),
+                    fill: new Fill({color: col.toRgba(opacity)}),
+                    text: new Text({
+                        font: "14px sans-serif",
+                        text: feature.get(nameAttr),
+                        placement: "point",
+                        overflow: true,
+                        stroke: new Stroke({color: "#ffffff".toRgba(1.0), width: 3}),
+                        fill: new Fill({color: col.toRgba(1.0)}),
+                        padding: [10, 10, 10, 10]
+                    })
+                });
+            }
+        }
+        return(style);
 	});
 };
 
@@ -130,22 +137,25 @@ export const LA = () => {
 			cluster: false,
 			visible: false,
 			minResolution: 10,
-            extent: geoconst.NEWCASTLE_CENTRE_3857,
-            zIndex: 100,
+            extent: geoconst.NEWCASTLE_CENTRE_3857,            
             opacity: LA_OPACITY,
 			switcherOpts: {
                 icon: "literal:LA",
-                feature: LA_FEATURE
+                feature: LA_FEATURE,
+                opacity: false
             },
 			style: (feature) => {
 				return(new Style({
 					fill: new Fill({color: LA_COL.toRgba(0.0)}),
-					stroke: new Stroke({color: LA_COL.toRgba(0.0)})		
+                    stroke: new Stroke({color: LA_COL.toRgba(0.0)}),
+                    zIndex: 100
 				}));
 			}
 		},
-		GEOJSON_SOURCE(LA_FEATURE),
-		BOUNDARY_HOVER_OPTIONS(LA_COL, LA_OPACITY)
+        GEOJSON_SOURCE(LA_FEATURE),
+        {
+            style: BOUNDARY_HOVER_STYLE(LA_COL, LA_OPACITY)
+        }		
 	));
 };
 
@@ -163,22 +173,25 @@ export const LSOA = () => {
 			visible: false,
 			minResolution: 2,
 			maxResolution: 20,
-            extent: geoconst.NEWCASTLE_CENTRE_3857,
-            zIndex: 110,
+            extent: geoconst.NEWCASTLE_CENTRE_3857,            
             opacity: LSOA_OPACITY,
 			switcherOpts: {
                 icon: "literal:LSOA",
-                feature: LSOA_FEATURE
+                feature: LSOA_FEATURE,
+                opacity: false
             },
 			style: (feature) => {
 				return(new Style({
 					fill: new Fill({color: LSOA_COL.toRgba(0.0)}),
-					stroke: new Stroke({color: LSOA_COL.toRgba(0.0)})		
+                    stroke: new Stroke({color: LSOA_COL.toRgba(0.0)}),
+                    zIndex: 110		
 				}));
 			}
 		},
-		GEOJSON_SOURCE(LSOA_FEATURE),
-		BOUNDARY_HOVER_OPTIONS(LSOA_COL, LSOA_OPACITY)
+        GEOJSON_SOURCE(LSOA_FEATURE),
+        {
+            style: BOUNDARY_HOVER_STYLE(LSOA_COL, LSOA_OPACITY)
+        }		
 	));
 };
 
@@ -195,22 +208,25 @@ export const OA = () => {
 			cluster: false,
 			visible: false,
 			maxResolution: 10,
-            extent: geoconst.NEWCASTLE_CENTRE_3857,
-            zIndex: 120,
+            extent: geoconst.NEWCASTLE_CENTRE_3857,            
             opacity: OA_OPACITY,
 			switcherOpts: {
                 icon: "literal:OA",
-                feature: OA_FEATURE
+                feature: OA_FEATURE,
+                opacity: false
             },
 			style: (feature) => {
 				return(new Style({
 					fill: new Fill({color: OA_COL.toRgba(0.0)}),
-					stroke: new Stroke({color: OA_COL.toRgba(0.0)})		
+                    stroke: new Stroke({color: OA_COL.toRgba(0.0)}),
+                    zIndex: 120	
 				}));
 			}
 		},
-		GEOJSON_SOURCE(OA_FEATURE),
-		BOUNDARY_HOVER_OPTIONS(OA_COL, OA_OPACITY, "code")
+        GEOJSON_SOURCE(OA_FEATURE),
+        {
+            style: BOUNDARY_HOVER_STYLE(OA_COL, OA_OPACITY, "code")
+        }		
 	));
 };
 
@@ -266,6 +282,90 @@ export const DISABILITY = () => {
 			}
 		})
 	}));
+};
+
+/**
+ * Ethnicity layer
+ */
+const ETHNICITY_FEATURE = "siss:tyne_and_wear_ethnicity_summary"
+const ETHNICITY_OPACITY = 1.0;
+const ETHNICITY_STYLE = sel => {
+    return((f, res) => {
+        let styles = [];
+        let data = [
+            isNaN(f.get("white")) ? 0 : parseInt(f.get("white")),            
+            isNaN(f.get("asian")) ? 0 : parseInt(f.get("asian")),
+            isNaN(f.get("black")) ? 0 : parseInt(f.get("black")),
+            isNaN(f.get("mixed")) ? 0 : parseInt(f.get("mixed")),
+            isNaN(f.get("other")) ? 0 : parseInt(f.get("other"))
+        ];
+        let sum = isNaN(f.get("total_residents")) ? 0 : parseInt(f.get("total_residents"));
+        let radius = (20 - 0.5 * res) * (sel ? 1.2 : 1.0);
+        styles.push(new Style({                                        
+            image: new Chart({
+                type: "pie",
+                radius: radius,
+                data: data,
+                rotateWithView: true,
+                colors: ["cornsilk", "brown", "black", "goldenrod", "gray"],
+                stroke: new Stroke({
+                    color: "black",
+                    width: 2 - 0.05 * res
+                })
+            })
+        }));
+        if (sel) {
+            let arc = 0;
+            for (let dataSlice of data) {
+                let angle = (2.0 * arc + dataSlice) / sum*Math.PI - Math.PI/2.0;
+                let pc = Math.round(dataSlice / sum * 1000.0);
+                if (pc > 100) {
+                    /* Ignore anything < 10% as labels will inevitably conflict and be unreadable */
+                    styles.push(new Style({
+                        text: new Text({
+                            text: `${pc/10}%`,
+                            offsetX: Math.cos(angle) * (radius + 6),
+                            offsetY: Math.sin(angle) * (radius + 6),
+                            textAlign: (angle < Math.PI/2.0 ? "left" : "right"),
+                            textBaseline: "middle",
+                            stroke: new Stroke({
+                                color: "white",
+                                width: 2.5
+                            }),
+                            fill: new Fill({
+                                color: "black"
+                            })
+                        })
+                    }));
+                }
+                arc += dataSlice;
+            }
+        }
+        return(styles);
+    });
+}
+export const ETHNICITY = () => {
+	return(new InteractiveVectorLayer(
+		{ /* Layer options */
+			title: "Ethnic composition", 
+			cluster: false,
+			visible: false,
+			minResolution: 2,
+			maxResolution: 20,
+            extent: geoconst.NEWCASTLE_CENTRE_3857,
+            zIndex: 200,
+            opacity: ETHNICITY_OPACITY,
+			switcherOpts: {
+                icon: "users",
+                feature: ETHNICITY_FEATURE
+            },
+			style: ETHNICITY_STYLE(false)
+		},
+        GEOJSON_SOURCE(ETHNICITY_FEATURE), {},
+        {
+            style: ETHNICITY_STYLE(true)
+        }
+	));
 };
 
 /**

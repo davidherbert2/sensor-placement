@@ -36,6 +36,14 @@ export default class Legend extends SwitcherSubControl {
      * @param {ol.Layer} layer 
      */
     show(layer) {
+        if (!this.element.classList.contains("active")) {
+            /* Activate the control */
+            this.element.classList.add("active");
+            this.set("active", true);         
+        } else {
+            /* Already active control to receive new content */
+            this.set("contentChanged", true);
+        }
         let parms = {
             "request": "GetLegendGraphic",
             "version": "1.3",
@@ -46,9 +54,7 @@ export default class Legend extends SwitcherSubControl {
             "legend_options": "layout:horizontal;rows:4;rowwidth:200;fontColor:ffffff;fontName=sans-serif;fontAntiAliasing:true;bgColor:000000"
         };        
         let queryString = Object.keys(parms).map(key => key + "=" + parms[key]).join("&");
-        if (!this.element.classList.contains("active")) {
-            this.element.classList.add("active");
-        }
+
         let titleDiv = this._headerDiv.querySelector("div:first-child");
         let caption = this._getLegendCaption(layer);
         titleDiv.setAttribute("title", caption);
@@ -56,13 +62,16 @@ export default class Legend extends SwitcherSubControl {
 
         this._bodyDiv.innerHTML = `<img alt="legend"/>`;
         let legendImage = this._bodyDiv.querySelector("img");
+        legendImage.addEventListener("load", () => {
+            this._positioningCallback();
+        });
         legendImage.addEventListener("error", () => {
             this._bodyDiv.innerHTML = "No legend available";
+            this._positioningCallback();
         });
         legendImage.setAttribute("src", `${geoconst.GEOSERVER_WMS}?${queryString}`);
 
         this._layer = layer;
-        this.set("active", true);        
     }
 
     /**

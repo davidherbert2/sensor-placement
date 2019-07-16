@@ -127,6 +127,7 @@ export default class LayerSwitcher extends Control {
     init() {
         this.getMap() && this._setLayerVisibilityControlStatus(this.getMap().getView().getResolution());
         this.getMap() && this.getMap().getView().on("change:resolution", evt => this._setLayerVisibilityControlStatus(evt.oldValue));
+        this.controls.forEach(ctrl => ctrl.registerPositioningCallback(this._positionSubControls.bind(this)));
     }
 
     /**
@@ -134,17 +135,22 @@ export default class LayerSwitcher extends Control {
      * @param {float} resolution - the new map resolution 
      */
     _setLayerVisibilityControlStatus(resolution) {
-        for (let layerDiv of this.element.querySelectorAll("div[id^='entry-']")) {
-            let layerId = layerDiv.getAttribute("id").replace(/^entry-/, "");
-            let layer = this._layerMapping[layerId];
-            let anchor = layerDiv.querySelector("a");
-            if (layer && anchor) {
-                /* Check the viewability of the layer w.r.t current map resolution supplied */
-                let inRange = this._layerInRange(layer, resolution);
-                anchor.classList.toggle("disabled", inRange);
-                anchor.querySelector("div.general-element").classList.toggle("layer-disabled", inRange);
-                anchor.querySelector("div.icon-wrapper").classList.toggle("layer-disabled", inRange);
-            }
+        for (const [layerId, layer] of Object.entries(this._layerMapping)) {
+            if (!(layer instanceof LayerGroup)) {
+                let anchor = this.element.querySelector(`div[id^='entry-${layerId}'] a`);
+                if (layer && anchor) {
+                    /* Check the viewability of the layer w.r.t current map resolution supplied */
+                    let inRange = this._layerInRange(layer, resolution);
+                    anchor.classList.toggle("disabled", !inRange);
+                    anchor.querySelector("div.general-element").classList.toggle("layer-disabled", !inRange);
+                    anchor.querySelector("div.icon-wrapper").classList.toggle("layer-disabled", !inRange);
+                    if (!inRange) {
+                        layer.setVisible(false);
+                    } else if (anchor.querySelector("div.icon-wrapper").classList.contains("layer-visible")) {
+                        layer.setVisible(true);
+                    }
+                }
+            }            
         }
     }
 
@@ -155,7 +161,7 @@ export default class LayerSwitcher extends Control {
      */
     _layerInRange(layer, resolution = null) {
         resolution = resolution || this.getMap().getView().getResolution();
-        return(resolution < layer.getMinResolution() || resolution > layer.getMaxResolution());
+        return(resolution >= layer.getMinResolution() && (!isFinite(layer.getMaxResolution()) || resolution <= layer.getMaxResolution()));
     }
 
     /**
@@ -267,13 +273,13 @@ export default class LayerSwitcher extends Control {
                 `;
 
             /* Add info (metadata/attribution) handler */
-            this._addSwitcherToolAction(layer, toolsDiv, "info", SourceMetadata);          
+            this._addSwitcherToolAction(layer, toolsDiv, "info", SourceMetadata, opts["info"] === false);          
             
             /* Add a legend handler */    
-            this._addSwitcherToolAction(layer, toolsDiv, "legend", Legend);                  
+            this._addSwitcherToolAction(layer, toolsDiv, "legend", Legend, opts["legend"] === false);                  
 
             /* Add opacity change handler */
-            this._addSwitcherToolAction(layer, toolsDiv, "opacity", OpacitySlider);
+            this._addSwitcherToolAction(layer, toolsDiv, "opacity", OpacitySlider, opts["opacity"] === false);
             
             /* Add zoom-to-layer-extent handler */
             toolsDiv.querySelector("a.tool-ztl").addEventListener("click", this._mapSizingFactory(layer));
@@ -286,35 +292,38 @@ export default class LayerSwitcher extends Control {
      * @param {HTMLElement} toolsDiv      - div containing all the tools
      * @param {string} toolAnchorCss      - info|legend|opacity
      * @param {ol.ControlClass} toolClass - SourceMetadata|Legend|OpacitySlider
+     * @param {boolean} disable           - whether control should be permanently disabled
      */
-    _addSwitcherToolAction(layer, toolsDiv, toolAnchorCss, toolClass) {
+    _addSwitcherToolAction(layer, toolsDiv, toolAnchorCss, toolClass, disable) {
         toolsDiv.querySelector(`a.tool-${toolAnchorCss}`).addEventListener("click", evt => {
+            let anchor = evt.currentTarget;           
             let control = this.controls.find(c => c instanceof toolClass);            
-            if (control != null) {
-                !control.getMap() && control.setMap(this.getMap());
-                typeof control.addActivationCallback === "function" && control.addActivationCallback(this._positionSubControls.bind(this));
+            if (control != null && !disable) {
+                if (!control.getMap()) {
+                    control.setMap(this.getMap());  
+                }            
                 control.show(layer);
             } else {
-                /* Disable the control */
-                !anchor.classList.contains("disabled") && anchor.classList.add("disabled");
-            }
+                /* Disable the control */                    
+                if (!anchor.classList.contains("disabled")) {
+                    anchor.classList.add("disabled");
+                }
+            }            
         });
     }
 
     /**
      * When a sub-control's activation state changes, update the control stack to economise on space taken from the map
-     * Any newly-activated control should go at the top of the stack
      * @param {ol.Control} changedCtrl
      */
     _positionSubControls(changedCtrl) {
         let stackBase = this.controlStackBl[1];
         for (let ctrl of this.controls) {
-            if (ctrl.active && ctrl != changedCtrl) {
+            if (ctrl.active) {
                 ctrl.setVerticalPos(`${stackBase}em`);
                 stackBase += Math.ceil(ctrl.getHeight()/16.0 + 1.0);
             }            
         }
-        changedCtrl.active && changedCtrl.setVerticalPos(`${stackBase}em`);
     }
 
     /**

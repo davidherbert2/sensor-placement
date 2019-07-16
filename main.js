@@ -5,6 +5,8 @@ import {fromLonLat} from "ol/proj";
 import MousePosition from "ol/control/MousePosition";
 import ScaleLine from "ol/control/ScaleLine";
 import Zoom from "ol/control/Zoom";
+import Select from "ol/interaction/Select";
+import {pointerMove, singleClick} from "ol/events/condition";
 
 import * as utils from "./src/utilities/String";
 import * as geoconst from "./src/utilities/GeoConstants";
@@ -27,9 +29,9 @@ window.onload = () => {
                 icon: "satellite-dish"
             },
             layers: [
-                layerspec.SENSORS('Air Quality', 'NO2', 200, true, "car-alt"),
-                layerspec.SENSORS('Air Quality', 'PM2.5', 201, false, "smog"), 
-                layerspec.SENSORS('Air Quality', 'PM10', 202, false, "smog")
+                layerspec.SENSORS('Air Quality', 'NO2', 500, true, "car-alt"),
+                layerspec.SENSORS('Air Quality', 'PM2.5', 501, false, "smog"), 
+                layerspec.SENSORS('Air Quality', 'PM10', 502, false, "smog")
             ]
         }),
         new LayerGroup({
@@ -52,7 +54,8 @@ window.onload = () => {
             },
             layers: [
                 layerspec.IMD(), 
-                layerspec.DISABILITY()
+                layerspec.DISABILITY(),
+                layerspec.ETHNICITY()
             ]
         }), 
         new LayerGroup({
@@ -103,32 +106,29 @@ window.onload = () => {
     map.addControl(switcher);
     switcher.init();
 
-    /* Check in range of visibility and clear highlight if out of range */
-    map.getView().on("change:resolution", evt => {
-        map.getLayers().forEach(lyr => lyr.hoverInteractive === true && lyr.hideHover(evt.oldValue))
-    });
-
     /* Map hover interactions */
-    map.on("pointermove", evt => {
-        if (!evt.dragging) {
-            map.forEachFeatureAtPixel(map.getEventPixel(evt.originalEvent),
-                (feat, layer) => layer != null && layer.hoverInteractive === true && layer.showHover(feat, map), 
-                {layerFilter: layerCandidate => layerCandidate.hoverInteractive === true}
-            );            
+    let hoverSelect = new Select({
+        condition: pointerMove,
+        multi: true,
+        layers: lyr => lyr.hoverInteractive === true,
+        style: feat => {
+            let layer = feat.get("layer");
+            return(layer ? layer.hoverStyle : null);            
         }
     });
+    map.addInteraction(hoverSelect);
 
     /* Map click interactions */
-    map.on("singleclick", evt => {
-        map.forEachFeatureAtPixel(evt.pixel, 
-            (feat, layer) => {
-                if (layer != null && layer.clickInteractive === true) {
-                    layer.showPopup(feat, evt.coordinate);
-                    return(true);   /* Only respond to the first one, otherwise confusing */
-                }
-            }, 
-            {layerFilter: layerCandidate => layerCandidate.clickInteractive === true}
-        );       
+    let clickSelect = new Select({
+        condition: singleClick,
+        multi: true,
+        layers: lyr => lyr.clickInteractive === true,
+        style: feat => {
+            let layer = feat.get("layer");
+            console.log(layer.clickStyle);
+            return(layer ? layer.clickStyle(feat, true) : null);    
+        }
     });
+    map.addInteraction(clickSelect);
         	
 }

@@ -35,8 +35,14 @@ export default class SwitcherSubControl extends Control {
         /* If control is active */
         this.set("active", false);
 
+        /* If content has changed */
+        this.set("contentChanged", false);
+
         /* Record of the oparational layer */
         this._layer = null;
+
+        /* Callback for positioning the control in a stack */
+        this._positioningCallback = () => {};
 
         /* Create header and body */
         this._headerDiv = document.createElement("div");
@@ -66,7 +72,8 @@ export default class SwitcherSubControl extends Control {
      */
     show(layer) {
         this._layer = layer;
-        this.set("active", true);        
+        this.set("active", true);   
+        this._positioningCallback();
     }
 
     /**
@@ -78,6 +85,7 @@ export default class SwitcherSubControl extends Control {
         } 
         this._layer = null; 
         this.set("active", false);
+        this._positioningCallback();
     }   
 
     get layer() {
@@ -88,12 +96,12 @@ export default class SwitcherSubControl extends Control {
         return(this.get("active"));
     }
 
-    addActivationCallback(cb) {
-        this.on("propertychange", evt => {
-            if (evt.key === "active") {
-                cb(this);
-            }
-        });
+    get contentChanged() {
+        return(this.get("contentChanged"));
+    }
+
+    registerPositioningCallback(cb) {
+        this._positioningCallback = cb;
     }
 
     getHeight() {

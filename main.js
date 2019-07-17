@@ -125,7 +125,6 @@ window.onload = () => {
         layers: lyr => lyr.clickInteractive === true,
         style: feat => {
             let layer = feat.get("layer");
-            console.log(layer.clickStyle);
             return(layer ? layer.clickStyle(feat, true) : null);    
         }
     });

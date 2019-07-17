@@ -71,8 +71,11 @@ export default class InteractiveVectorLayer extends VectorLayer {
         return(this._hoverStyle);
     }
 
-    get clickStyle() {
-        return(this._clickStyle);
+    clickStyle(feat, sel) {
+        this._clickStyle(feat, sel);
     }
+    //get clickStyle() {
+    //    return(this._clickStyle);
+    //}
 
 }

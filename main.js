@@ -11,10 +11,10 @@ import {pointerMove, singleClick} from "ol/events/condition";
 import * as utils from "./src/utilities/String";
 import * as geoconst from "./src/utilities/GeoConstants";
 import * as layerspec from "./src/LayerSetup";
-import LayerSwitcher from "./src/controls/LayerSwitcher";
-import Legend from "./src/controls/Legend";
-import OpacitySlider from "./src/controls/OpacitySlider";
-import SourceMetadata from "./src/controls/SourceMetadata";
+import LayerSwitcher from "./src/control/LayerSwitcher";
+import Legend from "./src/control/Legend";
+import OpacitySlider from "./src/control/OpacitySlider";
+import SourceMetadata from "./src/control/SourceMetadata";
 
 window.onload = () => {
 
@@ -113,7 +113,7 @@ window.onload = () => {
         layers: lyr => lyr.hoverInteractive === true,
         style: feat => {
             let layer = feat.get("layer");
-            return(layer ? layer.hoverStyle : null);            
+            return(layer ? layer.hoverStyle(feat, map.getView().getResolution()) : null);            
         }
     });
     map.addInteraction(hoverSelect);
@@ -125,7 +125,7 @@ window.onload = () => {
         layers: lyr => lyr.clickInteractive === true,
         style: feat => {
             let layer = feat.get("layer");
-            return(layer ? layer.clickStyle(feat, true) : null);    
+            return(layer ? layer.clickStyle(feat, map.getView().getResolution(), true) : null);    
         }
     });
     map.addInteraction(clickSelect);

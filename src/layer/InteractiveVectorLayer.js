@@ -4,8 +4,6 @@
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import Cluster from "ol/source/Cluster";
-import FeatureClusterPopover from "./FeatureClusterPopover";
-import { throws } from "assert";
  
 /** 
  * @classdesc Class for Interactive (hover and/or click) Vector Layers
@@ -25,7 +23,7 @@ export default class InteractiveVectorLayer extends VectorLayer {
         
         this._featureSource = new VectorSource(sourceOpts);
 		let source = this._featureSource;
-		if (layerOpts.cluster) {
+		if (layerOpts.cluster === true) {
 			source = new Cluster({
 				distance: 20, 					
 				source: this._featureSource,
@@ -71,11 +69,8 @@ export default class InteractiveVectorLayer extends VectorLayer {
         return(this._hoverStyle);
     }
 
-    clickStyle(feat, sel) {
-        this._clickStyle(feat, sel);
+    get clickStyle() {
+        return(this._clickStyle);
     }
-    //get clickStyle() {
-    //    return(this._clickStyle);
-    //}
 
 }

@@ -1,15 +1,14 @@
 @charset "utf-8";
 
 @import "../node_modules/bulma/bulma.sass";
-@import "ol_popup";
-@import "controls/ol_layerswitcher";
-@import "controls/ol_legend";
-@import "controls/ol_opacity_slider";
-@import "controls/ol_source_metadata";
-@import "controls/ol_switcher_sub_control";
-@import "controls/ol_zoom";
-@import "controls/ol_mouse_position";
-@import "controls/ol_scaleline";
+@import "control/ol_layerswitcher";
+@import "control/ol_legend";
+@import "control/ol_opacity_slider";
+@import "control/ol_source_metadata";
+@import "control/ol_switcher_sub_control";
+@import "control/ol_zoom";
+@import "control/ol_mouse_position";
+@import "control/ol_scaleline";
 
 @import "../node_modules/ol/ol.css";
 

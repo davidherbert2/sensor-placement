@@ -33,10 +33,7 @@ export default class SwitcherSubControl extends Control {
         });
 
         /* If control is active */
-        this.set("active", false);
-
-        /* If content has changed */
-        this.set("contentChanged", false);
+        this.set("active", false);       
 
         /* Record of the oparational layer */
         this._layer = null;
@@ -94,10 +91,6 @@ export default class SwitcherSubControl extends Control {
 
     get active() {
         return(this.get("active"));
-    }
-
-    get contentChanged() {
-        return(this.get("contentChanged"));
     }
 
     registerPositioningCallback(cb) {

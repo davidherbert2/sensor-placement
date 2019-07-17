@@ -40,10 +40,8 @@ export default class Legend extends SwitcherSubControl {
             /* Activate the control */
             this.element.classList.add("active");
             this.set("active", true);         
-        } else {
-            /* Already active control to receive new content */
-            this.set("contentChanged", true);
         }
+        
         let parms = {
             "request": "GetLegendGraphic",
             "version": "1.3",

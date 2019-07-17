@@ -42,11 +42,8 @@ export default class SourceMetadata extends SwitcherSubControl {
             /* Activate the control */
             this.element.classList.add("active");
             this.set("active", true);         
-        } else {
-            /* Already active control to receive new content */
-            console.log("Set contentChanged");
-            this.set("contentChanged", true);
-        }
+        } 
+        
         let titleDiv = this._headerDiv.querySelector("div:first-child"); 
         let caption = `Metadata for ${layer.get("title")}`;
         titleDiv.innerHTML = caption;

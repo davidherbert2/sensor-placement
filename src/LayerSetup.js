@@ -19,7 +19,7 @@ import TileWMS from "ol/source/TileWMS"
 import Chart from "ol-ext/style/Chart";
 
 import * as geoconst from "./utilities/GeoConstants";
-import InteractiveVectorLayer from "./vector/InteractiveVectorLayer";
+import InteractiveVectorLayer from "./layer/InteractiveVectorLayer";
 
 /**
  * Return options for a GeoJSON source pointing to the given typename
@@ -77,17 +77,18 @@ const UO_LOADER = (theme, sensorType) => {
 /**
  * Options for the OA/LSOA/LA boundaries on hover
  * @param {string} col 
+ * @param {int} zIndex
  * @param {float} opacity 
  * @param {string} nameAttr 
  */
-const BOUNDARY_HOVER_STYLE = (col, opacity = 0.4, nameAttr = "name") => {
+const BOUNDARY_HOVER_STYLE = (col, zIndex, opacity = 0.4, nameAttr = "name") => {
 	return((feature, res) => {
         let layer = feature.get("layer"), style = null;
         if (layer) {
             if (res >= layer.getMinResolution() && (!isFinite(layer.getMaxResolution()) || res <= layer.getMaxResolution())) {
                 /* Layer in range */
                 style = new Style({
-                    stroke: new Stroke({color: col.toRgba(1.0)}),
+                    stroke: new Stroke({color: col.toRgba(1.0), width: 2}),
                     fill: new Fill({color: col.toRgba(opacity)}),
                     text: new Text({
                         font: "14px sans-serif",
@@ -97,7 +98,8 @@ const BOUNDARY_HOVER_STYLE = (col, opacity = 0.4, nameAttr = "name") => {
                         stroke: new Stroke({color: "#ffffff".toRgba(1.0), width: 3}),
                         fill: new Fill({color: col.toRgba(1.0)}),
                         padding: [10, 10, 10, 10]
-                    })
+                    }),
+                    zIndex: zIndex
                 });
             }
         }
@@ -130,11 +132,11 @@ export const OPENSTREETMAP = () => {
 const LA_COL = "#7a4419"
 const LA_OPACITY = 0.5
 const LA_FEATURE = "siss:tyne_and_wear_la"
+const LA_ZINDEX = 100
 export const LA = () => {
 	return(new InteractiveVectorLayer(
 		{ /* Layer options */
 			title: "Local Authority areas", 
-			cluster: false,
 			visible: false,
 			minResolution: 10,
             extent: geoconst.NEWCASTLE_CENTRE_3857,            
@@ -148,13 +150,13 @@ export const LA = () => {
 				return(new Style({
 					fill: new Fill({color: LA_COL.toRgba(0.0)}),
                     stroke: new Stroke({color: LA_COL.toRgba(0.0)}),
-                    zIndex: 100
+                    zIndex: LA_ZINDEX
 				}));
 			}
 		},
         GEOJSON_SOURCE(LA_FEATURE),
         {
-            style: BOUNDARY_HOVER_STYLE(LA_COL, LA_OPACITY)
+            style: BOUNDARY_HOVER_STYLE(LA_COL, LA_ZINDEX, LA_OPACITY)
         }		
 	));
 };
@@ -165,11 +167,11 @@ export const LA = () => {
 const LSOA_COL = "#63535b"
 const LSOA_OPACITY = 0.5
 const LSOA_FEATURE = "siss:tyne_and_wear_lsoa"
+const LSOA_ZINDEX = 110
 export const LSOA = () => {
 	return(new InteractiveVectorLayer(
 		{ /* Layer options */
 			title: "Lower Super Output Areas", 
-			cluster: false,
 			visible: false,
 			minResolution: 2,
 			maxResolution: 20,
@@ -184,13 +186,13 @@ export const LSOA = () => {
 				return(new Style({
 					fill: new Fill({color: LSOA_COL.toRgba(0.0)}),
                     stroke: new Stroke({color: LSOA_COL.toRgba(0.0)}),
-                    zIndex: 110		
+                    zIndex: LSOA_ZINDEX		
 				}));
 			}
 		},
         GEOJSON_SOURCE(LSOA_FEATURE),
         {
-            style: BOUNDARY_HOVER_STYLE(LSOA_COL, LSOA_OPACITY)
+            style: BOUNDARY_HOVER_STYLE(LSOA_COL, LSOA_ZINDEX, LSOA_OPACITY)
         }		
 	));
 };
@@ -201,11 +203,11 @@ export const LSOA = () => {
 const OA_COL = "#400406"
 const OA_OPACITY = 0.5
 const OA_FEATURE = "siss:tyne_and_wear_oa"
+const OA_ZINDEX = 120
 export const OA = () => {
 	return(new InteractiveVectorLayer(
 		{ /* Layer options */
 			title: "Output Areas", 
-			cluster: false,
 			visible: false,
 			maxResolution: 10,
             extent: geoconst.NEWCASTLE_CENTRE_3857,            
@@ -219,13 +221,13 @@ export const OA = () => {
 				return(new Style({
 					fill: new Fill({color: OA_COL.toRgba(0.0)}),
                     stroke: new Stroke({color: OA_COL.toRgba(0.0)}),
-                    zIndex: 120	
+                    zIndex: OA_ZINDEX	
 				}));
 			}
 		},
         GEOJSON_SOURCE(OA_FEATURE),
         {
-            style: BOUNDARY_HOVER_STYLE(OA_COL, OA_OPACITY, "code")
+            style: BOUNDARY_HOVER_STYLE(OA_COL, OA_ZINDEX, OA_OPACITY, "code")
         }		
 	));
 };
@@ -335,7 +337,7 @@ const ETHNICITY_STYLE = sel => {
                             fill: new Fill({
                                 color: "black"
                             })
-                        })
+                        })                        
                     }));
                 }
                 arc += dataSlice;

@@ -63,44 +63,76 @@ export default class SwitcherSubControl extends Control {
         this._headerDiv.querySelector("a").addEventListener("click", this.hide.bind(this));
     }
 
+    get active() {
+        return(this.get("active"));
+    }
+
     /**
      * Show the control for a layer (usually overridden in subclasses)
      * @param {ol.Layer} layer 
      */
     show(layer) {
-        this._layer = layer;
-        this.set("active", true);   
-        this._positioningCallback();
+        this.activate(layer);    
     }
 
     /**
      * Hide the control
      */
     hide() {
-        if (this.element.classList.contains("active")) {
-            this.element.classList.remove("active");
-        } 
-        this._layer = null; 
-        this.set("active", false);
+        this.deactivate();
+    }  
+    
+    /**
+     * Activate the control
+     * @param {ol.Layer} layer 
+     */
+    activate(layer) {
+        this.element.classList.add("active");
+        this.set("active", true);
+        this._layer = layer;
         this._positioningCallback();
-    }   
-
-    get layer() {
-        return(this._layer);
     }
 
-    get active() {
-        return(this.get("active"));
+    /**
+     * Deactivate the control
+     */
+    deactivate() {
+        this.element.classList.remove("active");
+        this.set("active", false);
+        this._layer = null;         
+        this._positioningCallback();
     }
 
+    /**
+     * Register the control stack updating callback, called whenever a control status/content changes
+     * @param {function} cb 
+     */
     registerPositioningCallback(cb) {
         this._positioningCallback = cb;
     }
 
+    /**
+     * Get the total height of the control
+     * @return {int} the height
+     */
     getHeight() {
         return(this.element.getBoundingClientRect()["height"]);
     }
 
+    /**
+     * Set the control title in the header and a tooltip attribute so the complete title is visible on hover
+     * @param {string} title 
+     */
+    setTitle(title) {
+        let titleDiv = this._headerDiv.querySelector("div:first-child");
+        titleDiv.setAttribute("title", title);
+        titleDiv.innerHTML = title;
+    }
+
+    /**
+     * Position the control vertically in the switcher stack
+     * @param {int} pos 
+     */
     setVerticalPos(pos) {
         this.element.style.bottom = pos;
     }

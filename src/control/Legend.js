@@ -35,13 +35,11 @@ export default class Legend extends SwitcherSubControl {
      * Show a legend for the given layer
      * @param {ol.Layer} layer 
      */
-    show(layer) {
-        if (!this.element.classList.contains("active")) {
-            /* Activate the control */
-            this.element.classList.add("active");
-            this.set("active", true);         
-        }
+    show(layer) {    
         
+        this.activate(layer);
+        this.setTitle(this._getLegendCaption(layer));
+
         let parms = {
             "request": "GetLegendGraphic",
             "version": "1.3",
@@ -53,11 +51,6 @@ export default class Legend extends SwitcherSubControl {
         };        
         let queryString = Object.keys(parms).map(key => key + "=" + parms[key]).join("&");
 
-        let titleDiv = this._headerDiv.querySelector("div:first-child");
-        let caption = this._getLegendCaption(layer);
-        titleDiv.setAttribute("title", caption);
-        titleDiv.innerHTML = caption;
-
         this._bodyDiv.innerHTML = `<img alt="legend"/>`;
         let legendImage = this._bodyDiv.querySelector("img");
         legendImage.addEventListener("load", () => {
@@ -67,9 +60,7 @@ export default class Legend extends SwitcherSubControl {
             this._bodyDiv.innerHTML = "No legend available";
             this._positioningCallback();
         });
-        legendImage.setAttribute("src", `${geoconst.GEOSERVER_WMS}?${queryString}`);
-
-        this._layer = layer;
+        legendImage.setAttribute("src", `${geoconst.GEOSERVER_WMS}?${queryString}`);        
     }
 
     /**

@@ -37,17 +37,10 @@ export default class SourceMetadata extends SwitcherSubControl {
      * Show metadata for the given layer
      * @param {ol.Layer} layer 
      */
-    show(layer) {        
-        if (!this.element.classList.contains("active")) {
-            /* Activate the control */
-            this.element.classList.add("active");
-            this.set("active", true);         
-        } 
-        
-        let titleDiv = this._headerDiv.querySelector("div:first-child"); 
-        let caption = `Metadata for ${layer.get("title")}`;
-        titleDiv.innerHTML = caption;
-        titleDiv.setAttribute("title", caption);
+    show(layer) { 
+
+        this.activate(layer);
+        this.setTitle(`Metadata for ${layer.get("title")}`);       
 
         let so = layer.get("switcherOpts");
         if (so && typeof so.attribution === "string") {
@@ -76,7 +69,7 @@ export default class SourceMetadata extends SwitcherSubControl {
                 this._positioningCallback();
             }
         }
-        this._layer = layer;          
+        
     }
     
 }

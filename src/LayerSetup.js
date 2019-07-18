@@ -2,110 +2,21 @@
  * @module SensorMapSetup
  */
 
-import {fromLonLat} from "ol/proj";
-import {bbox as bboxStrategy} from "ol/loadingstrategy";
 import Style from "ol/style/Style";
-import Feature from "ol/Feature";
-import Point from "ol/geom/Point";
 import CircleStyle from "ol/style/Circle";
 import Fill from "ol/style/Fill";
 import Stroke from "ol/style/Stroke";
 import Text from "ol/style/Text";
-import GeoJSON from "ol/format/GeoJSON"; 
 import TileLayer from "ol/layer/Tile";
 import OSM from "ol/source/OSM";
 import TileWMS from "ol/source/TileWMS"
 
-import Chart from "ol-ext/style/Chart";
-
 import * as geoconst from "./utilities/GeoConstants";
+import * as uoloaders from "./featureloaders/UrbanObservatory";
+import * as wfsloaders from "./featureloaders/GeoserverWfs";
+import * as pointstyles from "./stylefunctions/PointStyles";
+import * as polygonstyles from "./stylefunctions/PolygonStyles";
 import InteractiveVectorLayer from "./layer/InteractiveVectorLayer";
-
-/**
- * Return options for a GeoJSON source pointing to the given typename
- * @param {string} feature - the name of the data layer, namespaced if necessary
- * @return {Object}
- */
-const GEOJSON_SOURCE = (feature) => {
-	return({ /* Source options */
-		format: new GeoJSON(),
-		url: (extent) => {
-			return(`${geoconst.GEOSERVER_WFS}&typename=${feature}&bbox=` + extent.join(",") + `,${geoconst.MAP_PROJECTION}`);
-		},
-		strategy: bboxStrategy,
-		overlaps: false,
-		wrapX: false		
-	});
-};
-
-/**
- * Loader function for getting sensor location data from the Urban Observatory
- * @param {string} theme - sensor theme e.g. 'Air Quality'
- * @param {string} sensorType - sensor type e.g. 'NO2'
- */
-const UO_LOADER = (theme, sensorType) => {
-    return(function(extent) {
-        let source = this;
-        let sensorInfo = geoconst.UO_SENSOR_DATA;
-        let sensorArgs = {
-            "theme": theme,
-            "sensor_type": sensorType
-        };
-        Object.assign(sensorArgs, geoconst.OL2UO(geoconst.NEWCASTLE_CENTRE));
-        sensorInfo = sensorInfo + "?" + Object.keys(sensorArgs).map(key => key + "=" + sensorArgs[key]).join("&");
-        source.clear();
-        fetch(sensorInfo)
-            .then(r => r.json())
-            .then(jsonResponse => {
-                let features = jsonResponse.sensors.map(sensor => {
-                    Object.assign(sensor, {
-                        geometry: new Point(fromLonLat([
-                            sensor["Sensor Centroid Longitude"], 
-                            sensor["Sensor Centroid Latitude"]
-                        ]))
-                    });
-                    return(new Feature(sensor));
-                });
-                source.addFeatures(features);
-            })
-            .catch(error => {
-                console.log(error);
-            });		
-    });
-};
-
-/**
- * Options for the OA/LSOA/LA boundaries on hover
- * @param {string} col 
- * @param {int} zIndex
- * @param {float} opacity 
- * @param {string} nameAttr 
- */
-const BOUNDARY_HOVER_STYLE = (col, zIndex, opacity = 0.4, nameAttr = "name") => {
-	return((feature, res) => {
-        let layer = feature.get("layer"), style = null;
-        if (layer) {
-            if (res >= layer.getMinResolution() && (!isFinite(layer.getMaxResolution()) || res <= layer.getMaxResolution())) {
-                /* Layer in range */
-                style = new Style({
-                    stroke: new Stroke({color: col.toRgba(1.0), width: 2}),
-                    fill: new Fill({color: col.toRgba(opacity)}),
-                    text: new Text({
-                        font: "14px sans-serif",
-                        text: feature.get(nameAttr),
-                        placement: "point",
-                        overflow: true,
-                        stroke: new Stroke({color: "#ffffff".toRgba(1.0), width: 3}),
-                        fill: new Fill({color: col.toRgba(1.0)}),
-                        padding: [10, 10, 10, 10]
-                    }),
-                    zIndex: zIndex
-                });
-            }
-        }
-        return(style);
-	});
-};
 
 /**
  * Individual layer definitions
@@ -115,7 +26,6 @@ export const OPENSTREETMAP = () => {
 	return(new TileLayer({
         title: "OpenStreetMap",
         type: "base",
-        visible: true,
         opacity: 0.7,
         zIndex: 1,
         switcherOpts: {
@@ -135,29 +45,27 @@ const LA_FEATURE = "siss:tyne_and_wear_la"
 const LA_ZINDEX = 100
 export const LA = () => {
 	return(new InteractiveVectorLayer(
-		{ /* Layer options */
+		{
 			title: "Local Authority areas", 
 			visible: false,
 			minResolution: 10,
             extent: geoconst.NEWCASTLE_CENTRE_3857,            
-            opacity: LA_OPACITY,
 			switcherOpts: {
                 icon: "literal:LA",
                 feature: LA_FEATURE,
                 opacity: false
             },
-			style: (feature) => {
-				return(new Style({
-					fill: new Fill({color: LA_COL.toRgba(0.0)}),
-                    stroke: new Stroke({color: LA_COL.toRgba(0.0)}),
-                    zIndex: LA_ZINDEX
-				}));
-			}
-		},
-        GEOJSON_SOURCE(LA_FEATURE),
+			style: polygonstyles.invisible(LA_ZINDEX),				
+            hoverStyle: polygonstyles.centroidLabelled(
+                {color: LA_COL.toRgba(1.0), width: 2}, 
+                {color: LA_COL.toRgba(LA_OPACITY)},
+                {labelAttr: "name"},
+                LA_ZINDEX
+            )
+        }, 
         {
-            style: BOUNDARY_HOVER_STYLE(LA_COL, LA_ZINDEX, LA_OPACITY)
-        }		
+            loader: wfsloaders.getFeatureLoader(LA_FEATURE)
+        }
 	));
 };
 
@@ -170,29 +78,27 @@ const LSOA_FEATURE = "siss:tyne_and_wear_lsoa"
 const LSOA_ZINDEX = 110
 export const LSOA = () => {
 	return(new InteractiveVectorLayer(
-		{ /* Layer options */
+		{
 			title: "Lower Super Output Areas", 
 			visible: false,
 			minResolution: 2,
 			maxResolution: 20,
             extent: geoconst.NEWCASTLE_CENTRE_3857,            
-            opacity: LSOA_OPACITY,
 			switcherOpts: {
                 icon: "literal:LSOA",
                 feature: LSOA_FEATURE,
                 opacity: false
             },
-			style: (feature) => {
-				return(new Style({
-					fill: new Fill({color: LSOA_COL.toRgba(0.0)}),
-                    stroke: new Stroke({color: LSOA_COL.toRgba(0.0)}),
-                    zIndex: LSOA_ZINDEX		
-				}));
-			}
+			style: polygonstyles.invisible(LSOA_ZINDEX),
+            hoverStyle: polygonstyles.centroidLabelled(
+                {color: LSOA_COL.toRgba(1.0), width: 2}, 
+                {color: LSOA_COL.toRgba(LSOA_OPACITY)},
+                {labelAttr: "name"},
+                LSOA_ZINDEX
+            )
 		},
-        GEOJSON_SOURCE(LSOA_FEATURE),
         {
-            style: BOUNDARY_HOVER_STYLE(LSOA_COL, LSOA_ZINDEX, LSOA_OPACITY)
+            loader: wfsloaders.getFeatureLoader(LSOA_FEATURE)
         }		
 	));
 };
@@ -206,7 +112,7 @@ const OA_FEATURE = "siss:tyne_and_wear_oa"
 const OA_ZINDEX = 120
 export const OA = () => {
 	return(new InteractiveVectorLayer(
-		{ /* Layer options */
+		{ 
 			title: "Output Areas", 
 			visible: false,
 			maxResolution: 10,
@@ -217,17 +123,16 @@ export const OA = () => {
                 feature: OA_FEATURE,
                 opacity: false
             },
-			style: (feature) => {
-				return(new Style({
-					fill: new Fill({color: OA_COL.toRgba(0.0)}),
-                    stroke: new Stroke({color: OA_COL.toRgba(0.0)}),
-                    zIndex: OA_ZINDEX	
-				}));
-			}
+			style: polygonstyles.invisible(OA_ZINDEX),
+            hoverStyle: polygonstyles.centroidLabelled(
+                {color: OA_COL.toRgba(1.0), width: 2}, 
+                {color: OA_COL.toRgba(OA_OPACITY)},
+                {labelAttr: "code"},
+                LSOA_ZINDEX
+            )
 		},
-        GEOJSON_SOURCE(OA_FEATURE),
         {
-            style: BOUNDARY_HOVER_STYLE(OA_COL, OA_ZINDEX, OA_OPACITY, "code")
+            loader: wfsloaders.getFeatureLoader(OA_FEATURE)
         }		
 	));
 };
@@ -242,9 +147,6 @@ export const IMD = () => {
         zIndex: 10,
 		switcherOpts: {
             icon: "minus",
-            attribution: true,
-            ztl: true,
-            opacity: true,
             legend: "IMD Decile"
         },
 		opacity: 0.6,
@@ -269,9 +171,6 @@ export const DISABILITY = () => {
         zIndex: 11,
 		switcherOpts: {
             icon: "wheelchair",
-            attribution: true,            
-            ztl: true,
-            opacity: true,
             legend: "% of disabled with day-to-day limitations"
         },
 		opacity: 0.6,
@@ -290,82 +189,38 @@ export const DISABILITY = () => {
  * Ethnicity layer
  */
 const ETHNICITY_FEATURE = "siss:tyne_and_wear_ethnicity_summary"
-const ETHNICITY_OPACITY = 1.0;
-const ETHNICITY_STYLE = sel => {
-    return((f, res) => {
-        let styles = [];
-        let data = [
-            isNaN(f.get("white")) ? 0 : parseInt(f.get("white")),            
-            isNaN(f.get("asian")) ? 0 : parseInt(f.get("asian")),
-            isNaN(f.get("black")) ? 0 : parseInt(f.get("black")),
-            isNaN(f.get("mixed")) ? 0 : parseInt(f.get("mixed")),
-            isNaN(f.get("other")) ? 0 : parseInt(f.get("other"))
-        ];
-        let sum = isNaN(f.get("total_residents")) ? 0 : parseInt(f.get("total_residents"));
-        let radius = (20 - 0.5 * res) * (sel ? 1.2 : 1.0);
-        styles.push(new Style({                                        
-            image: new Chart({
-                type: "pie",
-                radius: radius,
-                data: data,
-                rotateWithView: true,
-                colors: ["cornsilk", "brown", "black", "goldenrod", "gray"],
-                stroke: new Stroke({
-                    color: "black",
-                    width: 2 - 0.05 * res
-                })
-            })
-        }));
-        if (sel) {
-            let arc = 0;
-            for (let dataSlice of data) {
-                let angle = (2.0 * arc + dataSlice) / sum*Math.PI - Math.PI/2.0;
-                let pc = Math.round(dataSlice / sum * 1000.0);
-                if (pc > 100) {
-                    /* Ignore anything < 10% as labels will inevitably conflict and be unreadable */
-                    styles.push(new Style({
-                        text: new Text({
-                            text: `${pc/10}%`,
-                            offsetX: Math.cos(angle) * (radius + 6),
-                            offsetY: Math.sin(angle) * (radius + 6),
-                            textAlign: (angle < Math.PI/2.0 ? "left" : "right"),
-                            textBaseline: "middle",
-                            stroke: new Stroke({
-                                color: "white",
-                                width: 2.5
-                            }),
-                            fill: new Fill({
-                                color: "black"
-                            })
-                        })                        
-                    }));
-                }
-                arc += dataSlice;
-            }
-        }
-        return(styles);
-    });
+const ETHNICITY_ZINDEX = 200
+const ETHNICITY_DATA_OPTS = {
+    attrs: ["white", "asian", "black", "mixed", "other"],
+    colors: ["cornsilk", "brown", "black", "goldenrod", "gray"],
+    totalAttr: "total_residents"
 }
 export const ETHNICITY = () => {
 	return(new InteractiveVectorLayer(
-		{ /* Layer options */
+		{
 			title: "Ethnic composition", 
-			cluster: false,
 			visible: false,
 			minResolution: 2,
 			maxResolution: 20,
             extent: geoconst.NEWCASTLE_CENTRE_3857,
-            zIndex: 200,
-            opacity: ETHNICITY_OPACITY,
+            zIndex: ETHNICITY_ZINDEX,
 			switcherOpts: {
                 icon: "users",
                 feature: ETHNICITY_FEATURE
             },
-			style: ETHNICITY_STYLE(false)
+            style: pointstyles.percentageLabelledChart(
+                {labels: false}, 
+                ETHNICITY_DATA_OPTS,
+                ETHNICITY_ZINDEX 
+            ),
+            clickStyle: pointstyles.percentageLabelledChart(
+                {labels: true}, 
+                ETHNICITY_DATA_OPTS,
+                ETHNICITY_ZINDEX 
+            )
 		},
-        GEOJSON_SOURCE(ETHNICITY_FEATURE), {},
         {
-            style: ETHNICITY_STYLE(true)
+            loader: wfsloaders.getFeatureLoader(ETHNICITY_FEATURE)
         }
 	));
 };
@@ -382,10 +237,8 @@ export const SENSORS = (theme , sensorType, zIndex, visible = false, icon = "que
             zIndex: zIndex,		
             switcherOpts: {
                 icon: icon,
-                attribution: true,
-                ztl: true,
-                opacity: true,
-                legend: `${theme} ${sensorType} sensors`
+                legend: `${theme} ${sensorType} sensors`,
+                attribution: "Current sensor locations for NU Urban Observatory"
             },			
 			style: (feature) => {
 				let	clusterFeats = feature.get("features");
@@ -407,20 +260,6 @@ export const SENSORS = (theme , sensorType, zIndex, visible = false, icon = "que
 			}
 		},
 		{
-            loader: UO_LOADER(theme, sensorType),
-            wrapX: false
-        }, {},
-		{
-			ordering: ["Name", "Latitude", "Longitude", "Elevation", "Height", "Broker", "Third party"],
-			translation: {
-				"Broker": "Broker Name", 
-				"Elevation": "Ground Height Above Sea Level",
-				"Latitude": "Sensor Centroid Latitude", 
-				"Longitude": "Sensor Centroid Longitude", 
-				"Height": "Sensor Height Above Ground",
-				"Name": "Sensor Name",
-				"Third party": "Third Party"
-			},
-			nameattr: "Sensor Name"			
-		}));
+            loader: uoloaders.sensorLocationsByTheme(theme, sensorType),
+        }));
 };

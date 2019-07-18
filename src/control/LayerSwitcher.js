@@ -46,7 +46,15 @@ export default class LayerSwitcher extends Control {
          * - info     => SourceMetadata
          * - legend   => Legend
          * - opacity  => OpacitySlider
-         * Zoom to layer is included in basic switcher functionality 
+         * Zoom to layer is included in basic switcher functionality
+         * 
+         * Individual layers have a property object 'switcherOpts' containing the following options:
+         *  - icon         - {string} FontAwesome icon for the layer in the graphical switcher (without the 'fa fa-')   
+         *  - attribution  - {string} Canned attribution of layer source (e.g. for OSM)
+         *  - feature      - {string} Namespaced feature type, for cases where a feature loader is used and it's difficult to figure out any other way
+         *  - legend       - {string} Caption for the legend control (defaults to the layer title)
+         *  - info         - {boolean} Include metadata functionality for layer (default true)
+         *  - opacity      - {boolean} Include opacity control (default true)
          */      
         this.controls = options.controls || [];
         this.controlStackBl = options.controlStackBl || [1, 7];

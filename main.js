@@ -125,7 +125,7 @@ window.onload = () => {
         layers: lyr => lyr.clickInteractive === true,
         style: feat => {
             let layer = feat.get("layer");
-            return(layer ? layer.clickStyle(feat, map.getView().getResolution(), true) : null);    
+            return(layer ? layer.clickStyle(feat, map.getView().getResolution()) : null);    
         }
     });
     map.addInteraction(clickSelect);

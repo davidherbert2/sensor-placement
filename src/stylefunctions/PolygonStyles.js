@@ -49,6 +49,7 @@ export const centroidLabelled = (strokeOpts, fillOpts, textOpts, zIndex = Infini
     const TEXT_DEFAULTS = {
         font: "14px sans-serif",
         placement: "point",
+        textAlign: "end",
         overflow: true,
         stroke: new Stroke({color: "#ffffff".toRgba(1.0), width: 3}),
         fill: new Fill({color: "#000000".toRgba(1.0)}),

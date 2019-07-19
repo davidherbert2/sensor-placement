@@ -243,13 +243,21 @@ export const SENSORS = (theme , sensorType, zIndex, visible = false, icon = "que
 			style: (feature) => {
 				let	clusterFeats = feature.get("features");
 				let size = clusterFeats ? clusterFeats.length : 1;
-				let style = new Style({
+                let styles = [];
+                styles.push(new Style({
 					image: new CircleStyle({
-						radius: 7,
-						fill: new Fill({color: "white"}),
-						stroke: new Stroke({color: "red", width: 2})
+						radius: 4,
+						fill: new Fill({color: "brown"}),
+						stroke: new Stroke({color: "brown", width: 2, opacity: 0.5})
 					})
-				});
+                }));
+                styles.push(new Style({
+					image: new CircleStyle({
+						radius: 8,
+						fill: new Fill({opacity: 0}),
+						stroke: new Stroke({color: "brown", width: 2})
+					})
+                }));                
 				if (size > 1) {
 					style.setText(new Text({
 						text: size.toString(),

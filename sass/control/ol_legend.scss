@@ -5,4 +5,34 @@
 
 .ol-legend-control > .legend-body {
     background-color: black;
+    border-radius: 10px;
+}
+
+.ol-legend-control .html-legend-container, .ol-legend-control .map-legend-container {
+    width: 100%;
+    height: 100%;
+}
+
+div.invisible {
+    display: none;
+}
+
+.ol-legend-control table.manual-legend-table {
+    width: 100%;
+    table-layout: fixed;
+    border-spacing: 5px;
+}
+
+.ol-legend-control table.manual-legend-table td.swatch {
+    width: 30px;
+    height: 20px;
+    padding: 5px;
+}
+
+.ol-legend-control table.manual-legend-table td.swatch > div {
+    border: 1px solid darkslategray;
+}
+
+.ol-legend-control table.manual-legend-table td.caption {
+    padding: 5px;
 }

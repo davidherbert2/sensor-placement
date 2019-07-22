@@ -2,7 +2,7 @@
  * @module GeoConstants
  */
 
-import {fromLonLat} from "ol/proj";
+import {METERS_PER_UNIT, fromLonLat} from "ol/proj";
 
 /**
  * Map projection (Google Spherical Mercator EPSG:3857)
@@ -50,6 +50,11 @@ export const NEWCASTLE_CENTRE_3857 =
 	fromLonLat([NEWCASTLE_CENTRE[0], NEWCASTLE_CENTRE[1]], MAP_PROJECTION).concat(
     fromLonLat([NEWCASTLE_CENTRE[2], NEWCASTLE_CENTRE[3]], MAP_PROJECTION));
     
+/**
+ * Convert an OL extent array to the object form required by the Urban Observatory
+ * @param {ol.extent} olExtent 
+ * @return {Object}
+ */
 export const OL2UO = (olExtent) => {
     return({
         "bbox_p1_x": olExtent[0],
@@ -57,4 +62,18 @@ export const OL2UO = (olExtent) => {
         "bbox_p2_x": olExtent[2],
         "bbox_p2_y": olExtent[3]
     });
+};
+
+/**
+ * Get the scale of the supplied map, optionally using a dpi value
+ * @param {ol.Map} map 
+ * @param {float} dpi 
+ * @return {int}
+ */
+export const MAP_SCALE = (map, dpi = 96) => {
+    return(Math.ceil(map.getView().getResolution() * 
+        METERS_PER_UNIT[map.getView().getProjection().getUnits()] * 
+        39.37 *     /* Inches in one metre */
+        dpi         /* Dots per inch */
+    ));
 };

@@ -33,7 +33,9 @@ export const sensorLocationsByTheme = (theme, sensorType) => {
                             sensor["Sensor Centroid Latitude"]
                         ]))
                     });
-                    return(new Feature(sensor));
+                    let f = new Feature(sensor);
+                    f.setId(String.prototype.uuid4());
+                    return(f);
                 });
                 source.addFeatures(features);
             })

@@ -52,7 +52,7 @@ export default class LayerSwitcher extends Control {
          *  - icon         - {string} FontAwesome icon for the layer in the graphical switcher (without the 'fa fa-')   
          *  - attribution  - {string} Canned attribution of layer source (e.g. for OSM)
          *  - feature      - {string} Namespaced feature type, for cases where a feature loader is used and it's difficult to figure out any other way
-         *  - legend       - {string} Caption for the legend control (defaults to the layer title)
+         *  - legend       - {string|Object} Caption for the legend control (defaults to the layer title)
          *  - info         - {boolean} Include metadata functionality for layer (default true)
          *  - opacity      - {boolean} Include opacity control (default true)
          */      
@@ -313,9 +313,7 @@ export default class LayerSwitcher extends Control {
                 control.show(layer);
             } else {
                 /* Disable the control */                    
-                if (!anchor.classList.contains("disabled")) {
-                    anchor.classList.add("disabled");
-                }
+                anchor.classList.add("disabled");
             }            
         });
     }

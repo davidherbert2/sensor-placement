@@ -29,9 +29,9 @@ window.onload = () => {
                 icon: "satellite-dish"
             },
             layers: [
-                layerspec.SENSORS('Air Quality', 'NO2', 500, true, "car-alt"),
-                layerspec.SENSORS('Air Quality', 'PM2.5', 501, false, "smog"), 
-                layerspec.SENSORS('Air Quality', 'PM10', 502, false, "smog")
+                layerspec.SENSORS('Air Quality', 'NO2', 500, true, "car-alt", "#993300"),
+                layerspec.SENSORS('Air Quality', 'PM2.5', 501, false, "smog", "#303030"), 
+                layerspec.SENSORS('Air Quality', 'PM10', 502, false, "smog", "#000000")
             ]
         }),
         new LayerGroup({
@@ -106,6 +106,15 @@ window.onload = () => {
     map.addControl(switcher);
     switcher.init();
 
+    /* Display map scale as a tooltip on the scale bar */
+    let scaleBar = document.querySelector(".ol-scale-line");
+    if (scaleBar) {
+        scaleBar.setAttribute("title", `Map scale : ${geoconst.MAP_SCALE(map)}`);
+        map.getView().on("change:resolution", (evt) => {
+            scaleBar.setAttribute("title", `Map scale : ${geoconst.MAP_SCALE(map)}`);
+        });
+    }
+            
     /* Map hover interactions */
     let hoverSelect = new Select({
         condition: pointerMove,

@@ -2,11 +2,6 @@
  * @module SensorMapSetup
  */
 
-import Style from "ol/style/Style";
-import CircleStyle from "ol/style/Circle";
-import Fill from "ol/style/Fill";
-import Stroke from "ol/style/Stroke";
-import Text from "ol/style/Text";
 import TileLayer from "ol/layer/Tile";
 import OSM from "ol/source/OSM";
 import TileWMS from "ol/source/TileWMS"
@@ -52,6 +47,9 @@ export const LA = () => {
             extent: geoconst.NEWCASTLE_CENTRE_3857,            
 			switcherOpts: {
                 icon: "literal:LA",
+                legend: {
+                    geometryType: "polygon"
+                },
                 feature: LA_FEATURE,
                 opacity: false
             },
@@ -86,6 +84,9 @@ export const LSOA = () => {
             extent: geoconst.NEWCASTLE_CENTRE_3857,            
 			switcherOpts: {
                 icon: "literal:LSOA",
+                legend: {
+                    geometryType: "polygon"
+                },
                 feature: LSOA_FEATURE,
                 opacity: false
             },
@@ -120,6 +121,9 @@ export const OA = () => {
             opacity: OA_OPACITY,
 			switcherOpts: {
                 icon: "literal:OA",
+                legend: {
+                    geometryType: "polygon"
+                },
                 feature: OA_FEATURE,
                 opacity: false
             },
@@ -191,9 +195,9 @@ export const DISABILITY = () => {
 const ETHNICITY_FEATURE = "siss:tyne_and_wear_ethnicity_summary"
 const ETHNICITY_ZINDEX = 200
 const ETHNICITY_DATA_OPTS = {
+    geometryType: "chart", 
     attrs: ["white", "asian", "black", "mixed", "other"],
-    colors: ["cornsilk", "brown", "black", "goldenrod", "gray"],
-    totalAttr: "total_residents"
+    colors: ["cornsilk", "brown", "black", "goldenrod", "gray"]
 }
 export const ETHNICITY = () => {
 	return(new InteractiveVectorLayer(
@@ -206,16 +210,17 @@ export const ETHNICITY = () => {
             zIndex: ETHNICITY_ZINDEX,
 			switcherOpts: {
                 icon: "users",
-                feature: ETHNICITY_FEATURE
+                feature: ETHNICITY_FEATURE,
+                legend: ETHNICITY_DATA_OPTS
             },
             style: pointstyles.percentageLabelledChart(
                 {labels: false}, 
-                ETHNICITY_DATA_OPTS,
+                Object.assign({}, ETHNICITY_DATA_OPTS, {totalAttr: "total_residents"}),
                 ETHNICITY_ZINDEX 
             ),
             clickStyle: pointstyles.percentageLabelledChart(
                 {labels: true}, 
-                ETHNICITY_DATA_OPTS,
+                Object.assign({}, ETHNICITY_DATA_OPTS, {totalAttr: "total_residents"}),
                 ETHNICITY_ZINDEX 
             )
 		},
@@ -228,7 +233,7 @@ export const ETHNICITY = () => {
 /**
  * Sensor layer
  */
-export const SENSORS = (theme , sensorType, zIndex, visible = false, icon = "question") => {
+export const SENSORS = (theme , sensorType, zIndex, visible = false, icon = "question", color = "#000000") => {
 	return(new InteractiveVectorLayer(
 		{
 			title: `${sensorType} sensors`,
@@ -237,35 +242,14 @@ export const SENSORS = (theme , sensorType, zIndex, visible = false, icon = "que
             zIndex: zIndex,		
             switcherOpts: {
                 icon: icon,
-                legend: `${theme} ${sensorType} sensors`,
+                legend: {
+                    geometryType: "point",
+                    caption: `${theme} ${sensorType} sensors`
+                },
                 attribution: "Current sensor locations for NU Urban Observatory"
             },			
-			style: (feature) => {
-				let	clusterFeats = feature.get("features");
-				let size = clusterFeats ? clusterFeats.length : 1;
-                let styles = [];
-                styles.push(new Style({
-					image: new CircleStyle({
-						radius: 4,
-						fill: new Fill({color: "brown"}),
-						stroke: new Stroke({color: "brown", width: 2, opacity: 0.5})
-					})
-                }));
-                styles.push(new Style({
-					image: new CircleStyle({
-						radius: 8,
-						fill: new Fill({opacity: 0}),
-						stroke: new Stroke({color: "brown", width: 2})
-					})
-                }));                
-				if (size > 1) {
-					style.setText(new Text({
-						text: size.toString(),
-						fill: new Fill({color: "#ff0000"})
-					}));
-				}
-				return(style);
-			}
+            style: pointstyles.sensorDartboard(color, false, zIndex),
+            clickStyle: pointstyles.sensorDartboard(color, true, zIndex),
 		},
 		{
             loader: uoloaders.sensorLocationsByTheme(theme, sensorType),

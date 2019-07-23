@@ -4,13 +4,13 @@
 
 import TileLayer from "ol/layer/Tile";
 import OSM from "ol/source/OSM";
-import TileWMS from "ol/source/TileWMS"
 
 import * as geoconst from "./utilities/GeoConstants";
-import * as uoloaders from "./featureloaders/UrbanObservatory";
-import * as wfsloaders from "./featureloaders/GeoserverWfs";
 import * as pointstyles from "./stylefunctions/PointStyles";
 import * as polygonstyles from "./stylefunctions/PolygonStyles";
+import GeoserverWFSSource from "./source/GeoserverWFS";
+import GeoserverWMSSource from "./source/GeoserverWMS";
+import UrbanObservatorySource from "./source/UrbanObservatory";
 import InteractiveVectorLayer from "./layer/InteractiveVectorLayer";
 
 /**
@@ -32,27 +32,28 @@ export const OPENSTREETMAP = () => {
 };
 
 /**
+ * Project Geoserver workspace
+ */
+const GEOSERVER_WORKSPACE = "siss";
+
+/**
  * LA layer
  */
-const LA_COL = "#7a4419"
-const LA_OPACITY = 0.5
-const LA_FEATURE = "siss:tyne_and_wear_la"
-const LA_ZINDEX = 100
+const LA_COL = "#7a4419";
+const LA_OPACITY = 0.5;
+const LA_FEATURE = "siss:tyne_and_wear_la";
+const LA_ZINDEX = 100;
 export const LA = () => {
 	return(new InteractiveVectorLayer(
 		{
 			title: "Local Authority areas", 
 			visible: false,
 			minResolution: 10,
-            extent: geoconst.NEWCASTLE_CENTRE_3857,            
 			switcherOpts: {
-                icon: "literal:LA",
-                legend: {
-                    geometryType: "polygon"
-                },
-                feature: LA_FEATURE,
+                icon: "literal:LA",               
                 opacity: false
             },
+            source: new GeoserverWFSource({featureType: LA_FEATURE, workspace: GEOSERVER_WORKSPACE}),
 			style: polygonstyles.invisible(LA_ZINDEX),				
             hoverStyle: polygonstyles.centroidLabelled(
                 {color: LA_COL.toRgba(1.0), width: 2}, 
@@ -60,9 +61,6 @@ export const LA = () => {
                 {labelAttr: "name"},
                 LA_ZINDEX
             )
-        }, 
-        {
-            loader: wfsloaders.getFeatureLoader(LA_FEATURE)
         }
 	));
 };
@@ -70,10 +68,10 @@ export const LA = () => {
 /**
  * LSOA layer
  */
-const LSOA_COL = "#63535b"
-const LSOA_OPACITY = 0.5
-const LSOA_FEATURE = "siss:tyne_and_wear_lsoa"
-const LSOA_ZINDEX = 110
+const LSOA_COL = "#63535b";
+const LSOA_OPACITY = 0.5;
+const LSOA_FEATURE = "siss:tyne_and_wear_lsoa";
+const LSOA_ZINDEX = 110;
 export const LSOA = () => {
 	return(new InteractiveVectorLayer(
 		{
@@ -81,15 +79,11 @@ export const LSOA = () => {
 			visible: false,
 			minResolution: 2,
 			maxResolution: 20,
-            extent: geoconst.NEWCASTLE_CENTRE_3857,            
 			switcherOpts: {
-                icon: "literal:LSOA",
-                legend: {
-                    geometryType: "polygon"
-                },
-                feature: LSOA_FEATURE,
+                icon: "literal:LSOA",             
                 opacity: false
             },
+            source: new GeoserverWFSSource({featureType: LSOA_FEATURE, workspace: GEOSERVER_WORKSPACE}),
 			style: polygonstyles.invisible(LSOA_ZINDEX),
             hoverStyle: polygonstyles.centroidLabelled(
                 {color: LSOA_COL.toRgba(1.0), width: 2}, 
@@ -97,36 +91,29 @@ export const LSOA = () => {
                 {labelAttr: "name"},
                 LSOA_ZINDEX
             )
-		},
-        {
-            loader: wfsloaders.getFeatureLoader(LSOA_FEATURE)
-        }		
+		}	
 	));
 };
 
 /**
  * OA layer
  */
-const OA_COL = "#400406"
-const OA_OPACITY = 0.5
-const OA_FEATURE = "siss:tyne_and_wear_oa"
-const OA_ZINDEX = 120
+const OA_COL = "#400406";
+const OA_OPACITY = 0.5;
+const OA_FEATURE = "siss:tyne_and_wear_oa";
+const OA_ZINDEX = 120;
 export const OA = () => {
 	return(new InteractiveVectorLayer(
 		{ 
 			title: "Output Areas", 
 			visible: false,
 			maxResolution: 10,
-            extent: geoconst.NEWCASTLE_CENTRE_3857,            
             opacity: OA_OPACITY,
 			switcherOpts: {
-                icon: "literal:OA",
-                legend: {
-                    geometryType: "polygon"
-                },
-                feature: OA_FEATURE,
+                icon: "literal:OA",               
                 opacity: false
             },
+            source: new GeoserverWFSSource({featureType: OA_FEATURE, workspace: GEOSERVER_WORKSPACE}),
 			style: polygonstyles.invisible(OA_ZINDEX),
             hoverStyle: polygonstyles.centroidLabelled(
                 {color: OA_COL.toRgba(1.0), width: 2}, 
@@ -134,10 +121,7 @@ export const OA = () => {
                 {labelAttr: "code"},
                 LSOA_ZINDEX
             )
-		},
-        {
-            loader: wfsloaders.getFeatureLoader(OA_FEATURE)
-        }		
+		}	
 	));
 };
 
@@ -154,14 +138,7 @@ export const IMD = () => {
             legend: "IMD Decile"
         },
 		opacity: 0.6,
-		source: new TileWMS({
-			url: geoconst.GEOSERVER_WMS,
-			params: {
-				layers: "siss:imd_2015_by_lsoa",
-				serverType: "geoserver",
-				wrapX: false
-			}
-		})
+		source: new GeoserverWMSSource({layers: "siss:imd_2015_by_lsoa", workspace: GEOSERVER_WORKSPACE})
 	}));
 };
 
@@ -177,15 +154,8 @@ export const DISABILITY = () => {
             icon: "wheelchair",
             legend: "% of disabled with day-to-day limitations"
         },
-		opacity: 0.6,
-		source: new TileWMS({
-			url: geoconst.GEOSERVER_WMS,
-			params: {
-				layers: "siss:disability_2015_by_lsoa",
-				serverType: "geoserver",
-				wrapX: false
-			}
-		})
+        opacity: 0.6,
+        source: new GeoserverWMSSource({layers: "siss:disability_2015_by_lsoa", workspace: GEOSERVER_WORKSPACE})		
 	}));
 };
 
@@ -195,7 +165,6 @@ export const DISABILITY = () => {
 const ETHNICITY_FEATURE = "siss:tyne_and_wear_ethnicity_summary"
 const ETHNICITY_ZINDEX = 200
 const ETHNICITY_DATA_OPTS = {
-    geometryType: "chart", 
     attrs: ["white", "asian", "black", "mixed", "other"],
     colors: ["cornsilk", "brown", "black", "goldenrod", "gray"]
 }
@@ -209,10 +178,9 @@ export const ETHNICITY = () => {
             extent: geoconst.NEWCASTLE_CENTRE_3857,
             zIndex: ETHNICITY_ZINDEX,
 			switcherOpts: {
-                icon: "users",
-                feature: ETHNICITY_FEATURE,
-                legend: ETHNICITY_DATA_OPTS
+                icon: "users"
             },
+            source: new GeoserverWFSSource({featureType: ETHNICITY_FEATURE, workspace: GEOSERVER_WORKSPACE}),
             style: pointstyles.percentageLabelledChart(
                 {labels: false}, 
                 Object.assign({}, ETHNICITY_DATA_OPTS, {totalAttr: "total_residents"}),
@@ -223,10 +191,7 @@ export const ETHNICITY = () => {
                 Object.assign({}, ETHNICITY_DATA_OPTS, {totalAttr: "total_residents"}),
                 ETHNICITY_ZINDEX 
             )
-		},
-        {
-            loader: wfsloaders.getFeatureLoader(ETHNICITY_FEATURE)
-        }
+		}
 	));
 };
 
@@ -242,16 +207,12 @@ export const SENSORS = (theme , sensorType, zIndex, visible = false, icon = "que
             zIndex: zIndex,		
             switcherOpts: {
                 icon: icon,
-                legend: {
-                    geometryType: "point",
-                    caption: `${theme} ${sensorType} sensors`
-                },
+                legend: `${theme} ${sensorType} sensors`,
                 attribution: "Current sensor locations for NU Urban Observatory"
             },			
+            source: new UrbanObservatorySource({sensorTheme: theme, sensorType: sensorType}),
             style: pointstyles.sensorDartboard(color, false, zIndex),
             clickStyle: pointstyles.sensorDartboard(color, true, zIndex),
 		},
-		{
-            loader: uoloaders.sensorLocationsByTheme(theme, sensorType),
-        }));
+	));
 };

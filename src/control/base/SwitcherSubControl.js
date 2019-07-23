@@ -159,12 +159,9 @@ export default class SwitcherSubControl extends Control {
                 if (typeof url === "string") {
                     let qry = new URLSearchParams(url.substring(url.indexOf("?") + 1));
                     featureType = qry.get("typename");		
-                } else {
-                    /* Probably a feature loader, so look for some help in switcherOpts */
-                    let so = layer.get("switcherOpts");
-                    if (so && so.feature) {
-                        featureType = so.feature;
-                    }
+                } else if (source instanceof GeoserverWfsSource) {
+                    /* Can get feature type from source */
+                    source.get("featureType");
                 }	
             } catch(e) {			
             }		

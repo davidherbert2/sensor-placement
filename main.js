@@ -19,6 +19,20 @@ import SourceMetadata from "./src/control/SourceMetadata";
 window.onload = () => {
 
     /**
+     * Get the scale of the supplied map, optionally using a dpi value
+     * @param {ol.Map} map 
+     * @param {float} dpi 
+     * @return {int}
+     */
+    mapScale = (map, dpi = 96) => {
+        return(Math.ceil(map.getView().getResolution() * 
+            METERS_PER_UNIT[map.getView().getProjection().getUnits()] * 
+            39.37 *     /* Inches in one metre */
+            dpi         /* Dots per inch */
+        ));
+    }
+
+    /**
      * List of map layers/groups
      */
     let layers = [        	               
@@ -109,9 +123,9 @@ window.onload = () => {
     /* Display map scale as a tooltip on the scale bar */
     let scaleBar = document.querySelector(".ol-scale-line");
     if (scaleBar) {
-        scaleBar.setAttribute("title", `Map scale : ${geoconst.MAP_SCALE(map)}`);
-        map.getView().on("change:resolution", (evt) => {
-            scaleBar.setAttribute("title", `Map scale : ${geoconst.MAP_SCALE(map)}`);
+        scaleBar.setAttribute("title", `Map scale : ${mapScale(map)}`);
+        map.getView().on("change:resolution", () => {
+            scaleBar.setAttribute("title", `Map scale : ${mapScale(map)}`);
         });
     }
             

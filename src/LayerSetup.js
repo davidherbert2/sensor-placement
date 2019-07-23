@@ -8,6 +8,7 @@ import OSM from "ol/source/OSM";
 import * as geoconst from "./utilities/GeoConstants";
 import * as pointstyles from "./stylefunctions/PointStyles";
 import * as polygonstyles from "./stylefunctions/PolygonStyles";
+import LabelledChartStyle from "./style/LabelledChart";
 import GeoserverWFSSource from "./source/GeoserverWFS";
 import GeoserverWMSSource from "./source/GeoserverWMS";
 import UrbanObservatorySource from "./source/UrbanObservatory";
@@ -53,7 +54,7 @@ export const LA = () => {
                 icon: "literal:LA",               
                 opacity: false
             },
-            source: new GeoserverWFSource({featureType: LA_FEATURE, workspace: GEOSERVER_WORKSPACE}),
+            source: new GeoserverWFSSource({featureType: LA_FEATURE, workspace: GEOSERVER_WORKSPACE}),
 			style: polygonstyles.invisible(LA_ZINDEX),				
             hoverStyle: polygonstyles.centroidLabelled(
                 {color: LA_COL.toRgba(1.0), width: 2}, 
@@ -166,8 +167,12 @@ const ETHNICITY_FEATURE = "siss:tyne_and_wear_ethnicity_summary"
 const ETHNICITY_ZINDEX = 200
 const ETHNICITY_DATA_OPTS = {
     attrs: ["white", "asian", "black", "mixed", "other"],
-    colors: ["cornsilk", "brown", "black", "goldenrod", "gray"]
+    colors: ["cornsilk", "brown", "black", "goldenrod", "gray"],
+    totalAttr: "total_residents",
+    zIndex: ETHNICITY_ZINDEX
 }
+const ETHNICITY_STYLE = new LabelledChartStyle(Object.assign({}, ETHNICITY_DATA_OPTS, {labels: false}));
+
 export const ETHNICITY = () => {
 	return(new InteractiveVectorLayer(
 		{
@@ -181,16 +186,9 @@ export const ETHNICITY = () => {
                 icon: "users"
             },
             source: new GeoserverWFSSource({featureType: ETHNICITY_FEATURE, workspace: GEOSERVER_WORKSPACE}),
-            style: pointstyles.percentageLabelledChart(
-                {labels: false}, 
-                Object.assign({}, ETHNICITY_DATA_OPTS, {totalAttr: "total_residents"}),
-                ETHNICITY_ZINDEX 
-            ),
-            clickStyle: pointstyles.percentageLabelledChart(
-                {labels: true}, 
-                Object.assign({}, ETHNICITY_DATA_OPTS, {totalAttr: "total_residents"}),
-                ETHNICITY_ZINDEX 
-            )
+            style: ETHNICITY_STYLE.StyleFunction,            
+            clickStyle: new LabelledChartStyle(Object.assign({}, ETHNICITY_DATA_OPTS, {labels: true})).StyleFunction,
+            legend: ETHNICITY_STYLE.LegendFunction
 		}
 	));
 };
@@ -198,7 +196,7 @@ export const ETHNICITY = () => {
 /**
  * Sensor layer
  */
-export const SENSORS = (theme , sensorType, zIndex, visible = false, icon = "question", color = "#000000") => {
+export const SENSORS = (theme, sensorType, zIndex, visible = false, icon = "question", color = "#000000") => {
 	return(new InteractiveVectorLayer(
 		{
 			title: `${sensorType} sensors`,

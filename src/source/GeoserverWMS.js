@@ -1,5 +1,5 @@
 /**
- * @module GeoserverWmsSource
+ * @module GeoserverWMSSource
  */
 import TileWMS from "ol/source/TileWMS"
 import * as appconfig from "../appconfig";
@@ -7,7 +7,7 @@ import * as appconfig from "../appconfig";
 /** 
  * @classdesc Class to provide sensor feature loading capability from Geoserver WFS services
  */
-export default class GeoserverWfsSource extends TileWMS {
+export default class GeoserverWMSSource extends TileWMS {
 
     /**
 	 * Source constructor
@@ -16,7 +16,7 @@ export default class GeoserverWfsSource extends TileWMS {
      *  - {string} workspace - e.g. 'siss'
 	 * @param {Object} options - options passed directly to base class constructor
 	 */
-	constructor(options = {}) {
+	constructor(options) {
 
         super({
             url: `${appconfig.AWS_INSTANCE}/geoserver/${options.workspace}/wms`,
@@ -25,6 +25,7 @@ export default class GeoserverWfsSource extends TileWMS {
                 wrapX: false
             }, options)
         });
+        
     }
 
 };

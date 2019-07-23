@@ -1,7 +1,7 @@
 import Map from "ol/Map";
 import View from "ol/View";
 import LayerGroup from "ol/layer/Group";
-import {fromLonLat} from "ol/proj";
+import {METERS_PER_UNIT, fromLonLat} from "ol/proj";
 import MousePosition from "ol/control/MousePosition";
 import ScaleLine from "ol/control/ScaleLine";
 import Zoom from "ol/control/Zoom";
@@ -123,9 +123,9 @@ window.onload = () => {
     /* Display map scale as a tooltip on the scale bar */
     let scaleBar = document.querySelector(".ol-scale-line");
     if (scaleBar) {
-        scaleBar.setAttribute("title", `Map scale : ${mapScale(map)}`);
+        scaleBar.setAttribute("title", `Map scale 1 : ${mapScale(map)}`);
         map.getView().on("change:resolution", () => {
-            scaleBar.setAttribute("title", `Map scale : ${mapScale(map)}`);
+            scaleBar.setAttribute("title", `Map scale 1 : ${mapScale(map)}`);
         });
     }
             

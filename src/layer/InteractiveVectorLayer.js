@@ -28,7 +28,10 @@ export default class InteractiveVectorLayer extends VectorLayer {
 
             /* Interaction types */            
             hoverStyle: null,
-            clickStyle: null
+            clickStyle: null,
+
+            /* Canvas legend renderer */
+            legend: null
         };
 
         options = Object.assign(LAYER_DEFAULTS, options);
@@ -51,8 +54,9 @@ export default class InteractiveVectorLayer extends VectorLayer {
         /* Add a layer back-pointer to every feature */
         this._featureSource.on("addfeature", evt => evt.feature.set("layer", this));
         
-        this._hoverStyle = layerOpts.hoverStyle;
-        this._clickStyle = layerOpts.clickStyle;
+        this._hoverStyle = options.hoverStyle;
+        this._clickStyle = options.clickStyle;
+        this._legend = options.legend;
     }
 
     get featureSource() {
@@ -73,6 +77,10 @@ export default class InteractiveVectorLayer extends VectorLayer {
 
     get clickStyle() {
         return(this._clickStyle);
+    }
+
+    get legend() {
+        return(this._legend);
     }
 
 }

@@ -1,6 +1,10 @@
 /**
  * @module GeoserverWFSSource
+ * 
  */
+import {bbox} from "ol/loadingstrategy";
+import GeoJSON from "ol/format/GeoJSON";
+import VectorSource from "ol/source/Vector";
 import * as appconfig from "../appconfig";
 
 /** 
@@ -15,17 +19,20 @@ export default class GeoserverWFSSource extends VectorSource {
      *  - {string} workspace - e.g. 'siss'
 	 * @param {Object} options - options passed directly to base class constructor
 	 */
-	constructor(options = {}) {
+	constructor(options) {
 
         /* Defaults for source options */
         const SOURCE_DEFAULTS = {
             format: new GeoJSON(),
-            strategy: bboxStrategy,
+            strategy: bbox,
 		    overlaps: false,
             wrapX: false,
         };
 
         super(Object.assign({}, SOURCE_DEFAULTS, options));
+
+        this.set("featureType", options.featureType);
+        this.set("workspace", options.workspace);
 
         this.setLoader(this.getFeatureLoader());
     }
@@ -33,7 +40,7 @@ export default class GeoserverWFSSource extends VectorSource {
     /**
      * Loader function for getting features from a GeoJSON feed output by Geoserver WFS
      */
-    getFeatureLoader = () => {
+    getFeatureLoader() {
 
         let featureType = this.get("featureType");
         let workspace = this.get("workspace");
@@ -47,7 +54,7 @@ export default class GeoserverWFSSource extends VectorSource {
                 "request": "GetFeature",
                 "version": "2.0.0",
                 "outputFormat": "application/json",
-                "srsname": projection,
+                "srsname": projection.getCode(),
                 "typename": featureType,
                 "bbox": extent.join(",")
             };        

@@ -3,8 +3,11 @@
  */
 
 import {fromLonLat} from "ol/proj";
+import {bbox} from "ol/loadingstrategy";
 import Feature from "ol/Feature";
 import Point from "ol/geom/Point";
+import GeoJSON from "ol/format/GeoJSON";
+import VectorSource from "ol/source/Vector";
 import * as appconfig from "../appconfig";
 
 /**
@@ -24,20 +27,26 @@ export default class UrbanObservatorySource extends VectorSource {
      *  - {string} sensorTheme - e.g. 'Air Quality'
      *  - {string} sensorType - e.g 'NO2'
      *  - {ol.extent} extent - Observatory bounding box in WGS84
-	 * @param {Object} [options = {}] - options passed directly to base class constructor
+	 * @param {Object} options - options passed directly to base class constructor
 	 */
-	constructor(options = {}) {
+	constructor(options) {
 
         /* Defaults for source options */
         const SOURCE_DEFAULTS = {
             extent: UO_BOUNDING_BOX,
             format: new GeoJSON(),
-            strategy: bboxStrategy,
+            strategy: bbox,
 		    overlaps: false,
             wrapX: false,
         };
 
-        super(Object.assign({}, SOURCE_DEFAULTS, options));
+        let merged = Object.assign({}, SOURCE_DEFAULTS, options);
+
+        super(merged);
+
+        this.set("sensorTheme", merged.sensorTheme);
+        this.set("sensorType", merged.sensorType);
+        this.set("extent", merged.extent);
 
         this.setLoader(this.sensorLocationsByTheme());
     }
@@ -45,17 +54,20 @@ export default class UrbanObservatorySource extends VectorSource {
     /**
      * Loader function for getting themed sensor location data from the NU Urban Observatory
      */
-    sensorLocationsByTheme = () => {
+    sensorLocationsByTheme() {
         return(function(extent) {
+
             let source = this;
             let sensorInfo = `${UO_API}/sensors/json/`;
             let sensorArgs = {
                 "theme": this.get("sensorTheme"),
                 "sensor_type": this.get("sensorType")
-            };            
-            Object.assign(sensorArgs, this._ol2uo(this.get("extent")));
+            };                        
+
+            sensorArgs = Object.assign(sensorArgs, this._ol2uo(this.get("extent")));
             let queryString = Object.keys(sensorArgs).map(key => key + "=" + sensorArgs[key]).join("&");
             source.clear();
+
             fetch(`${sensorInfo}?${queryString}`)
                 .then(r => r.json())
                 .then(jsonResponse => {
@@ -83,7 +95,7 @@ export default class UrbanObservatorySource extends VectorSource {
      * @param {ol.extent} olExtent 
      * @return {Object}
      */
-   _ol2uo = (olExtent) => {
+   _ol2uo(olExtent) {
         return({
             "bbox_p1_x": olExtent[0],
             "bbox_p1_y": olExtent[1],

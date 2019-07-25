@@ -48,7 +48,7 @@ window.onload = () => {
             },
             layers: [
                 layerspec.SENSORS('Air Quality', 'NO2', 500, true, "car-alt", "#993300"),
-                layerspec.SENSORS('Air Quality', 'PM2.5', 501, false, "smog", "#303030"), 
+                layerspec.SENSORS('Air Quality', 'PM2.5', 501, false, "smog", "#404040"), 
                 layerspec.SENSORS('Air Quality', 'PM10', 502, false, "smog", "#000000")
             ]
         }),
@@ -154,6 +154,7 @@ window.onload = () => {
         multi: true,
         layers: lyr => lyr.clickInteractive === true,
         style: feat => {
+            console.log(feat);
             let style = null, layer = feat.get("layer");
             if (layer) {
                 style = layer.clickStyle(feat, map.getView().getResolution());

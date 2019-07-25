@@ -43,7 +43,7 @@ export default class InteractiveVectorLayer extends VectorLayer {
 				distance: 20, 					
 				source: featureSource,
 				wrapX: false
-			});
+            });            
         }
         
         super(options);
@@ -52,6 +52,9 @@ export default class InteractiveVectorLayer extends VectorLayer {
         this._featureSource = featureSource;
 
         /* Add a layer back-pointer to every feature */
+        if (options.cluster === true) {
+            this.getSource().on("addfeature", evt => evt.feature.set("layer", this));
+        }
         this._featureSource.on("addfeature", evt => evt.feature.set("layer", this));
         
         this._hoverStyle = options.hoverStyle;

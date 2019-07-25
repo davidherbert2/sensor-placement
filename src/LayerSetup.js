@@ -7,9 +7,9 @@ import TileWMS from "ol/source/TileWMS";
 import OSM from "ol/source/OSM";
 
 import * as appconfig from "./appconfig";
-import * as pointstyles from "./stylefunctions/PointStyles";
 import * as polygonstyles from "./stylefunctions/PolygonStyles";
 import LabelledChartStyle from "./style/LabelledChart";
+import UrbanObservatorySensorStyle from "./style/UrbanObservatorySensor";
 import GeoserverWFSSource from "./source/GeoserverWFS";
 import UrbanObservatorySource from "./source/UrbanObservatory";
 import InteractiveVectorLayer from "./layer/InteractiveVectorLayer";
@@ -149,17 +149,15 @@ export const DISABILITY = () => {
 /**
  * Ethnicity layer
  */
-const ETHNICITY_FEATURE = "siss:tyne_and_wear_ethnicity_summary"
-const ETHNICITY_ZINDEX = 200
-const ETHNICITY_DATA_OPTS = {
+const ETHNICITY_FEATURE = "siss:tyne_and_wear_ethnicity_summary";
+const ETHNICITY_ZINDEX = 200;
+const ETHNICITY_STYLE = new LabelledChartStyle({
     attrs: ["white", "asian", "black", "mixed", "other"],
     colors: ["cornsilk", "brown", "black", "goldenrod", "gray"],
     totalAttr: "total_residents",
     zIndex: ETHNICITY_ZINDEX,
     labels: false
-}
-const ETHNICITY_STYLE = new LabelledChartStyle(ETHNICITY_DATA_OPTS);
-const ETHNICITY_STYLE_LABELLED = new LabelledChartStyle(Object.assign(ETHNICITY_DATA_OPTS, {labels: true}));
+});
 
 export const ETHNICITY = () => {
 	return(new InteractiveVectorLayer(
@@ -172,27 +170,28 @@ export const ETHNICITY = () => {
             zIndex: ETHNICITY_ZINDEX,
 			switcherOpts: {icon: "users"},
             source: new GeoserverWFSSource({featureType: ETHNICITY_FEATURE}),
-            style: ETHNICITY_STYLE.StyleFunction,            
-            clickStyle: ETHNICITY_STYLE_LABELLED.StyleFunction,
+            style: ETHNICITY_STYLE.percentageLabelledChart({}),            
+            clickStyle: ETHNICITY_STYLE.percentageLabelledChart({labels: true}),
             legendOptions: ETHNICITY_STYLE.legendOptions
 		}
 	));
 };
 
 /**
- * Sensor layer
+ * Urban Observatory Sensor layer
  */
 export const SENSORS = (theme, sensorType, zIndex, visible = false, icon = "question", color = "#000000") => {
+    let sensorStyle = new UrbanObservatorySensorStyle({color1: color});
 	return(new InteractiveVectorLayer(
 		{
 			title: `${sensorType} sensors`,
 			cluster: true,
-            visible: false,//visible,
+            visible: visible,
             zIndex: zIndex,		
             switcherOpts: {icon: icon, legend: `${theme} ${sensorType} sensors`, attribution: "Current sensor locations for NU Urban Observatory"},			
             source: new UrbanObservatorySource({sensorTheme: theme, sensorType: sensorType}),
-            style: pointstyles.sensorDartboard(color, false, zIndex)
-            //clickStyle: pointstyles.sensorDartboard(color, true, zIndex),
+            style: sensorStyle.sensorDartboard({}),
+            clickStyle: sensorStyle.sensorDartboard({multiplier: 1.4})
 		},
 	));
 };

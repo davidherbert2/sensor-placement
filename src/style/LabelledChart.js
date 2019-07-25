@@ -16,7 +16,7 @@ const _styleCache = {};
 export default class LabelledChartStyle extends Style {
 
     /**
-	 * Source constructor 
+	 * Style constructor 
 	 * @param {Object} options - options passed directly to base class constructor
      * Options can be:
      *  - type {string} - pie|donut
@@ -49,8 +49,7 @@ export default class LabelledChartStyle extends Style {
 
         super({});
 
-        /* Set global style function */
-        this.StyleFunction = this.percentageLabelledChart(Object.assign({}, CHART_DEFAULTS, options));
+        this._options = Object.assign({}, CHART_DEFAULTS, options);
         
         /* Set directives for legend rendering */
         this._legendOptions = {
@@ -66,16 +65,19 @@ export default class LabelledChartStyle extends Style {
 
     /**
      * Return the style function for the percentage labelled chart     
-     * @param {boolean} options
+     * @param {boolean} options - anything from the above
      */
     percentageLabelledChart(options) { 
+
+        options = Object.assign({}, this._options, options);
+
         return((feature, res) => {
 
             let styles = [];        
     
             let fid = feature.getId(), cacheKey = null;
             if (fid) {
-                cacheKey = `${fid}-${res}-pclc${options.labels === true ? "-labels" : ""}`;
+                cacheKey = `${fid}-${res}-${options.labels === true ? "-labels" : ""}`;
             }
             if (!cacheKey || !_styleCache[cacheKey]) {
                 

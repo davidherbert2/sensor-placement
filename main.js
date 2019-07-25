@@ -9,7 +9,6 @@ import Select from "ol/interaction/Select";
 import {pointerMove, singleClick} from "ol/events/condition";
 
 import * as utils from "./src/utilities/String";
-import * as geoconst from "./src/utilities/GeoConstants";
 import * as layerspec from "./src/LayerSetup";
 import LayerSwitcher from "./src/control/LayerSwitcher";
 import Legend from "./src/control/Legend";
@@ -31,6 +30,11 @@ window.onload = () => {
             dpi         /* Dots per inch */
         ));
     }
+
+    /**
+     * Lon/lat of USB
+     */
+    const NEWCASTLE_CENTROID = [-1.6253, 54.9736];
 
     /**
      * List of map layers/groups
@@ -90,7 +94,7 @@ window.onload = () => {
 		target: "map",
 		layers: layers,
 		view: new View({
-			center: fromLonLat(geoconst.NEWCASTLE_CENTROID),
+			center: fromLonLat(NEWCASTLE_CENTROID),
             zoom: 12,
             minZoom: 10
 		}),
@@ -135,8 +139,11 @@ window.onload = () => {
         multi: true,
         layers: lyr => lyr.hoverInteractive === true,
         style: feat => {
-            let layer = feat.get("layer");
-            return(layer ? layer.hoverStyle(feat, map.getView().getResolution()) : null);            
+            let style = null, layer = feat.get("layer");
+            if (layer) {
+                style = layer.hoverStyle(feat, map.getView().getResolution());
+            }
+            return(style);            
         }
     });
     map.addInteraction(hoverSelect);
@@ -147,8 +154,11 @@ window.onload = () => {
         multi: true,
         layers: lyr => lyr.clickInteractive === true,
         style: feat => {
-            let layer = feat.get("layer");
-            return(layer ? layer.clickStyle(feat, map.getView().getResolution()) : null);    
+            let style = null, layer = feat.get("layer");
+            if (layer) {
+                style = layer.clickStyle(feat, map.getView().getResolution());
+            }
+            return(style);    
         }
     });
     map.addInteraction(clickSelect);

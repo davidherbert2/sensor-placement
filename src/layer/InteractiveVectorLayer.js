@@ -56,7 +56,7 @@ export default class InteractiveVectorLayer extends VectorLayer {
         
         this._hoverStyle = options.hoverStyle;
         this._clickStyle = options.clickStyle;
-        this._legend = options.legend;
+        this._legendOptions = options.legendOptions || {method: "unclassified"};
     }
 
     get featureSource() {
@@ -79,8 +79,8 @@ export default class InteractiveVectorLayer extends VectorLayer {
         return(this._clickStyle);
     }
 
-    get legend() {
-        return(this._legend);
+    get legendOptions() {
+        return(this._legendOptions);
     }
 
 }

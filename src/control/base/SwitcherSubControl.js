@@ -5,7 +5,6 @@
 import Control from "ol/control/Control";
 import TileWMS from "ol/source/TileWMS";
 import Cluster from "ol/source/Cluster";
-import GeoserverWMSSource from "../../source/GeoserverWMS";
 import GeoserverWFSSource from "../../source/GeoserverWFS";
 
 /** 
@@ -145,9 +144,13 @@ export default class SwitcherSubControl extends Control {
      * @return {string}
      */
     _getFeature(layer) {
+        return(this.constructor.getSourceFeature(layer));
+    }
+
+    static getSourceFeature(layer) {
         let source = layer.getSource();
         let featureType = null;
-        if (source instanceof TileWMS || source instanceof GeoserverWMSSource) {
+        if (source instanceof TileWMS) {
             /* Tile WMS layer */            
             featureType = source.getParams()["layers"];
         } else {

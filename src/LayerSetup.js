@@ -3,14 +3,14 @@
  */
 
 import TileLayer from "ol/layer/Tile";
+import TileWMS from "ol/source/TileWMS";
 import OSM from "ol/source/OSM";
 
-import * as geoconst from "./utilities/GeoConstants";
+import * as appconfig from "./appconfig";
 import * as pointstyles from "./stylefunctions/PointStyles";
 import * as polygonstyles from "./stylefunctions/PolygonStyles";
 import LabelledChartStyle from "./style/LabelledChart";
 import GeoserverWFSSource from "./source/GeoserverWFS";
-import GeoserverWMSSource from "./source/GeoserverWMS";
 import UrbanObservatorySource from "./source/UrbanObservatory";
 import InteractiveVectorLayer from "./layer/InteractiveVectorLayer";
 
@@ -24,18 +24,10 @@ export const OPENSTREETMAP = () => {
         type: "base",
         opacity: 0.7,
         zIndex: 1,
-        switcherOpts: {
-            icon: "literal:OSM",
-            attribution: "© OpenStreetMap contributors"
-        },		
+        switcherOpts: {icon: "literal:OSM", attribution: "© OpenStreetMap contributors"},		
 		source: new OSM()
 	}));
 };
-
-/**
- * Project Geoserver workspace
- */
-const GEOSERVER_WORKSPACE = "siss";
 
 /**
  * LA layer
@@ -50,11 +42,8 @@ export const LA = () => {
 			title: "Local Authority areas", 
 			visible: false,
 			minResolution: 10,
-			switcherOpts: {
-                icon: "literal:LA",               
-                opacity: false
-            },
-            source: new GeoserverWFSSource({featureType: LA_FEATURE, workspace: GEOSERVER_WORKSPACE}),
+			switcherOpts: {icon: "literal:LA", opacity: false},
+            source: new GeoserverWFSSource({featureType: LA_FEATURE}),
 			style: polygonstyles.invisible(LA_ZINDEX),				
             hoverStyle: polygonstyles.centroidLabelled(
                 {color: LA_COL.toRgba(1.0), width: 2}, 
@@ -80,11 +69,8 @@ export const LSOA = () => {
 			visible: false,
 			minResolution: 2,
 			maxResolution: 20,
-			switcherOpts: {
-                icon: "literal:LSOA",             
-                opacity: false
-            },
-            source: new GeoserverWFSSource({featureType: LSOA_FEATURE, workspace: GEOSERVER_WORKSPACE}),
+			switcherOpts: {icon: "literal:LSOA", opacity: false},
+            source: new GeoserverWFSSource({featureType: LSOA_FEATURE}),
 			style: polygonstyles.invisible(LSOA_ZINDEX),
             hoverStyle: polygonstyles.centroidLabelled(
                 {color: LSOA_COL.toRgba(1.0), width: 2}, 
@@ -110,11 +96,8 @@ export const OA = () => {
 			visible: false,
 			maxResolution: 10,
             opacity: OA_OPACITY,
-			switcherOpts: {
-                icon: "literal:OA",               
-                opacity: false
-            },
-            source: new GeoserverWFSSource({featureType: OA_FEATURE, workspace: GEOSERVER_WORKSPACE}),
+			switcherOpts: {icon: "literal:OA", opacity: false},
+            source: new GeoserverWFSSource({featureType: OA_FEATURE}),
 			style: polygonstyles.invisible(OA_ZINDEX),
             hoverStyle: polygonstyles.centroidLabelled(
                 {color: OA_COL.toRgba(1.0), width: 2}, 
@@ -134,12 +117,14 @@ export const IMD = () => {
 		title: "Index of Multiple Deprivation",
         visible: false,
         zIndex: 10,
-		switcherOpts: {
-            icon: "minus",
-            legend: "IMD Decile"
-        },
+		switcherOpts: {icon: "minus", legend: "IMD Decile"},
 		opacity: 0.6,
-		source: new GeoserverWMSSource({layers: "siss:imd_2015_by_lsoa", workspace: GEOSERVER_WORKSPACE})
+		source: new TileWMS({
+            url: `${appconfig.GEOSERVER_WMS}`,
+            params: {layers: "siss:imd_2015_by_lsoa"},
+            serverType: "geoserver",
+            wrapX: false
+        })
 	}));
 };
 
@@ -151,12 +136,13 @@ export const DISABILITY = () => {
 		title: "Day-to-day disability limited (%)",
         visible: false,
         zIndex: 11,
-		switcherOpts: {
-            icon: "wheelchair",
-            legend: "% of disabled with day-to-day limitations"
-        },
+		switcherOpts: {icon: "wheelchair", legend: "% of disabled with day-to-day limitations"},
         opacity: 0.6,
-        source: new GeoserverWMSSource({layers: "siss:disability_2015_by_lsoa", workspace: GEOSERVER_WORKSPACE})		
+        source: new TileWMS({
+            url: `${appconfig.GEOSERVER_WMS}`,
+            params: {layers: "siss:disability_2015_by_lsoa"},
+            serverType: "geoserver",
+            wrapX: false})		
 	}));
 };
 
@@ -169,9 +155,11 @@ const ETHNICITY_DATA_OPTS = {
     attrs: ["white", "asian", "black", "mixed", "other"],
     colors: ["cornsilk", "brown", "black", "goldenrod", "gray"],
     totalAttr: "total_residents",
-    zIndex: ETHNICITY_ZINDEX
+    zIndex: ETHNICITY_ZINDEX,
+    labels: false
 }
-const ETHNICITY_STYLE = new LabelledChartStyle(Object.assign({}, ETHNICITY_DATA_OPTS, {labels: false}));
+const ETHNICITY_STYLE = new LabelledChartStyle(ETHNICITY_DATA_OPTS);
+const ETHNICITY_STYLE_LABELLED = new LabelledChartStyle(Object.assign(ETHNICITY_DATA_OPTS, {labels: true}));
 
 export const ETHNICITY = () => {
 	return(new InteractiveVectorLayer(
@@ -180,15 +168,13 @@ export const ETHNICITY = () => {
 			visible: false,
 			minResolution: 2,
 			maxResolution: 20,
-            extent: geoconst.NEWCASTLE_CENTRE_3857,
+            extent: appconfig.NEWCASTLE_CENTRE_3857,
             zIndex: ETHNICITY_ZINDEX,
-			switcherOpts: {
-                icon: "users"
-            },
-            source: new GeoserverWFSSource({featureType: ETHNICITY_FEATURE, workspace: GEOSERVER_WORKSPACE}),
+			switcherOpts: {icon: "users"},
+            source: new GeoserverWFSSource({featureType: ETHNICITY_FEATURE}),
             style: ETHNICITY_STYLE.StyleFunction,            
-            clickStyle: new LabelledChartStyle(Object.assign({}, ETHNICITY_DATA_OPTS, {labels: true})).StyleFunction,
-            legend: ETHNICITY_STYLE.LegendFunction
+            clickStyle: ETHNICITY_STYLE_LABELLED.StyleFunction,
+            legendOptions: ETHNICITY_STYLE.legendOptions
 		}
 	));
 };
@@ -201,16 +187,12 @@ export const SENSORS = (theme, sensorType, zIndex, visible = false, icon = "ques
 		{
 			title: `${sensorType} sensors`,
 			cluster: true,
-            visible: visible,
+            visible: false,//visible,
             zIndex: zIndex,		
-            switcherOpts: {
-                icon: icon,
-                legend: `${theme} ${sensorType} sensors`,
-                attribution: "Current sensor locations for NU Urban Observatory"
-            },			
+            switcherOpts: {icon: icon, legend: `${theme} ${sensorType} sensors`, attribution: "Current sensor locations for NU Urban Observatory"},			
             source: new UrbanObservatorySource({sensorTheme: theme, sensorType: sensorType}),
-            style: pointstyles.sensorDartboard(color, false, zIndex),
-            clickStyle: pointstyles.sensorDartboard(color, true, zIndex),
+            style: pointstyles.sensorDartboard(color, false, zIndex)
+            //clickStyle: pointstyles.sensorDartboard(color, true, zIndex),
 		},
 	));
 };

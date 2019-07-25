@@ -5,13 +5,11 @@
 import {fromLonLat} from "ol/proj";
 import Control from "ol/control/Control";
 import LayerGroup from "ol/layer/Group";
-import TileWMS from "ol/source/TileWMS";
-import Cluster from "ol/source/Cluster";
-import VectorSource from "ol/source/Vector";
-import * as geoconst from "../utilities/GeoConstants";
+import * as appconfig from "../appconfig";
 import Legend from "./Legend";
 import OpacitySlider from "./OpacitySlider";
 import SourceMetadata from "./SourceMetadata";
+import SwitcherSubControl from "./base/SwitcherSubControl";
 
 /** 
  * @classdesc Class for a more fully-functional layer switcher
@@ -304,6 +302,7 @@ export default class LayerSwitcher extends Control {
      */
     _addSwitcherToolAction(layer, toolsDiv, toolAnchorCss, toolClass, disable) {
         toolsDiv.querySelector(`a.tool-${toolAnchorCss}`).addEventListener("click", evt => {
+            evt.preventDefault();
             let anchor = evt.currentTarget;           
             let control = this.controls.find(c => c instanceof toolClass);            
             if (control != null && !disable) {
@@ -340,6 +339,7 @@ export default class LayerSwitcher extends Control {
      */
     _toggleGroupStatesFactory(group) {        
         return(evt => {
+            evt.preventDefault();
             for (let grp of this._layers) {
                 if (grp instanceof LayerGroup) {
                     let titleCell = this.element.querySelector(`div[id='entry-${grp.get("id")}'] div.left-cell`);
@@ -364,9 +364,10 @@ export default class LayerSwitcher extends Control {
      */
     _toggleLayerVisibilityFactory(layer, anchor) {
         return(evt => {
+            evt.preventDefault();
             let type = layer.get("type") || "overlay";
             if (type == "overlay") {
-                /* Toggle layer visibility and indicator */
+                /* Toggle layer visibility and indicator */                
                 layer.setVisible(!layer.getVisible());
                 anchor.querySelector("div.icon-wrapper").classList.toggle("layer-visible");
             } else if (type == "base" && !layer.getVisible()) {
@@ -403,12 +404,13 @@ export default class LayerSwitcher extends Control {
      */
     _mapSizingFactory(layer) {
         return((evt) => {
+            evt.preventDefault();
             if (layer.getVisible()) {
-                [source, featureType] = this._sourceFeature(layer);
+                [source, featureType] = SwitcherSubControl.getSourceFeature(layer);
                 if (featureType) {
                     /* Call Geoserver REST API to get layer extent */
                     let nonNsFeatureType = featureType.split(":").pop();
-                    fetch(`${geoconst.GEOSERVER_REST}/featuretypes/${nonNsFeatureType}.json`)
+                    fetch(`${appconfig.GEOSERVER_REST}/featuretypes/${nonNsFeatureType}.json`)
                     .then(r => r.json())
                     .then(jsonResponse => {
                         let nbbox = jsonResponse["featureType"]["latLonBoundingBox"];
@@ -427,7 +429,7 @@ export default class LayerSwitcher extends Control {
                         console.log(error);
                         alert("Failed to get metadata for layer");
                     });		
-                } else if (source && source instanceof VectorSource) {
+                } else if (typeof source.getExtent == "function") {
                     /* Extent from features if possible */
                     this.getMap().getView().fit(source.getExtent(), {
                         size: this.getMap().getSize(),
@@ -437,35 +439,6 @@ export default class LayerSwitcher extends Control {
                 }
             }            
         });
-    }
-
-    /**
-     * Return a source and feature type for the given layer
-     * @param {ol.Layer} layer 
-     * @return {Array}
-     */
-    _sourceFeature(layer) {
-        let source = layer.getSource();
-        let featureType = null;
-        if (source instanceof TileWMS) {
-            /* Tile WMS layer */
-            featureType = source.getParams()["layers"];
-        } else {
-            if (source instanceof Cluster) {
-                /* Cluster layer */
-                source = source.getSource();
-            } 
-            /* Vectors here */
-            try {
-                let url = source.getUrl();
-                if (url) {
-                    let qry = new URLSearchParams(url.substring(url.indexOf("?") + 1));
-                    featureType = qry.get("typename");		
-                }		
-            } catch(e) {			
-            }		
-        }      
-        return([source, featureType]);
     }
     
 }

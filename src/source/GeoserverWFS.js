@@ -8,7 +8,7 @@ import VectorSource from "ol/source/Vector";
 import * as appconfig from "../appconfig";
 
 /** 
- * @classdesc Class to provide sensor feature loading capability from Geoserver WFS services
+ * @classdesc Class to provide feature loading capability from Geoserver WFS services
  */
 export default class GeoserverWFSSource extends VectorSource {
 
@@ -16,7 +16,6 @@ export default class GeoserverWFSSource extends VectorSource {
 	 * Source constructor
      * Possible options:
      *  - {string} featureType - e.g. 'siss:tyne_and_wear_la'
-     *  - {string} workspace - e.g. 'siss'
 	 * @param {Object} options - options passed directly to base class constructor
 	 */
 	constructor(options) {
@@ -32,7 +31,6 @@ export default class GeoserverWFSSource extends VectorSource {
         super(Object.assign({}, SOURCE_DEFAULTS, options));
 
         this.set("featureType", options.featureType);
-        this.set("workspace", options.workspace);
 
         this.setLoader(this.getFeatureLoader());
     }
@@ -43,8 +41,7 @@ export default class GeoserverWFSSource extends VectorSource {
     getFeatureLoader() {
 
         let featureType = this.get("featureType");
-        let workspace = this.get("workspace");
-        let wfsEndpoint = `${appconfig.AWS_INSTANCE}/geoserver/${workspace}/wfs`;
+        let wfsEndpoint = `${appconfig.GEOSERVER_WFS}`;
 
         return(function(extent, resolution, projection) {        
             let source = this;

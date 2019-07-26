@@ -48,7 +48,7 @@ window.onload = () => {
             },
             layers: [
                 layerspec.SENSORS('Air Quality', 'NO2', 500, true, "car-alt", "#993300"),
-                layerspec.SENSORS('Air Quality', 'PM2.5', 501, false, "smog", "#404040"), 
+                layerspec.SENSORS('Air Quality', 'PM2.5', 501, false, "smog", "#663399"), 
                 layerspec.SENSORS('Air Quality', 'PM10', 502, false, "smog", "#000000")
             ]
         }),
@@ -137,30 +137,22 @@ window.onload = () => {
     let hoverSelect = new Select({
         condition: pointerMove,
         multi: true,
-        layers: lyr => lyr.hoverInteractive === true,
-        style: feat => {
-            let style = null, layer = feat.get("layer");
-            if (layer) {
-                style = layer.hoverStyle(feat, map.getView().getResolution());
-            }
-            return(style);            
-        }
+        layers: lyr => lyr.hoverInteractive === true
+    });
+    hoverSelect.on("select", evt => {
+        evt.selected.forEach(f => f.setStyle(hoverSelect.getLayer(f).hoverStyle));
+        evt.deselected.forEach(f => f.setStyle(null));
     });
     map.addInteraction(hoverSelect);
 
-    /* Map click interactions */
     let clickSelect = new Select({
         condition: singleClick,
         multi: true,
-        layers: lyr => lyr.clickInteractive === true,
-        style: feat => {
-            console.log(feat);
-            let style = null, layer = feat.get("layer");
-            if (layer) {
-                style = layer.clickStyle(feat, map.getView().getResolution());
-            }
-            return(style);    
-        }
+        layers: lyr => lyr.clickInteractive === true
+    });
+    clickSelect.on("select", evt => {
+        evt.selected.forEach(f => f.setStyle(clickSelect.getLayer(f).clickStyle));
+        evt.deselected.forEach(f => f.setStyle(null));
     });
     map.addInteraction(clickSelect);
         	

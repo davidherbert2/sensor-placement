@@ -6,7 +6,7 @@ import TileLayer from "ol/layer/Tile";
 import TileWMS from "ol/source/TileWMS";
 import OSM from "ol/source/OSM";
 
-import * as appconfig from "./appconfig";
+import {GEOSERVER_WMS, NEWCASTLE_CENTRE_3857} from "./appconfig";
 import * as polygonstyles from "./stylefunctions/PolygonStyles";
 import LabelledChartStyle from "./style/LabelledChart";
 import UrbanObservatorySensorStyle from "./style/UrbanObservatorySensor";
@@ -120,7 +120,7 @@ export const IMD = () => {
 		switcherOpts: {icon: "minus", legend: "IMD Decile"},
 		opacity: 0.6,
 		source: new TileWMS({
-            url: `${appconfig.GEOSERVER_WMS}`,
+            url: `${GEOSERVER_WMS}`,
             params: {layers: "siss:imd_2015_by_lsoa"},
             serverType: "geoserver",
             wrapX: false
@@ -139,7 +139,7 @@ export const DISABILITY = () => {
 		switcherOpts: {icon: "wheelchair", legend: "% of disabled with day-to-day limitations"},
         opacity: 0.6,
         source: new TileWMS({
-            url: `${appconfig.GEOSERVER_WMS}`,
+            url: `${GEOSERVER_WMS}`,
             params: {layers: "siss:disability_2015_by_lsoa"},
             serverType: "geoserver",
             wrapX: false})		
@@ -166,7 +166,7 @@ export const ETHNICITY = () => {
 			visible: false,
 			minResolution: 2,
 			maxResolution: 20,
-            extent: appconfig.NEWCASTLE_CENTRE_3857,
+            extent: NEWCASTLE_CENTRE_3857,
             zIndex: ETHNICITY_ZINDEX,
 			switcherOpts: {icon: "users"},
             source: new GeoserverWFSSource({featureType: ETHNICITY_FEATURE}),
@@ -182,16 +182,14 @@ export const ETHNICITY = () => {
  */
 export const SENSORS = (theme, sensorType, zIndex, visible = false, icon = "question", color = "#000000") => {
     let sensorStyle = new UrbanObservatorySensorStyle({color1: color});
-	return(new InteractiveVectorLayer(
-		{
-			title: `${sensorType} sensors`,
-			cluster: true,
-            visible: visible,
-            zIndex: zIndex,		
-            switcherOpts: {icon: icon, legend: `${theme} ${sensorType} sensors`, attribution: "Current sensor locations for NU Urban Observatory"},			
-            source: new UrbanObservatorySource({sensorTheme: theme, sensorType: sensorType}),
-            style: sensorStyle.sensorDartboard({}),
-            clickStyle: sensorStyle.sensorDartboard({multiplier: 1.4})
-		},
-	));
+    return(new InteractiveVectorLayer({
+        title: `${sensorType} sensors`,
+        cluster: true,
+        visible: visible,
+        zIndex: zIndex,
+        switcherOpts: {icon: icon, legend: `${theme} ${sensorType} sensors`, attribution: "Current sensor locations for NU Urban Observatory"},		        			
+        source: new UrbanObservatorySource({sensorTheme: theme, sensorType: sensorType}),
+        style: sensorStyle.sensorDartboard({}),
+        clickStyle: sensorStyle.sensorDartboard({multiplier: 1.2})
+    }));    
 };

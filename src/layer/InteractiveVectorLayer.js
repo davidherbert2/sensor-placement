@@ -23,12 +23,13 @@ export default class InteractiveVectorLayer extends VectorLayer {
             opacity: 1.0,
 
             /* Local additions */
-            type: "overlay",            
-            cluster: false,
+            type: "overlay",        /* Layer type - base|overlay */       
+            cluster: false,         /* Use clustering? */
+            clusterDistance: 20,    /* Distance apart points have to be to avoid clustering */
 
             /* Interaction types */            
-            hoverStyle: null,
-            clickStyle: null,
+            hoverStyle: null,       /* Applied on feature hover for the layer */
+            clickStyle: null,       /* Applied on feature click for the layer */
 
             /* Canvas legend renderer */
             legend: null
@@ -40,7 +41,7 @@ export default class InteractiveVectorLayer extends VectorLayer {
         if (options.cluster === true) {
             /* Use feature clustering */
 			options.source = new Cluster({
-				distance: 20, 					
+				distance: options.clusterDistance, 					
 				source: featureSource,
 				wrapX: false
             });            
@@ -51,12 +52,6 @@ export default class InteractiveVectorLayer extends VectorLayer {
         /* Get the source we actually add features to, not the top-level cluster */
         this._featureSource = featureSource;
 
-        /* Add a layer back-pointer to every feature */
-        if (options.cluster === true) {
-            this.getSource().on("addfeature", evt => evt.feature.set("layer", this));
-        }
-        this._featureSource.on("addfeature", evt => evt.feature.set("layer", this));
-        
         this._hoverStyle = options.hoverStyle;
         this._clickStyle = options.clickStyle;
         this._legendOptions = options.legendOptions || {method: "unclassified"};

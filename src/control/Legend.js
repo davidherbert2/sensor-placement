@@ -2,7 +2,7 @@
  * @module Legend
  */
 
-import * as appconfig from "../appconfig";
+import {GEOSERVER_WMS} from "../appconfig";
 import {toContext} from "ol/render";
 import Style from "ol/style/Style";
 import Fill from "ol/style/Fill";
@@ -90,7 +90,7 @@ export default class Legend extends SwitcherSubControl {
             legendContainer.innerHTML = "No legend available";
             this._positioningCallback();
         });
-        legendImage.setAttribute("src", `${appconfig.GEOSERVER_WMS}?${queryString}`);
+        legendImage.setAttribute("src", `${GEOSERVER_WMS}?${queryString}`);
     }
 
     /**

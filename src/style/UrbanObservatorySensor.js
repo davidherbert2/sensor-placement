@@ -67,11 +67,9 @@ export default class UrbanObservatorySensorStyle extends Style {
             let symbolRadius = options.multiplier * Math.min(10, options.baseRadius + 2 + Math.floor(size / 5));
 
             cacheKey = `${size}-${options.color1}-${options.color2}-${symbolRadius}-${options.multiplier}`;
-            console.log(options);
-            console.log(cacheKey);
     
-            if (!_styleCache[cacheKey]) {                
-                console.log("not cached");
+            if (!_styleCache[cacheKey]) {   
+
                 let col1 = options.color1.toRgba(1.0), col2 = options.color2.toRgba(0.5), transp = options.color1.toRgba(0.0);
                 
                 for (let i = 0; i < 5; i++) {
@@ -103,5 +101,19 @@ export default class UrbanObservatorySensorStyle extends Style {
             return(styles);
         });
     }
+
+    sensorExplode() {
+        return((feature, res) => {
+            return(new Style({
+                image: new CircleStyle({
+                    radius: 8,
+                    stroke: new Stroke({color: "#ff0000", width: 1}),
+                    fill: new Fill({color: "#ff0000"})
+                }),
+                stroke: new Stroke({color: "#ffffff", width: 1})
+            }));
+        });
+    }
+
 };
 

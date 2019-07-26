@@ -5,7 +5,7 @@
 import {bbox} from "ol/loadingstrategy";
 import GeoJSON from "ol/format/GeoJSON";
 import VectorSource from "ol/source/Vector";
-import * as appconfig from "../appconfig";
+import {GEOSERVER_WFS} from "../appconfig";
 
 /** 
  * @classdesc Class to provide feature loading capability from Geoserver WFS services
@@ -41,11 +41,10 @@ export default class GeoserverWFSSource extends VectorSource {
     getFeatureLoader() {
 
         let featureType = this.get("featureType");
-        let wfsEndpoint = `${appconfig.GEOSERVER_WFS}`;
+        let wfsEndpoint = `${GEOSERVER_WFS}`;
 
         return(function(extent, resolution, projection) {        
             let source = this;
-            source.clear();
             let parms = {
                 "service": "WFS",
                 "request": "GetFeature",

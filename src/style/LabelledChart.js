@@ -98,7 +98,7 @@ export default class LabelledChartStyle extends Style {
                 let radius = r1;
                 if (r1 > r0) {
                     /* Judged to be a resolution-specific radius required */
-                    try {
+                    try {                        
                         radius = Math.min(r1, Math.max(r0, r1 + (res - R0) * (r1 - r0) / (R0 - R1)));
                     } catch(e) {}                
                 }
@@ -115,7 +115,7 @@ export default class LabelledChartStyle extends Style {
                         colors: options.colors,
                         stroke: new Stroke({
                             color: "black",
-                            width: radius < 10 ? 1 : 2
+                            width: radius < 10 ? 1 : 1.5
                         })
                     }),
                     zIndex: options.zIndex

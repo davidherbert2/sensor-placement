@@ -5,7 +5,8 @@
 import {fromLonLat} from "ol/proj";
 import Control from "ol/control/Control";
 import LayerGroup from "ol/layer/Group";
-import * as appconfig from "../appconfig";
+import Select from "ol/interaction/Select";
+import {GEOSERVER_REST} from "../appconfig";
 import Legend from "./Legend";
 import OpacitySlider from "./OpacitySlider";
 import SourceMetadata from "./SourceMetadata";
@@ -302,7 +303,6 @@ export default class LayerSwitcher extends Control {
      */
     _addSwitcherToolAction(layer, toolsDiv, toolAnchorCss, toolClass, disable) {
         toolsDiv.querySelector(`a.tool-${toolAnchorCss}`).addEventListener("click", evt => {
-            evt.preventDefault();
             let anchor = evt.currentTarget;           
             let control = this.controls.find(c => c instanceof toolClass);            
             if (control != null && !disable) {
@@ -339,7 +339,6 @@ export default class LayerSwitcher extends Control {
      */
     _toggleGroupStatesFactory(group) {        
         return(evt => {
-            evt.preventDefault();
             for (let grp of this._layers) {
                 if (grp instanceof LayerGroup) {
                     let titleCell = this.element.querySelector(`div[id='entry-${grp.get("id")}'] div.left-cell`);
@@ -364,7 +363,7 @@ export default class LayerSwitcher extends Control {
      */
     _toggleLayerVisibilityFactory(layer, anchor) {
         return(evt => {
-            evt.preventDefault();
+            this._clearSelections(layer);
             let type = layer.get("type") || "overlay";
             if (type == "overlay") {
                 /* Toggle layer visibility and indicator */                
@@ -387,6 +386,23 @@ export default class LayerSwitcher extends Control {
     }
 
     /**
+     * Clear all selections from any map select controls, otherwise selected features may persist even though we have turned the layer off!
+     * @param {ol.Layer} layer 
+     */
+    _clearSelections(layer) {
+        this.getMap().getInteractions().forEach(intn => {
+            if (intn instanceof Select) {
+                let selected = intn.getFeatures();
+                selected.forEach(f => {
+                    if (intn.getLayer(f) == layer) {
+                        selected.remove(f);
+                    }
+                });
+            }
+        });
+    }
+
+    /**
      * Create the icon markup for a switcher entry
      * @param {string} icon - the fa icon name (without 'fa fa-'), or literal:<some_string> for a text literal
      * @return {string}
@@ -404,13 +420,12 @@ export default class LayerSwitcher extends Control {
      */
     _mapSizingFactory(layer) {
         return((evt) => {
-            evt.preventDefault();
             if (layer.getVisible()) {
                 [source, featureType] = SwitcherSubControl.getSourceFeature(layer);
                 if (featureType) {
                     /* Call Geoserver REST API to get layer extent */
                     let nonNsFeatureType = featureType.split(":").pop();
-                    fetch(`${appconfig.GEOSERVER_REST}/featuretypes/${nonNsFeatureType}.json`)
+                    fetch(`${GEOSERVER_REST}/featuretypes/${nonNsFeatureType}.json`)
                     .then(r => r.json())
                     .then(jsonResponse => {
                         let nbbox = jsonResponse["featureType"]["latLonBoundingBox"];

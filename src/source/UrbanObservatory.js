@@ -8,12 +8,12 @@ import Feature from "ol/Feature";
 import Point from "ol/geom/Point";
 import GeoJSON from "ol/format/GeoJSON";
 import VectorSource from "ol/source/Vector";
-import * as appconfig from "../appconfig";
+import {AWS_INSTANCE} from "../appconfig";
 
 /**
  * Urban Observatory API endpoint
  */
-const UO_API = `${appconfig.AWS_INSTANCE}/sensor-placement/cgi-bin/uo_wrapper.py?url=http://uoweb3.ncl.ac.uk/api/v1.1`;
+const UO_API = `${AWS_INSTANCE}/sensor-placement/cgi-bin/uo_wrapper.py?url=http://uoweb3.ncl.ac.uk/api/v1.1`;
 const UO_BOUNDING_BOX = [-2.4163, 54.7373, -0.8356, 55.2079];
 
 /** 
@@ -66,7 +66,6 @@ export default class UrbanObservatorySource extends VectorSource {
 
             sensorArgs = Object.assign(sensorArgs, this._ol2uo(this.get("extent")));
             let queryString = Object.keys(sensorArgs).map(key => key + "=" + sensorArgs[key]).join("&");
-            source.clear();
 
             fetch(`${sensorInfo}?${queryString}`)
                 .then(r => r.json())

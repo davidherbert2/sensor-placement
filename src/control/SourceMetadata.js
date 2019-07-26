@@ -2,7 +2,7 @@
  * @module SourceMetadata
  */
 
-import * as appconfig from "../appconfig";
+import {GEOSERVER_REST} from "../appconfig";
 import SwitcherSubControl from "./base/SwitcherSubControl";
 
 /** 
@@ -52,7 +52,7 @@ export default class SourceMetadata extends SwitcherSubControl {
             if (featureType) {
                 /* Call Geoserver REST API to get layer extent */
                 let nonNsFeatureType = featureType.split(":").pop();
-                fetch(`${appconfig.GEOSERVER_REST}/featuretypes/${nonNsFeatureType}.json`)
+                fetch(`${GEOSERVER_REST}/featuretypes/${nonNsFeatureType}.json`)
                 .then(r => r.json())
                 .then(jsonResponse => {
                     let abstract = jsonResponse["featureType"]["abstract"];

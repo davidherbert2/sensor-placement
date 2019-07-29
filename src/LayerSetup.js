@@ -7,8 +7,8 @@ import TileWMS from "ol/source/TileWMS";
 import OSM from "ol/source/OSM";
 
 import {GEOSERVER_WMS, NEWCASTLE_CENTRE_3857} from "./appconfig";
-import * as polygonstyles from "./stylefunctions/PolygonStyles";
 import LabelledChartStyle from "./style/LabelledChart";
+import CentroidLabelledPolygonStyle from "./style/CentroidLabelledPolygon";
 import UrbanObservatorySensorStyle from "./style/UrbanObservatorySensor";
 import GeoserverWFSSource from "./source/GeoserverWFS";
 import UrbanObservatorySource from "./source/UrbanObservatory";
@@ -36,6 +36,7 @@ const LA_COL = "#7a4419";
 const LA_OPACITY = 0.5;
 const LA_FEATURE = "siss:tyne_and_wear_la";
 const LA_ZINDEX = 100;
+const LA_STYLE = new CentroidLabelledPolygonStyle({outline: LA_COL.toRgba(1.0), outlineWidth: 2, fill: LA_COL.toRgba(LA_OPACITY), zIndex: LA_ZINDEX});
 export const LA = () => {
 	return(new InteractiveVectorLayer(
 		{
@@ -44,13 +45,9 @@ export const LA = () => {
 			minResolution: 10,
 			switcherOpts: {icon: "literal:LA", opacity: false},
             source: new GeoserverWFSSource({featureType: LA_FEATURE}),
-			style: polygonstyles.invisible(LA_ZINDEX),				
-            hoverStyle: polygonstyles.centroidLabelled(
-                {color: LA_COL.toRgba(1.0), width: 2}, 
-                {color: LA_COL.toRgba(LA_OPACITY)},
-                {labelAttr: "name"},
-                LA_ZINDEX
-            )
+			style: LA_STYLE.centroidLabelled("name", false),				
+            hoverStyle: LA_STYLE.centroidLabelled("name"),
+            legendOptions: LA_STYLE.legendOptions        
         }
 	));
 };
@@ -62,6 +59,7 @@ const LSOA_COL = "#63535b";
 const LSOA_OPACITY = 0.5;
 const LSOA_FEATURE = "siss:tyne_and_wear_lsoa";
 const LSOA_ZINDEX = 110;
+const LSOA_STYLE = new CentroidLabelledPolygonStyle({outline: LSOA_COL.toRgba(1.0), outlineWidth: 2, fill: LSOA_COL.toRgba(LSOA_OPACITY), zIndex: LSOA_ZINDEX});
 export const LSOA = () => {
 	return(new InteractiveVectorLayer(
 		{
@@ -71,13 +69,9 @@ export const LSOA = () => {
 			maxResolution: 20,
 			switcherOpts: {icon: "literal:LSOA", opacity: false},
             source: new GeoserverWFSSource({featureType: LSOA_FEATURE}),
-			style: polygonstyles.invisible(LSOA_ZINDEX),
-            hoverStyle: polygonstyles.centroidLabelled(
-                {color: LSOA_COL.toRgba(1.0), width: 2}, 
-                {color: LSOA_COL.toRgba(LSOA_OPACITY)},
-                {labelAttr: "name"},
-                LSOA_ZINDEX
-            )
+			style: LSOA_STYLE.centroidLabelled("name", false),				
+            hoverStyle: LSOA_STYLE.centroidLabelled("name"),
+            legendOptions: LSOA_STYLE.legendOptions
 		}	
 	));
 };
@@ -89,22 +83,18 @@ const OA_COL = "#400406";
 const OA_OPACITY = 0.5;
 const OA_FEATURE = "siss:tyne_and_wear_oa";
 const OA_ZINDEX = 120;
+const OA_STYLE = new CentroidLabelledPolygonStyle({outline: OA_COL.toRgba(1.0), outlineWidth: 2, fill: OA_COL.toRgba(OA_OPACITY), zIndex: OA_ZINDEX});
 export const OA = () => {
 	return(new InteractiveVectorLayer(
 		{ 
 			title: "Output Areas", 
 			visible: false,
 			maxResolution: 10,
-            opacity: OA_OPACITY,
 			switcherOpts: {icon: "literal:OA", opacity: false},
             source: new GeoserverWFSSource({featureType: OA_FEATURE}),
-			style: polygonstyles.invisible(OA_ZINDEX),
-            hoverStyle: polygonstyles.centroidLabelled(
-                {color: OA_COL.toRgba(1.0), width: 2}, 
-                {color: OA_COL.toRgba(OA_OPACITY)},
-                {labelAttr: "code"},
-                LSOA_ZINDEX
-            )
+			style: OA_STYLE.centroidLabelled("code", false),				
+            hoverStyle: OA_STYLE.centroidLabelled("code"),
+            legendOptions: OA_STYLE.legendOptions
 		}	
 	));
 };
@@ -190,6 +180,7 @@ export const SENSORS = (theme, sensorType, zIndex, visible = false, icon = "ques
         switcherOpts: {icon: icon, legend: `${theme} ${sensorType} sensors`, attribution: "Current sensor locations for NU Urban Observatory"},		        			
         source: new UrbanObservatorySource({sensorTheme: theme, sensorType: sensorType}),
         style: sensorStyle.sensorDartboard({}),
-        clickStyle: sensorStyle.sensorDartboard({multiplier: 1.2})
+        clickStyle: sensorStyle.sensorDartboard({multiplier: 1.3}),
+        legendOptions: sensorStyle.legendOptions
     }));    
 };

@@ -394,9 +394,9 @@ export default class LayerSwitcher extends Control {
             if (intn instanceof Select) {
                 let selected = intn.getFeatures();
                 selected.forEach(f => {
-                    if (intn.getLayer(f) == layer) {
+                    if (!f || intn.getLayer(f) == layer) {
                         selected.remove(f);
-                    }
+                    }                                    
                 });
             }
         });

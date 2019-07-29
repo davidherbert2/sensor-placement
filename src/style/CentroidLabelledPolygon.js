@@ -5,10 +5,6 @@ import Style from "ol/style/Style";
 import Fill from "ol/style/Fill";
 import Stroke from "ol/style/Stroke";
 import Text from "ol/style/Text";
-import CircleStyle from "ol/style/Circle";
-
-/* Local style cache for performance */
-const _styleCache = {};
 
 /** 
  * @classdesc Class to style UO sensors
@@ -22,7 +18,6 @@ export default class CentroidLabelledPolygonStyle extends Style {
      *  - outline {string} - outline (stroke) colour (could be supplied as rgba() to indicate opacity), default 'red'
      *  - outlineWidth {string} - outline width
      *  - fill {string} - fill colour (could be supplied as rgba() to indicate opacity), default 'white'
-     *  - label {string} - feature attribute to use as the label
      *  - zIndex - z-index for the style
 	 */
 	constructor(options) {
@@ -49,24 +44,24 @@ export default class CentroidLabelledPolygonStyle extends Style {
             padding: [10, 10, 10, 10]
         };
 
-        let mergedStrokeOpts = Object.assign({}, STROKE_DEFAULTS, strokeOpts);
-        let mergedFillOpts = Object.assign({}, FILL_DEFAULTS, fillOpts);
+        super({});
 
-        super({            
-            stroke: new Stroke(Object.assign({}, STROKE_DEFAULTS, {color: options.outline, width: options.outlineWidth})),
-            fill: new Fill(Object.assign({}, FILL_DEFAULTS, {color: options.fill})),
-            text: new Text({
-// TODO
-            }),
-            zIndex: 
-        });
-
-        this._options = Object.assign({}, SENSOR_DEFAULTS, options);
+        this._options = {
+            stroke: Object.assign({}, STROKE_DEFAULTS, {color: options.outline, width: options.outlineWidth}),
+            fill: Object.assign({}, FILL_DEFAULTS, {color: options.fill}),
+            text: Object.assign({}, TEXT_DEFAULTS),
+            zIndex: options.zIndex || Infinity
+        };
         
         /* Set directives for legend rendering */
         this._legendOptions = {
             method: "unclassified",
-            geometryType: "polygon"
+            geometryType: "polygon",
+            /* Used to render a legend successfully if the default style is transparent, as for a layer made visible on hover */
+            styleOverride: {
+                stroke: this._options.stroke,
+                fill: this._options.fill
+            }
         };
     }
 
@@ -75,26 +70,21 @@ export default class CentroidLabelledPolygonStyle extends Style {
     }
 
     /**
-    * Style function for a boundaried polygon labelled at its centroid
-    * @param {Object} strokeOpts
-    *  - {string} color  - stroke colour/opacity as rgba, default rgba(0, 0, 0, 1.0)
-    *  - {int} width     - stroke width, default 1
-    * @param {Object} fillOpts
-    *  - {string} color  - fill colour/opacity as rgba, default rgba(255, 255, 255, 1.0)
-    * @param {Object} textOpts  
-    *  - {string} labelAttr - label attribute
-    * @param {int} zIndex - style zIndex
-    */
-    centroidLabelled = (strokeOpts, fillOpts, textOpts, zIndex = Infinity) => {
+     * Create the polygon style
+     * @param {string} label - feature attribute to use for label
+     * @param {boolean} visible - false for a completely transparent (i.e. invisible) style
+     */
+    centroidLabelled(label = null, visible = true) {
        return((feature, res) => {
-            return(new Style({
-                stroke: new Stroke(mergedStrokeOpts),
-                fill: new Fill(mergedFillOpts),
-                text: new Text(Object.assign({}, TEXT_DEFAULTS, {
-                    text: feature.get(textOpts.labelAttr || "name")
-                })),                
-                zIndex: zIndex
-            }));
+            let style = new Style({
+                stroke: new Stroke(visible ? this._options.stroke : {color: "#000000".toRgba(0.0)}),
+                fill: new Fill(visible ? this._options.fill : {color: "#000000".toRgba(0.0)}),                            
+                zIndex: this._options.zIndex
+            });
+            if (visible && label != null) {
+                style.setText(new Text(Object.assign({}, this._options.text, {text: feature.get(label) || `No such attribute ${label}`})));    
+            }
+            return(style);
        });
     }
 

@@ -215,7 +215,6 @@ export default class Legend extends SwitcherSubControl {
                 }                
             }
         } 
-        
     }
 
     /**

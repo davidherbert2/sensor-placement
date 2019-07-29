@@ -180,6 +180,7 @@ export const SENSORS = (theme, sensorType, zIndex, visible = false, icon = "ques
         switcherOpts: {icon: icon, legend: `${theme} ${sensorType} sensors`, attribution: "Current sensor locations for NU Urban Observatory"},		        			
         source: new UrbanObservatorySource({sensorTheme: theme, sensorType: sensorType}),
         style: sensorStyle.sensorDartboard({}),
+        hoverStyle: sensorStyle.sensorDartboard({multiplier: 1.3}),
         clickStyle: sensorStyle.sensorDartboard({multiplier: 1.3}),
         legendOptions: sensorStyle.legendOptions
     }));    
